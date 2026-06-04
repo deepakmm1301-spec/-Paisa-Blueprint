@@ -113,6 +113,23 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Paisa Blueprint server is fully operational.", totalAccounts: accountsMemory.length });
 });
 
+// Authentication API: Check if email is already registered
+app.get("/api/auth/check-email", (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) {
+      res.status(400).json({ error: "Missing email parameter" });
+      return;
+    }
+    const emailNorm = (email as string).trim().toLowerCase();
+    const found = accountsMemory.some(acc => acc.email.toLowerCase() === emailNorm);
+    res.json({ registered: found });
+  } catch (err: any) {
+    console.error("Check email error:", err);
+    res.status(500).json({ error: "Internal server error checking account email." });
+  }
+});
+
 // Authentication API: Register
 app.post("/api/auth/register", (req, res) => {
   try {

@@ -79,6 +79,9 @@ type ActiveWidget =
   | "coach";
 
 export default function App() {
+  // Lock to prevent overwriting server-side state during profile loading race conditions
+  const [isLoadingProfiles, setIsLoadingProfiles] = useState(false);
+
   // Session authentication state
   const [sessionUser, setSessionUser] = useState<{ name: string; email: string } | null>(() => {
     const saved = localStorage.getItem("paisa_active_session");
@@ -200,6 +203,7 @@ export default function App() {
   // Pull latest central ledger details on load if session is active
   useEffect(() => {
     if (sessionUser && sessionUser.email) {
+      setIsLoadingProfiles(true);
       fetch(`/api/auth/get-profiles?email=${encodeURIComponent(sessionUser.email)}`)
         .then(res => {
           if (res.ok) return res.json();
@@ -215,12 +219,18 @@ export default function App() {
         })
         .catch(err => {
           console.warn("Could not retrieve central ledger portfolios on init, fell back to cache:", err);
+        })
+        .finally(() => {
+          setIsLoadingProfiles(false);
         });
     }
   }, [sessionUser?.email]);
 
   // Sync profile storage changes & update user's localized locker record
   useEffect(() => {
+    // If we're loading profiles, lock synchronization so we don't overwrite server state
+    if (isLoadingProfiles) return;
+
     localStorage.setItem("paisa_family_profiles_list", JSON.stringify(profiles));
     localStorage.setItem("paisa_active_profile_id", activeProfileId);
     // Backward compatibility file link
@@ -283,7 +293,7 @@ export default function App() {
         console.error("Failed to connect with cloud portfolios ledger", err);
       });
     }
-  }, [profiles, activeProfileId, profile, sessionUser]);
+  }, [profiles, activeProfileId, profile, sessionUser, isLoadingProfiles]);
 
   const handleLoginSuccess = (
     user: { name: string; email: string },

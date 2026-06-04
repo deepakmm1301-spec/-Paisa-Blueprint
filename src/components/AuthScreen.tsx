@@ -1,17 +1,7 @@
 import React, { useState } from "react";
-import { Lock, Mail, User, ShieldCheck, Sparkles, LogIn, UserPlus, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { Lock, Mail, User, ShieldCheck, Sparkles, LogIn, UserPlus, ArrowRight, Eye, EyeOff, ChevronLeft, RefreshCw } from "lucide-react";
 // @ts-ignore
 import paisaLogo from "../assets/images/deep_paisa_logo_1780484307855.png";
-
-// Simple internal interface for user account structures
-interface UserAccount {
-  email: string;
-  name: string;
-  passwordHash: string;
-  profilesList: any[];
-  activeProfileId: string;
-  createdAt: string;
-}
 
 interface AuthScreenProps {
   onLoginSuccess: (user: { name: string; email: string }, profilesList: any[], activeProfileId: string) => void;
@@ -19,32 +9,64 @@ interface AuthScreenProps {
 }
 
 export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScreenProps) {
-  const [isSignUp, setIsSignUp] = useState(false);
-  
-  // Inputs
-  const [name, setName] = useState("");
+  // Common inputs & state
   const [email, setEmail] = useState("");
+  const [emailChecked, setEmailChecked] = useState(false);
+  const [isRegistered, setIsRegistered] = useState(false);
+  
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   
-  // States
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // Dynamic step detection: checks standard network registry for matching email
+  const handleCheckEmail = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    setError("");
+    setSuccessMsg("");
+    
+    const emailStr = email.trim();
+    if (!emailStr) {
+      setError("Please key in your email address.");
+      return;
+    }
+    if (!emailStr.includes("@") || emailStr.length < 5) {
+      setError("Please present a valid standard Email format.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const res = await fetch(`/api/auth/check-email?email=${encodeURIComponent(emailStr)}`);
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Paisa center ledger query failed.");
+      }
+      setIsRegistered(data.registered);
+      setEmailChecked(true);
+    } catch (err: any) {
+      setError(err.message || "Failed to reach the Paisa central directory.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Perform standard secure sign in
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccessMsg("");
-    setIsLoading(true);
-
-    if (!email || !password) {
-      setError("Please fill in all standard credentials.");
-      setIsLoading(false);
+    
+    if (!password) {
+      setError("Please input your password.");
       return;
     }
 
+    setIsLoading(true);
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
@@ -53,15 +75,17 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Invalid credentials. Please attempt login again.");
+        throw new Error(data.error || "Password matched inaccurately or locker does not exist.");
       }
 
-      // Success login!
-      onLoginSuccess(
-        { name: data.name, email: data.email },
-        data.profilesList || [{ ...defaultProfile, id: "profile-main" }],
-        data.activeProfileId || "profile-main"
-      );
+      setSuccessMsg("Locker file authenticated! Launching financial engine...");
+      setTimeout(() => {
+        onLoginSuccess(
+          { name: data.name, email: data.email },
+          data.profilesList || [{ ...defaultProfile, id: "profile-main" }],
+          data.activeProfileId || "profile-main"
+        );
+      }, 500);
     } catch (err: any) {
       setError(err.message || "Connection failure with centralized Paisa network.");
     } finally {
@@ -69,28 +93,30 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
     }
   };
 
+  // Perform standard secure signup
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccessMsg("");
 
-    if (!name.trim() || !email.trim() || !password) {
-      setError("All inputs must be completed.");
+    if (!name.trim()) {
+      setError("Please present your full name for the master portfolio profile.");
       return;
     }
-
+    if (!password) {
+      setError("Please declare a secure account password.");
+      return;
+    }
     if (password.length < 5) {
-      setError("Password must have at least 5 character dimensions.");
+      setError("For safety, use at least 5 character symbols.");
       return;
     }
-
     if (password !== confirmPassword) {
-      setError("Password confirmations do not match.");
+      setError("Passwords confirmed do not match. Check spelling.");
       return;
     }
 
     setIsLoading(true);
-
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
@@ -107,18 +133,16 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
         throw new Error(data.error || "Centrex registration rejected.");
       }
 
-      setSuccessMsg("Locker successfully registered in the Paisa network center! Launching your financial portfolio...");
-      
-      // Auto login immediately with registered credentials
+      setSuccessMsg("Locker file registered and seeded successfully! Logging in...");
       setTimeout(() => {
         onLoginSuccess(
           { name: data.user.name, email: data.user.email },
           data.user.profilesList,
           data.user.activeProfileId
         );
-      }, 750);
+      }, 800);
     } catch (err: any) {
-      setError(err.message || "Connection failure registering account.");
+      setError(err.message || "Error setting up your database files.");
     } finally {
       setIsLoading(false);
     }
@@ -129,10 +153,18 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
     setSuccessMsg("");
     setEmail("advisor@paisa.in");
     setPassword("paisa");
+    setIsRegistered(true);
+    setEmailChecked(true);
+  };
+
+  const handleResetEmail = () => {
+    setEmailChecked(false);
+    setError("");
+    setSuccessMsg("");
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 md:p-8 animate-fade-in text-slate-150">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 md:p-8 animate-fade-in text-slate-100">
       
       {/* Background Ambience styling */}
       <div className="absolute inset-0 max-w-full h-full overflow-hidden pointer-events-none z-0 opacity-40">
@@ -167,10 +199,10 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
 
             <div className="space-y-4 pt-4">
               <h2 className="text-xl font-bold text-slate-100 leading-tight">
-                Securely calibrate your household compounding engine.
+                Instantly compute and calibrate salary compounding.
               </h2>
               <p className="text-slate-400 text-xs leading-relaxed">
-                Unlock multi-profile family accounting, compute New vs Old tax slabs, step-up SIPs, and draft government scale allowances with smart AI auditing options.
+                Seamless multi-profile family accounts, New vs Old tax comparisons, SIP compounders, and smart allowances with robust cloud syncing.
               </p>
             </div>
           </div>
@@ -178,205 +210,209 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
           <div className="pt-8 border-t border-slate-850 space-y-3">
             <div className="flex items-center gap-2.5 text-xs text-slate-300">
               <ShieldCheck className="w-4 h-4 text-bhagwa-500 shrink-0" />
-              <span>Full offline state simulation</span>
+              <span>Secure central database file locker</span>
             </div>
             <div className="flex items-center gap-2.5 text-xs text-slate-300">
               <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span>Calibrated standard Tax slabs</span>
+              <span>Real-time cross-device synchronization</span>
             </div>
           </div>
 
         </div>
 
-        {/* Right Aspect: Authentication Interactive Form Panel */}
+        {/* Right Aspect: Authentication Interactive Dynamic Panel */}
         <div className="md:col-span-7 p-8 md:p-12 flex flex-col justify-center space-y-6 bg-slate-900/20">
           
-          {/* Prominent Tab Switcher */}
-          <div className="grid grid-cols-2 p-1 bg-slate-950/80 border border-slate-800 rounded-xl">
-            <button
-              type="button"
-              onClick={() => {
-                setIsSignUp(false);
-                setError("");
-                setSuccessMsg("");
-              }}
-              className={`py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                !isSignUp 
-                  ? "bg-bhagwa-600 text-white shadow-sm" 
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              Sign In (Access File)
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setIsSignUp(true);
-                setError("");
-                setSuccessMsg("");
-              }}
-              className={`py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                isSignUp 
-                  ? "bg-bhagwa-600 text-white shadow-sm" 
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-            >
-              Create Account (Register)
-            </button>
-          </div>
-
           <div>
             <h2 className="text-2xl font-bold text-white tracking-tight">
-              {isSignUp ? "Register Family Locker" : "Unlock Account File"}
+              {!emailChecked ? "Access Portfolio Locker" : isRegistered ? "Unlock Secure Locker" : "Create Modern Account"}
             </h2>
             <p className="text-slate-400 text-xs mt-1">
-              {isSignUp 
-                ? "Set your details below to create a brand new secure portfolio file." 
-                : "Enter your registered credentials to synchronize your active ledger profiles."
+              {!emailChecked 
+                ? "Input your email. We will instantly locate your ledger or set up a brand new one."
+                : isRegistered 
+                ? "Account found in central database! Enter your locker password to access." 
+                : "New Email identified! Enter your name and password to seal your new ledger."
               }
             </p>
           </div>
 
           {/* Messages info box */}
           {error && (
-            <div className="p-3.5 bg-rose-950/40 border border-rose-900 text-rose-300 text-xs font-semibold rounded-xl flex items-start gap-2 animate-pulse">
+            <div className="p-3.5 bg-rose-950/40 border border-rose-900/80 text-rose-300 text-xs font-semibold rounded-xl flex items-start gap-2">
               <Lock className="w-4 h-4 text-rose-500 mt-0.5 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
           {successMsg && (
-            <div className="p-3.5 bg-emerald-950/40 border border-emerald-900 text-emerald-300 text-xs font-semibold rounded-xl flex items-start gap-2">
+            <div className="p-3.5 bg-emerald-950/40 border border-emerald-900/80 text-emerald-300 text-xs font-semibold rounded-xl flex items-start gap-2">
               <ShieldCheck className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
               <span>{successMsg}</span>
             </div>
           )}
 
-          <form onSubmit={isSignUp ? handleSignUp : handleLogin} className="space-y-4">
-            
-            {/* Full Name input for registration */}
-            {isSignUp && (
+          {/* STEP 1: Email Form */}
+          {!emailChecked ? (
+            <form onSubmit={handleCheckEmail} className="space-y-4">
               <div className="space-y-1">
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-450 text-slate-450 text-slate-400">
-                  Full Name
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                  Email Address
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                   <input
-                    type="text"
+                    type="email"
                     required
-                    placeholder="e.g. Deepak Kumar"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all"
+                    placeholder="e.g. deepak@gmail.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm"
                   />
                 </div>
               </div>
-            )}
 
-            {/* Email Input */}
-            <div className="space-y-1">
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                <input
-                  type="email"
-                  required
-                  placeholder="e.g. deepak@gmail.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all"
-                />
-              </div>
-            </div>
-
-            {/* Password Input */}
-            <div className="space-y-1">
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  required
-                  placeholder="Password (min 5 symbols)"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-10 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 pointer-events-auto p-1"
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full bg-bhagwa-600 hover:bg-bhagwa-700 text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-bhagwa-600/10 hover:shadow-bhagwa-600/20 active:scale-[0.99] cursor-pointer mt-4"
+              >
+                {isLoading ? (
+                  <span className="flex items-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
+                    Searching central registry...
+                  </span>
+                ) : (
+                  <>
+                    Continue to Locker <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </form>
+          ) : (
+            /* STEP 2: Password (and optionally Name) Form */
+            <form onSubmit={isRegistered ? handleLogin : handleSignUp} className="space-y-4">
+              
+              {/* Dynamic Information Pill */}
+              <div className={`p-3 rounded-xl border text-[11px] font-medium flex items-center gap-2 ${
+                isRegistered 
+                  ? "bg-slate-950/50 text-slate-300 border-slate-800" 
+                  : "bg-emerald-950/30 text-emerald-400 border-emerald-900/50"
+              }`}>
+                <div className={`w-2 h-2 rounded-full ${isRegistered ? "bg-emerald-500" : "bg-bhagwa-500"}`}></div>
+                <div className="flex-1 truncate">
+                  Registered account for <span className="font-bold">{email}</span> {isRegistered ? "exists." : "will be created."}
+                </div>
+                <button 
+                  type="button" 
+                  onClick={handleResetEmail} 
+                  className="text-[10px] text-slate-400 hover:text-white underline cursor-pointer"
                 >
-                  {showPassword ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
+                  Change Email
                 </button>
               </div>
-            </div>
 
-            {/* Confirm Password input for registration */}
-            {isSignUp && (
-              <div className="space-y-1 animate-fade-in">
+              {/* Full Name input for registration */}
+              {!isRegistered && (
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                    Full Name
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Deepak Kumar"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Password Input */}
+              <div className="space-y-1">
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                  Confirm Password
+                  Password
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     required
-                    placeholder="Verify passcode"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all"
+                    placeholder={isRegistered ? "Enter account password" : "Define password (min 5 symbols)"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-10 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 pointer-events-auto p-1"
+                  >
+                    {showPassword ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
+                  </button>
                 </div>
               </div>
-            )}
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={`w-full bg-bhagwa-600 hover:bg-bhagwa-700 text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-bhagwa-600/10 hover:shadow-bhagwa-600/20 active:scale-[0.99] cursor-pointer mt-4 ${isLoading ? "opacity-75 cursor-not-allowed" : ""}`}
-            >
-              {isLoading ? (
-                <span className="flex items-center gap-2">
-                  <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
-                  Processing Sync...
-                </span>
-              ) : isSignUp ? (
-                <>
-                  <UserPlus className="w-4.5 h-4.5" /> Create Multi-Profile Locker
-                </>
-              ) : (
-                <>
-                  <LogIn className="w-4.5 h-4.5" /> Access Portfolio File <ArrowRight className="w-4 h-4" />
-                </>
+              {/* Confirm Password input for registration */}
+              {!isRegistered && (
+                <div className="space-y-1 animate-fade-in">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                    Confirm Password
+                  </label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <input
+                      type="password"
+                      required
+                      placeholder="Re-verify password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm"
+                    />
+                  </div>
+                </div>
               )}
-            </button>
-          </form>
 
-          {/* Register vs Access toggle link */}
-          <div className="text-center pt-2">
-            <button
-              type="button"
-              onClick={() => {
-                setIsSignUp(!isSignUp);
-                setError("");
-                setSuccessMsg("");
-              }}
-              className="text-xs text-bhagwa-400 hover:text-bhagwa-300 font-semibold cursor-pointer select-none"
-            >
-              {isSignUp ? "Already have a lock file? Access Sign In" : "Don't have a secure family profile? Create account"}
-            </button>
-          </div>
+              {/* Submit Buttons */}
+              <div className="flex gap-2.5 pt-3">
+                <button
+                  type="button"
+                  onClick={handleResetEmail}
+                  className="px-4 py-3 bg-slate-950/40 hover:bg-slate-950/80 border border-slate-850 hover:border-slate-800 text-slate-300 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                >
+                  <ChevronLeft className="w-4 h-4" /> Back
+                </button>
+                
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className={`flex-1 bg-bhagwa-600 hover:bg-bhagwa-700 text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-bhagwa-600/10 hover:shadow-bhagwa-600/20 active:scale-[0.99] cursor-pointer ${isLoading ? "opacity-75 cursor-not-allowed" : ""}`}
+                >
+                  {isLoading ? (
+                    <span className="flex items-center gap-2">
+                      <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
+                      Synchronizing...
+                    </span>
+                  ) : isRegistered ? (
+                    <>
+                      <LogIn className="w-4.5 h-4.5" /> Unlock Account File <ArrowRight className="w-4 h-4" />
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus className="w-4.5 h-4.5" /> Register & Launch Locker
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          )}
 
           {/* Quick-seed demo credentials option for reviewer */}
-          {!isSignUp && (
+          {!emailChecked && (
             <div className="border-t border-slate-800/80 pt-5">
               <div className="bg-slate-950/40 border border-slate-800/60 p-3.5 rounded-xl text-center space-y-1.5">
                 <span className="text-[10px] text-slate-400 block font-semibold uppercase tracking-wider">
