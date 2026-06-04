@@ -100,10 +100,19 @@ export default function App() {
       try {
         const parsedSess = JSON.parse(activeSess);
         if (parsedSess && parsedSess.email) {
+          const userEmail = parsedSess.email.toLowerCase();
+          
+          // Try user-scoped localStorage key
+          const userSpecificList = localStorage.getItem(`paisa_family_profiles_list_${userEmail}`);
+          if (userSpecificList) {
+            return JSON.parse(userSpecificList);
+          }
+
+          // Fallback to matching accounts entry
           const savedAccounts = localStorage.getItem("paisa_user_accounts");
           if (savedAccounts) {
             const accounts = JSON.parse(savedAccounts);
-            const match = accounts.find((a: any) => a.email.toLowerCase() === parsedSess.email.toLowerCase());
+            const match = accounts.find((a: any) => a.email.toLowerCase() === userEmail);
             if (match && match.profilesList && match.profilesList.length > 0) {
               return match.profilesList;
             }
@@ -146,10 +155,18 @@ export default function App() {
       try {
         const parsedSess = JSON.parse(activeSess);
         if (parsedSess && parsedSess.email) {
+          const userEmail = parsedSess.email.toLowerCase();
+
+          // Try user-scoped active profile ID
+          const userSpecificId = localStorage.getItem(`paisa_active_profile_id_${userEmail}`);
+          if (userSpecificId) {
+            return userSpecificId;
+          }
+
           const savedAccounts = localStorage.getItem("paisa_user_accounts");
           if (savedAccounts) {
             const accounts = JSON.parse(savedAccounts);
-            const match = accounts.find((a: any) => a.email.toLowerCase() === parsedSess.email.toLowerCase());
+            const match = accounts.find((a: any) => a.email.toLowerCase() === userEmail);
             if (match && match.activeProfileId) {
               return match.activeProfileId;
             }
@@ -210,12 +227,20 @@ export default function App() {
     localStorage.setItem("paisa_profile", JSON.stringify(profile));
 
     if (sessionUser && sessionUser.email) {
+      const userEmail = sessionUser.email.toLowerCase();
+      // Scoped lists as well so page reloads immediately resolve correct profile
+      localStorage.setItem(`paisa_family_profiles_list_${userEmail}`, JSON.stringify(profiles));
+      localStorage.setItem(`paisa_active_profile_id_${userEmail}`, activeProfileId);
+
       const savedAccounts = localStorage.getItem("paisa_user_accounts");
-      if (savedAccounts) {
-        try {
-          const accounts = JSON.parse(savedAccounts);
-          const updatedAccounts = accounts.map((acc: any) => {
-            if (acc.email.toLowerCase() === sessionUser.email.toLowerCase()) {
+      try {
+        const accounts = savedAccounts ? JSON.parse(savedAccounts) : [];
+        const exists = accounts.some((acc: any) => acc.email.toLowerCase() === userEmail);
+        
+        let updatedAccounts;
+        if (exists) {
+          updatedAccounts = accounts.map((acc: any) => {
+            if (acc.email.toLowerCase() === userEmail) {
               return {
                 ...acc,
                 profilesList: profiles,
@@ -224,10 +249,21 @@ export default function App() {
             }
             return acc;
           });
-          localStorage.setItem("paisa_user_accounts", JSON.stringify(updatedAccounts));
-        } catch (e) {
-          console.error("Sync user account error", e);
+        } else {
+          updatedAccounts = [
+            ...accounts,
+            {
+              email: userEmail,
+              name: sessionUser.name,
+              profilesList: profiles,
+              activeProfileId: activeProfileId,
+              createdAt: new Date().toISOString()
+            }
+          ];
         }
+        localStorage.setItem("paisa_user_accounts", JSON.stringify(updatedAccounts));
+      } catch (e) {
+        console.error("Sync user account error", e);
       }
 
       // Synchronize with Central Server Database dynamically on modification
@@ -256,6 +292,32 @@ export default function App() {
   ) => {
     setSessionUser(user);
     localStorage.setItem("paisa_active_session", JSON.stringify(user));
+    
+    const userEmail = user.email.toLowerCase();
+    localStorage.setItem(`paisa_family_profiles_list_${userEmail}`, JSON.stringify(profilesList));
+    localStorage.setItem(`paisa_active_profile_id_${userEmail}`, activeId);
+
+    try {
+      const savedAccounts = localStorage.getItem("paisa_user_accounts");
+      const accounts = savedAccounts ? JSON.parse(savedAccounts) : [];
+      const index = accounts.findIndex((a: any) => a.email.toLowerCase() === userEmail);
+      const updatedAccount = {
+        email: userEmail,
+        name: user.name,
+        profilesList: profilesList,
+        activeProfileId: activeId,
+        createdAt: new Date().toISOString()
+      };
+      if (index > -1) {
+        accounts[index] = { ...accounts[index], ...updatedAccount };
+      } else {
+        accounts.push(updatedAccount);
+      }
+      localStorage.setItem("paisa_user_accounts", JSON.stringify(accounts));
+    } catch (err) {
+      console.error("Error setting user accounts list in handleLoginSuccess:", err);
+    }
+
     setProfiles(profilesList);
     setActiveProfileId(activeId);
     setActiveWidget("profiles");
