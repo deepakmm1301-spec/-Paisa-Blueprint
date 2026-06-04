@@ -94,7 +94,7 @@ export default function App() {
         console.error("Failed to parse active session", err);
       }
     }
-    return { name: "Deepak Kumar", email: "deepak.mm1301@gmail.com" };
+    return { name: "Deepak Kumar", email: "deepak.mm1301@paisa.in" };
   });
 
   // Ensure standard session is stored for continuous sync under the hood

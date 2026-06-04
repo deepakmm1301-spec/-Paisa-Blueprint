@@ -264,7 +264,7 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
                   <input
                     type="email"
                     required
-                    placeholder="e.g. deepak@gmail.com"
+                    placeholder="e.g. deepak@paisa.in"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm"

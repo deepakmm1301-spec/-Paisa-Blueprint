@@ -1,0 +1,74 @@
+[
+  {
+    "email": "advisor@paisa.in",
+    "name": "Deepak Kumar",
+    "passwordHash": "paisa",
+    "profilesList": [
+      {
+        "id": "profile-main",
+        "name": "Deepak Kumar",
+        "age": 32,
+        "salary": 150000,
+        "monthlyExpenses": 60000,
+        "investments": {
+          "epfMonthly": 8000,
+          "ppfAnnual": 100005,
+          "npsMonthly": 5000,
+          "elssAnnual": 50000,
+          "healthPremium": 25000,
+          "rentMonthly": 25000,
+          "homeLoanInterestAnnual": 120000,
+          "otherDeductions": 10000,
+          "directEquitySIP": 25000,
+          "goldMonthly": 5000
+        },
+        "dependentsCount": 3,
+        "cityTier": "Metropolitan",
+        "insurance": {
+          "termCover": 20000000,
+          "healthCover": 1000000
+        }
+      }
+    ],
+    "activeProfileId": "profile-main",
+    "createdAt": "2026-06-04T11:33:55.525Z"
+  },
+  {
+    "email": "deepak.mm1301@paisa.in",
+    "name": "DEEPAK KUMAR",
+    "passwordHash": "Deep@1357",
+    "profilesList": [
+      {
+        "name": "DEEPAK KUMAR",
+        "age": 32,
+        "retirementAge": 60,
+        "salary": 75000,
+        "city": "tier2",
+        "maritalStatus": "dependents",
+        "dependentsCount": 2,
+        "currentSavings": 120000,
+        "loans": {
+          "homeLoan": 0,
+          "personalLoan": 0,
+          "carLoan": 0,
+          "otherLoan": 0
+        },
+        "investments": {
+          "mutualFunds": 350000,
+          "stocks": 120000,
+          "gold": 150000,
+          "epf": 180000,
+          "ppf": 50000,
+          "nps": 60000,
+          "realEstate": 0
+        },
+        "monthlyExpenses": 35000,
+        "healthInsuranceCover": 500000,
+        "termInsuranceCover": 5000000,
+        "id": "profile-main"
+      }
+    ],
+    "activeProfileId": "profile-main",
+    "createdAt": "2026-06-04T12:02:40.765Z"
+  }
+]
