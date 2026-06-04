@@ -33,7 +33,9 @@ import {
   UserCheck,
   RefreshCw,
   User,
-  ChevronDown
+  ChevronDown,
+  Edit2,
+  Check
 } from "lucide-react";
 
 // Default profile setup
@@ -100,6 +102,47 @@ export default function App() {
   });
 
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [isEditingAccountName, setIsEditingAccountName] = useState(false);
+  const [newAccountName, setNewAccountName] = useState("");
+
+  const handleSaveAccountName = async () => {
+    if (!newAccountName.trim() || !sessionUser) return;
+    
+    const updatedUser = { ...sessionUser, name: newAccountName.trim() };
+    setSessionUser(updatedUser);
+    localStorage.setItem("paisa_active_session", JSON.stringify(updatedUser));
+    
+    // Update local accounts cache structure
+    try {
+      const savedAccounts = localStorage.getItem("paisa_user_accounts");
+      if (savedAccounts) {
+        const accounts = JSON.parse(savedAccounts);
+        const index = accounts.findIndex((a: any) => a.email.toLowerCase() === sessionUser.email.toLowerCase());
+        if (index > -1) {
+          accounts[index].name = newAccountName.trim();
+          localStorage.setItem("paisa_user_accounts", JSON.stringify(accounts));
+        }
+      }
+    } catch (err) {
+      console.error("Failed to update user accounts renaming cache:", err);
+    }
+
+    // Call dynamic backend rename endpoint
+    try {
+      await fetch("/api/auth/update-account-name", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: sessionUser.email,
+          name: newAccountName.trim()
+        })
+      });
+    } catch (err) {
+      console.warn("Cloud account renaming failed, synced changes remain local", err);
+    }
+    
+    setIsEditingAccountName(false);
+  };
 
   // Ensure standard session is stored for continuous sync under the hood
   useEffect(() => {
@@ -560,15 +603,57 @@ export default function App() {
                       />
                       <div className="absolute right-0 mt-2 w-72 bg-white border border-slate-150 rounded-2xl shadow-xl z-50 py-3.5 px-4 space-y-3 text-xs text-left">
                         <div className="border-b border-slate-100 pb-2.5">
-                          <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider block mb-1">
-                            LOGGED IN ACCOUNT
-                          </span>
-                          <span className="block font-black text-slate-800 text-sm leading-tight">
-                            {sessionUser.name}
-                          </span>
-                          <span className="block font-mono text-[10px] text-slate-500 truncate mt-0.5">
-                            {sessionUser.email}
-                          </span>
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider block">
+                              LOGGED IN ACCOUNT
+                            </span>
+                            {!isEditingAccountName && (
+                              <button
+                                onClick={() => {
+                                  setIsEditingAccountName(true);
+                                  setNewAccountName(sessionUser.name);
+                                }}
+                                className="text-bhagwa-600 hover:text-bhagwa-700 font-bold text-[10px] flex items-center gap-1 cursor-pointer transition-colors"
+                              >
+                                <Edit2 className="w-2.5 h-2.5" /> Rename
+                              </button>
+                            )}
+                          </div>
+
+                          {isEditingAccountName ? (
+                            <div className="flex items-center gap-1.5 mt-1.5">
+                              <input
+                                type="text"
+                                value={newAccountName}
+                                onChange={(e) => setNewAccountName(e.target.value)}
+                                className="border border-slate-200 rounded-lg px-2 py-1 text-xs focus:ring-1 focus:ring-bhagwa-500 focus:outline-none font-bold text-slate-800 flex-1"
+                                placeholder="Customize Name"
+                                autoFocus
+                              />
+                              <button
+                                onClick={handleSaveAccountName}
+                                className="p-1.5 bg-bhagwa-100 hover:bg-bhagwa-200 text-bhagwa-800 rounded-lg cursor-pointer"
+                                title="Save Profile Name"
+                              >
+                                <Check className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                onClick={() => setIsEditingAccountName(false)}
+                                className="text-slate-450 hover:text-slate-600 font-bold px-1.5 py-1 text-xs"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ) : (
+                            <>
+                              <span className="block font-black text-slate-800 text-sm leading-tight">
+                                {sessionUser.name}
+                              </span>
+                              <span className="block font-mono text-[10px] text-slate-500 truncate mt-0.5">
+                                {sessionUser.email}
+                              </span>
+                            </>
+                          )}
                         </div>
 
                         <div className="space-y-2">
@@ -704,6 +789,7 @@ export default function App() {
                 onCreateProfile={handleCreateProfile}
                 onDeleteProfile={handleDeleteProfile}
                 onDuplicateProfile={handleDuplicateProfile}
+                onUpdateProfile={handleUpdateProfile}
               />
             )}
 

@@ -261,6 +261,33 @@ app.post("/api/auth/update-profiles", (req, res) => {
   }
 });
 
+// Authentication API: Update account custom name
+app.post("/api/auth/update-account-name", (req, res) => {
+  try {
+    const { email, name } = req.body;
+    if (!email || !name) {
+      res.status(400).json({ error: "Missing email or name core parameters" });
+      return;
+    }
+
+    const emailNorm = email.trim().toLowerCase();
+    const index = accountsMemory.findIndex(acc => acc.email.toLowerCase() === emailNorm);
+
+    if (index === -1) {
+      res.status(404).json({ error: "Account not found for rename" });
+      return;
+    }
+
+    accountsMemory[index].name = name.trim();
+    saveAccounts();
+
+    res.json({ success: true, message: "Account profile renamed successfully." });
+  } catch (err: any) {
+    console.error("Account Rename Error:", err);
+    res.status(500).json({ error: "Internal server error renaming account" });
+  }
+});
+
 // Authentication API: Get current portfolios dynamically
 app.get("/api/auth/get-profiles", (req, res) => {
   try {

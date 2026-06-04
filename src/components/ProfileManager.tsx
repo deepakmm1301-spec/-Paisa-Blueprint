@@ -19,7 +19,8 @@ import {
   TrendingUp,
   MapPin,
   Heart,
-  Landmark
+  Landmark,
+  Edit2
 } from "lucide-react";
 
 interface ProfileManagerProps {
@@ -29,6 +30,7 @@ interface ProfileManagerProps {
   onCreateProfile: (profile: UserProfile) => void;
   onDeleteProfile: (id: string) => void;
   onDuplicateProfile: (id: string) => void;
+  onUpdateProfile: (profile: UserProfile) => void;
 }
 
 export default function ProfileManager({
@@ -38,8 +40,15 @@ export default function ProfileManager({
   onCreateProfile,
   onDeleteProfile,
   onDuplicateProfile,
+  onUpdateProfile,
 }: ProfileManagerProps) {
   const [showAddForm, setShowAddForm] = useState(false);
+  
+  // Editing profile state
+  const [editingProfile, setEditingProfile] = useState<UserProfile | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editAge, setEditAge] = useState<number>(30);
+  const [editSalary, setEditSalary] = useState<number>(80000);
   
   // New profile state inputs
   const [name, setName] = useState("");
@@ -167,6 +176,31 @@ export default function ProfileManager({
     setUsePin(false);
     setPinValue("");
     setShowAddForm(false);
+  };
+
+  const handleStartEdit = (e: React.MouseEvent, p: UserProfile) => {
+    e.stopPropagation();
+    setEditingProfile(p);
+    setEditName(p.name);
+    setEditAge(p.age);
+    setEditSalary(p.salary);
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProfile) return;
+    if (!editName.trim()) return;
+
+    const updatedProfile: UserProfile = {
+      ...editingProfile,
+      name: editName.trim(),
+      age: editAge,
+      salary: editSalary,
+      monthlyExpenses: Math.round(editSalary * 0.4),
+    };
+
+    onUpdateProfile(updatedProfile);
+    setEditingProfile(null);
   };
 
   const handleProfileClick = (p: UserProfile) => {
@@ -300,6 +334,78 @@ export default function ProfileManager({
                   className="w-full py-2.5 bg-bhagwa-600 hover:bg-bhagwa-700 disabled:opacity-50 text-white text-xs font-bold rounded-xl cursor-pointer"
                 >
                   Access File
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Customize/Edit Profile Modal */}
+      {editingProfile && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 transition-all animate-fade-in">
+          <div className="bg-white border border-slate-100 rounded-2xl p-6 max-w-sm w-full shadow-2xl relative">
+            <div className="text-center py-4 border-b border-slate-100 mb-4">
+              <div className="mx-auto w-12 h-12 bg-bhagwa-50 border border-bhagwa-100 rounded-full flex items-center justify-center mb-3">
+                <Edit2 className="w-5 h-5 text-bhagwa-600" />
+              </div>
+              <h3 className="font-bold text-slate-800 text-lg font-display">Rename Directory</h3>
+              <p className="text-xs text-slate-500 mt-1">
+                Customize portfolio name for <strong className="text-slate-700">{editingProfile.name}</strong>
+              </p>
+            </div>
+
+            <form onSubmit={handleEditSubmit} className="space-y-4 text-xs">
+              <div>
+                <label className="block text-10px font-extrabold text-slate-400 uppercase tracking-wider mb-1">Full Name</label>
+                <input
+                  type="text"
+                  required
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="w-full border border-slate-200 rounded-xl px-3 py-2.5 focus:ring-1 focus:ring-bhagwa-500 focus:outline-none font-bold text-slate-800 text-xs"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-10px font-extrabold text-slate-400 uppercase tracking-wider mb-1">Age (Yrs)</label>
+                  <input
+                    type="number"
+                    min={18}
+                    max={85}
+                    required
+                    value={editAge}
+                    onChange={(e) => setEditAge(Number(e.target.value))}
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 focus:ring-1 focus:ring-bhagwa-500 focus:outline-none font-semibold text-slate-800 text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="block text-10px font-extrabold text-slate-400 uppercase tracking-wider mb-1">Monthly package (₹)</label>
+                  <input
+                    type="number"
+                    min={0}
+                    required
+                    value={editSalary}
+                    onChange={(e) => setEditSalary(Number(e.target.value))}
+                    className="w-full border border-slate-200 rounded-xl px-3 py-2.5 focus:ring-1 focus:ring-bhagwa-500 focus:outline-none font-mono font-bold text-slate-800 text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingProfile(null)}
+                  className="w-full py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-500 text-xs font-bold rounded-xl cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="w-full py-2.5 bg-bhagwa-600 hover:bg-bhagwa-700 text-white text-xs font-black rounded-xl cursor-pointer"
+                >
+                  Save Profile
                 </button>
               </div>
             </form>
@@ -678,6 +784,14 @@ export default function ProfileManager({
                   </div>
 
                   <div className="flex gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                    <button
+                      type="button"
+                      title="Edit Name & Key Metrics"
+                      onClick={(e) => handleStartEdit(e, p)}
+                      className="p-1 px-1.5 border border-slate-200 hover:border-bhagwa-205 hover:bg-slate-50 rounded text-slate-600 hover:text-bhagwa-600 transition-colors pointer-events-auto cursor-pointer"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                    </button>
                     <button
                       type="button"
                       title="Duplicate base directory scenarios"

@@ -56,8 +56,23 @@ Here are some helpful presets you can ask me, or type your own question below:`,
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: "Failed to connect to AI server." }));
-        throw new Error(errorData.error || "Internal Server Error");
+        let serverErrorMsg = "";
+        try {
+          const errorText = await response.text();
+          if (errorText.includes("GEMINI_API_KEY") || errorText.includes("ApiKey")) {
+            serverErrorMsg = "Your Gemini API Key is missing. Access the Secrets panel in Settings to provide your GEMINI_API_KEY.";
+          } else {
+            try {
+              const parsed = JSON.parse(errorText);
+              serverErrorMsg = parsed.error || "Failed to parse error description.";
+            } catch (jsonErr) {
+              serverErrorMsg = "Failed to connect to AI server. This usually happens when GEMINI_API_KEY is not configured in the Secrets manager, or the server is still booting up.";
+            }
+          }
+        } catch (readErr) {
+          serverErrorMsg = "Failed to match AI server response. Please verify your GEMINI_API_KEY configured in Settings > Secrets.";
+        }
+        throw new Error(serverErrorMsg);
       }
 
       const data = await response.json();
@@ -73,7 +88,7 @@ Here are some helpful presets you can ask me, or type your own question below:`,
       console.error(err);
       setErrorStatus(
         err.message?.includes("GEMINI_API_KEY") 
-          ? "Your Gemini API Key is missing. Access the Secrets panel in Settings to provide your GEMINI_API_KEY."
+          ? "Your Gemini API Key is missing or invalid. Access the Secrets panel in Settings to provide your GEMINI_API_KEY."
           : err.message || "Something went wrong. Please check your network connection or try again."
       );
     } finally {
