@@ -30,7 +30,8 @@ import {
   Award,
   Users,
   LogOut,
-  UserCheck
+  UserCheck,
+  RefreshCw
 } from "lucide-react";
 
 // Default profile setup
@@ -82,18 +83,24 @@ export default function App() {
   // Lock to prevent overwriting server-side state during profile loading race conditions
   const [isLoadingProfiles, setIsLoadingProfiles] = useState(false);
 
-  // Session authentication state
-  const [sessionUser, setSessionUser] = useState<{ name: string; email: string } | null>(() => {
+  // Session authentication state (Auto-bypassed/Preloaded)
+  const [sessionUser, setSessionUser] = useState<{ name: string; email: string }>(() => {
     const saved = localStorage.getItem("paisa_active_session");
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.email) return parsed;
       } catch (err) {
         console.error("Failed to parse active session", err);
       }
     }
-    return null;
+    return { name: "Deepak Kumar", email: "deepak.mm1301@gmail.com" };
   });
+
+  // Ensure standard session is stored for continuous sync under the hood
+  useEffect(() => {
+    localStorage.setItem("paisa_active_session", JSON.stringify(sessionUser));
+  }, [sessionUser]);
 
   // Profiles list state scoped to user session OR legacy fallbacks
   const [profiles, setProfiles] = useState<UserProfile[]>(() => {
@@ -333,9 +340,11 @@ export default function App() {
     setActiveWidget("profiles");
   };
 
-  const handleLogOut = () => {
-    localStorage.removeItem("paisa_active_session");
-    setSessionUser(null);
+  const handleResetData = () => {
+    if (window.confirm("Are you sure you want to reset all your portfolio profiles to default? This cannot be undone.")) {
+      localStorage.clear();
+      window.location.reload();
+    }
   };
 
   const handleUpdateProfile = (updated: UserProfile) => {
@@ -505,12 +514,12 @@ export default function App() {
             </div>
             <div className="h-4 w-px bg-slate-200"></div>
             <button
-              onClick={handleLogOut}
+              onClick={handleResetData}
               className="flex items-center gap-1 text-rose-600 hover:text-rose-700 font-bold transition-colors cursor-pointer select-none focus:outline-none"
-              title="Lock portfolio and Log Out"
+              title="Clear all local changes and reset"
             >
-              <LogOut className="w-3.5 h-3.5 shrink-0 text-rose-500" />
-              <span>Sign Out</span>
+              <RefreshCw className="w-3.5 h-3.5 shrink-0 text-rose-500" />
+              <span>Reset Data</span>
             </button>
           </div>
 
@@ -525,7 +534,7 @@ export default function App() {
           {/* Active File Locker User status */}
           <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-3xs space-y-3">
             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
-              SECURE FILE LOCKER
+              PAISA WORKSPACE
             </span>
             <div className="flex items-center gap-3 bg-slate-50 border border-slate-100 p-2.5 rounded-xl">
               <div className="h-9 w-9 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center font-bold text-emerald-700 font-mono text-sm shadow-xs shrink-0 select-none">
@@ -537,12 +546,12 @@ export default function App() {
               </div>
             </div>
             <button
-              onClick={handleLogOut}
+              onClick={handleResetData}
               className="w-full py-2 bg-slate-50 hover:bg-rose-50 hover:text-rose-600 border border-slate-100 hover:border-rose-100 text-slate-600 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer focus:outline-none"
-              title="Close the secure file"
+              title="Reset all settings and data"
             >
-              <LogOut className="w-3.5 h-3.5 text-rose-500" />
-              <span>Lock and Sign Out</span>
+              <RefreshCw className="w-3.5 h-3.5 text-rose-500" />
+              <span>Reset All Portfolios</span>
             </button>
           </div>
 
