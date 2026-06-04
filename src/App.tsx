@@ -10,6 +10,7 @@ import NetWorthTracker from "./components/NetWorthTracker";
 import AICoach from "./components/AICoach";
 import ProfileManager from "./components/ProfileManager";
 import AuthScreen from "./components/AuthScreen";
+import ArticlesColumn from "./components/ArticlesColumn";
 // @ts-ignore
 import paisaLogo from "./assets/images/deep_paisa_logo_1780484307855.png";
 
@@ -179,6 +180,28 @@ export default function App() {
     }
   }, [activeWidget]);
 
+  // Pull latest central ledger details on load if session is active
+  useEffect(() => {
+    if (sessionUser && sessionUser.email) {
+      fetch(`/api/auth/get-profiles?email=${encodeURIComponent(sessionUser.email)}`)
+        .then(res => {
+          if (res.ok) return res.json();
+          throw new Error("Response status indicates error");
+        })
+        .then(data => {
+          if (data && data.profilesList && data.profilesList.length > 0) {
+            setProfiles(data.profilesList);
+            if (data.activeProfileId) {
+              setActiveProfileId(data.activeProfileId);
+            }
+          }
+        })
+        .catch(err => {
+          console.warn("Could not retrieve central ledger portfolios on init, fell back to cache:", err);
+        });
+    }
+  }, [sessionUser?.email]);
+
   // Sync profile storage changes & update user's localized locker record
   useEffect(() => {
     localStorage.setItem("paisa_family_profiles_list", JSON.stringify(profiles));
@@ -206,6 +229,23 @@ export default function App() {
           console.error("Sync user account error", e);
         }
       }
+
+      // Synchronize with Central Server Database dynamically on modification
+      fetch("/api/auth/update-profiles", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: sessionUser.email,
+          profilesList: profiles,
+          activeProfileId
+        })
+      })
+      .then(res => {
+        if (!res.ok) console.warn("Failed to update cloud portfolios ledger");
+      })
+      .catch(err => {
+        console.error("Failed to connect with cloud portfolios ledger", err);
+      });
     }
   }, [profiles, activeProfileId, profile, sessionUser]);
 
@@ -489,8 +529,8 @@ export default function App() {
           </div>
         </section>
 
-        {/* Right Content Sheet */}
-        <section ref={contentRef} className="lg:col-span-9 scroll-mt-24">
+        {/* Middle Content Sheet */}
+        <section ref={contentRef} className="lg:col-span-6 scroll-mt-24">
           <div className="space-y-6">
             
             {activeWidget === "profiles" && (
@@ -537,6 +577,19 @@ export default function App() {
             )}
 
           </div>
+        </section>
+
+        {/* Right Sidebar: Articles Guidance cabinet */}
+        <section className="lg:col-span-3 space-y-6">
+          <ArticlesColumn 
+            onNavigateToWidget={(widgetId) => {
+              setActiveWidget(widgetId);
+              if (contentRef.current) {
+                contentRef.current.scrollIntoView({ behavior: "smooth" });
+              }
+            }}
+            userMonthlySalary={profile.salary}
+          />
         </section>
 
       </main>

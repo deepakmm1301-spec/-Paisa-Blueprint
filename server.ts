@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
@@ -10,6 +11,82 @@ const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+
+// Persistent server-side accounts database
+const ACCOUNTS_FILE = path.join(process.cwd(), "accounts-db.json");
+
+interface ServerUserAccount {
+  email: string;
+  name: string;
+  passwordHash: string;
+  profilesList: any[];
+  activeProfileId: string;
+  createdAt: string;
+}
+
+// Initial seed
+const DEFAULT_ACCOUNT: ServerUserAccount = {
+  email: "advisor@paisa.in",
+  name: "Deepak Kumar",
+  passwordHash: "paisa",
+  profilesList: [
+    {
+      id: "profile-main",
+      name: "Deepak Kumar",
+      age: 32,
+      salary: 150000,
+      monthlyExpenses: 60000,
+      investments: {
+        epfMonthly: 8000,
+        ppfAnnual: 100005,
+        npsMonthly: 5000,
+        elssAnnual: 50000,
+        healthPremium: 25000,
+        rentMonthly: 25000,
+        homeLoanInterestAnnual: 120000,
+        otherDeductions: 10000,
+        directEquitySIP: 25000,
+        goldMonthly: 5000
+      },
+      dependentsCount: 3,
+      cityTier: "Metropolitan",
+      insurance: {
+        termCover: 20000000,
+        healthCover: 1000000
+      }
+    }
+  ],
+  activeProfileId: "profile-main",
+  createdAt: new Date().toISOString()
+};
+
+let accountsMemory: ServerUserAccount[] = [];
+
+function loadAccounts() {
+  try {
+    if (fs.existsSync(ACCOUNTS_FILE)) {
+      const data = fs.readFileSync(ACCOUNTS_FILE, "utf-8");
+      accountsMemory = JSON.parse(data);
+    } else {
+      accountsMemory = [DEFAULT_ACCOUNT];
+      saveAccounts();
+    }
+  } catch (err) {
+    console.error("Error reading accounts DB file, resetting to memory seed", err);
+    accountsMemory = [DEFAULT_ACCOUNT];
+  }
+}
+
+function saveAccounts() {
+  try {
+    fs.writeFileSync(ACCOUNTS_FILE, JSON.stringify(accountsMemory, null, 2), "utf-8");
+  } catch (err) {
+    console.error("Error writing accounts DB file", err);
+  }
+}
+
+// Load on start
+loadAccounts();
 
 // Lazy-loaded or guarded initialization of Gemini API
 let aiInstance: GoogleGenAI | null = null;
@@ -33,7 +110,156 @@ function getAIClient(): GoogleGenAI {
 
 // Health check
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", message: "Paisa Blueprint server is fully operational." });
+  res.json({ status: "ok", message: "Paisa Blueprint server is fully operational.", totalAccounts: accountsMemory.length });
+});
+
+// Authentication API: Register
+app.post("/api/auth/register", (req, res) => {
+  try {
+    const { email, name, password, defaultProfile } = req.body;
+    if (!email || !name || !password) {
+      res.status(400).json({ error: "Missing required fields: email, name, or password" });
+      return;
+    }
+
+    const emailNorm = email.trim().toLowerCase();
+    
+    // Check duplication centrally across ALL devices connected
+    const existing = accountsMemory.find(acc => acc.email.toLowerCase() === emailNorm);
+    if (existing) {
+      res.status(409).json({ error: "This email address is already registered on another device in the Paisa Network. Please use a unique Email." });
+      return;
+    }
+
+    const initialProfile = {
+      ...(defaultProfile || {
+        age: 30,
+        salary: 120000,
+        monthlyExpenses: 45000,
+        investments: {
+          epfMonthly: 5000,
+          ppfAnnual: 50000,
+          npsMonthly: 5000,
+          elssAnnual: 30000,
+          healthPremium: 15000,
+          rentMonthly: 18000,
+          homeLoanInterestAnnual: 0,
+          otherDeductions: 0,
+          directEquitySIP: 15000,
+          goldMonthly: 2000
+        },
+        dependentsCount: 2,
+        cityTier: "Metropolitan",
+        insurance: {
+          termCover: 15000000,
+          healthCover: 500000
+        }
+      }),
+      id: "profile-main",
+      name: name.trim() // Instantly seed name
+    };
+
+    const newAccount: ServerUserAccount = {
+      email: emailNorm,
+      name: name.trim(),
+      passwordHash: password,
+      profilesList: [initialProfile],
+      activeProfileId: "profile-main",
+      createdAt: new Date().toISOString()
+    };
+
+    accountsMemory.push(newAccount);
+    saveAccounts();
+
+    res.status(201).json({ success: true, message: "Locker successfully registered in the Paisa network." });
+  } catch (err: any) {
+    console.error("Register Error:", err);
+    res.status(500).json({ error: "Internal server error registering account." });
+  }
+});
+
+// Authentication API: Login
+app.post("/api/auth/login", (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      res.status(400).json({ error: "Missing email or password credentials" });
+      return;
+    }
+
+    const emailNorm = email.trim().toLowerCase();
+    const found = accountsMemory.find(acc => acc.email.toLowerCase() === emailNorm);
+
+    if (!found || found.passwordHash !== password) {
+      res.status(401).json({ error: "Invalid Email address or Password. Try checking credentials or register a new account if you are new." });
+      return;
+    }
+
+    res.json({
+      name: found.name,
+      email: found.email,
+      profilesList: found.profilesList,
+      activeProfileId: found.activeProfileId
+    });
+  } catch (err: any) {
+    console.error("Login Error:", err);
+    res.status(500).json({ error: "Internal server error authenticating" });
+  }
+});
+
+// Authentication API: Sync profiles/ledgers across devices
+app.post("/api/auth/update-profiles", (req, res) => {
+  try {
+    const { email, profilesList, activeProfileId } = req.body;
+    if (!email || !profilesList || !activeProfileId) {
+      res.status(400).json({ error: "Missing required core parameters" });
+      return;
+    }
+
+    const emailNorm = email.trim().toLowerCase();
+    const index = accountsMemory.findIndex(acc => acc.email.toLowerCase() === emailNorm);
+
+    if (index === -1) {
+      res.status(404).json({ error: "Account not found for update" });
+      return;
+    }
+
+    accountsMemory[index].profilesList = profilesList;
+    accountsMemory[index].activeProfileId = activeProfileId;
+    saveAccounts();
+
+    res.json({ success: true, message: "Ledger portfolios synchronized centrally." });
+  } catch (err: any) {
+    console.error("Sync Error:", err);
+    res.status(500).json({ error: "Internal server error synchronizing" });
+  }
+});
+
+// Authentication API: Get current portfolios dynamically
+app.get("/api/auth/get-profiles", (req, res) => {
+  try {
+    const { email } = req.query;
+    if (!email) {
+      res.status(400).json({ error: "Missing email parameter" });
+      return;
+    }
+
+    const emailNorm = (email as string).trim().toLowerCase();
+    const found = accountsMemory.find(acc => acc.email.toLowerCase() === emailNorm);
+
+    if (!found) {
+      res.status(404).json({ error: "Account not found in Central Ledger" });
+      return;
+    }
+
+    res.json({
+      profilesList: found.profilesList,
+      activeProfileId: found.activeProfileId
+    });
+  } catch (err: any) {
+    console.error("Get Profiles Error:", err);
+    res.status(500).json({ error: "Internal server error fetching profiles" });
+  }
 });
 
 // AI Financial Coach Chat Endpoint

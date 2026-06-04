@@ -31,64 +31,45 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
   // States
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Retrieve existing accounts or seed default one
-  const getAccounts = (): UserAccount[] => {
-    const saved = localStorage.getItem("paisa_user_accounts");
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error("Failed to parse accounts, reset", e);
-      }
-    }
-    
-    // Seed default account
-    const seed: UserAccount[] = [
-      {
-        email: "advisor@paisa.in",
-        name: "Deepak Kumar",
-        passwordHash: "paisa", // Simple secure match
-        profilesList: [
-          {
-            ...defaultProfile,
-            id: "profile-main"
-          }
-        ],
-        activeProfileId: "profile-main",
-        createdAt: new Date().toISOString()
-      }
-    ];
-    localStorage.setItem("paisa_user_accounts", JSON.stringify(seed));
-    return seed;
-  };
-
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccessMsg("");
+    setIsLoading(true);
 
     if (!email || !password) {
       setError("Please fill in all standard credentials.");
+      setIsLoading(false);
       return;
     }
 
-    const accounts = getAccounts();
-    const found = accounts.find(acc => acc.email.toLowerCase() === email.toLowerCase().trim());
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), password })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Invalid credentials. Please attempt login again.");
+      }
 
-    if (!found || found.passwordHash !== password) {
-      setError("Invalid Email address or Password. Did you forget your password? Try checking credentials or register a new one.");
-      return;
+      // Success login!
+      onLoginSuccess(
+        { name: data.name, email: data.email },
+        data.profilesList || [{ ...defaultProfile, id: "profile-main" }],
+        data.activeProfileId || "profile-main"
+      );
+    } catch (err: any) {
+      setError(err.message || "Connection failure with centralized Paisa network.");
+    } finally {
+      setIsLoading(false);
     }
-
-    // Success login!
-    onLoginSuccess(
-      { name: found.name, email: found.email },
-      found.profilesList || [{ ...defaultProfile, id: "profile-main" }],
-      found.activeProfileId || "profile-main"
-    );
   };
 
-  const handleSignUp = (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccessMsg("");
@@ -108,43 +89,38 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
       return;
     }
 
-    const accounts = getAccounts();
-    const alreadyExists = accounts.some(acc => acc.email.toLowerCase() === email.toLowerCase().trim());
-    
-    if (alreadyExists) {
-      setError("This email address is already registered in Paisa system. Try logging in.");
-      return;
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email.trim(),
+          name: name.trim(),
+          password,
+          defaultProfile
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Centrex registration rejected.");
+      }
+
+      setSuccessMsg("Locker successfully registered in the Paisa network center! You may sign in now.");
+      setIsSignUp(false);
+      setPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      setError(err.message || "Connection failure registering account.");
+    } finally {
+      setIsLoading(false);
     }
-
-    // Register ! Create localized template
-    const newAccount: UserAccount = {
-      email: email.trim().toLowerCase(),
-      name: name.trim(),
-      passwordHash: password,
-      profilesList: [
-        {
-          ...defaultProfile,
-          id: "profile-main",
-          name: name.trim() // Instantly seed with user's name!
-        }
-      ],
-      activeProfileId: "profile-main",
-      createdAt: new Date().toISOString()
-    };
-
-    const updated = [...accounts, newAccount];
-    localStorage.setItem("paisa_user_accounts", JSON.stringify(updated));
-
-    setSuccessMsg("Account successfully created in database! You may now sign in using your credentials.");
-    
-    // Clear registration controls
-    setIsSignUp(false);
-    setPassword("");
-    setConfirmPassword("");
   };
 
   const loadPromoCreds = () => {
     setError("");
+    setSuccessMsg("");
     setEmail("advisor@paisa.in");
     setPassword("paisa");
   };
@@ -358,9 +334,15 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-bhagwa-600 hover:bg-bhagwa-700 text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-bhagwa-600/10 hover:shadow-bhagwa-600/20 active:scale-[0.99] cursor-pointer mt-4"
+              disabled={isLoading}
+              className={`w-full bg-bhagwa-600 hover:bg-bhagwa-700 text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-bhagwa-600/10 hover:shadow-bhagwa-600/20 active:scale-[0.99] cursor-pointer mt-4 ${isLoading ? "opacity-75 cursor-not-allowed" : ""}`}
             >
-              {isSignUp ? (
+              {isLoading ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
+                  Processing Sync...
+                </span>
+              ) : isSignUp ? (
                 <>
                   <UserPlus className="w-4.5 h-4.5" /> Create Multi-Profile Locker
                 </>
