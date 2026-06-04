@@ -10,6 +10,7 @@ import NetWorthTracker from "./components/NetWorthTracker";
 import AICoach from "./components/AICoach";
 import ProfileManager from "./components/ProfileManager";
 import AuthScreen from "./components/AuthScreen";
+import CibilCheck from "./components/CibilCheck";
 import ArticlesColumn from "./components/ArticlesColumn";
 // @ts-ignore
 import paisaLogo from "./assets/images/deep_paisa_logo_1780484307855.png";
@@ -35,7 +36,8 @@ import {
   User,
   ChevronDown,
   Edit2,
-  Check
+  Check,
+  CreditCard
 } from "lucide-react";
 
 // Default profile setup
@@ -81,7 +83,8 @@ type ActiveWidget =
   | "goals" 
   | "tax" 
   | "networth" 
-  | "coach";
+  | "coach"
+  | "cibil";
 
 export default function App() {
   // Lock to prevent overwriting server-side state during profile loading race conditions
@@ -489,6 +492,13 @@ export default function App() {
       color: "text-blue-600 bg-blue-50 border-blue-100",
     },
     {
+      id: "cibil" as ActiveWidget,
+      label: "CIBIL Credit Score",
+      desc: "Check & simulate Credit Health",
+      icon: <CreditCard className="w-5 h-5" />,
+      color: "text-emerald-650 bg-emerald-50 border-emerald-110",
+    },
+    {
       id: "coach" as ActiveWidget,
       label: "Paisa AI Coach",
       desc: "Real-time chat & feedback",
@@ -819,6 +829,10 @@ export default function App() {
 
             {activeWidget === "networth" && (
               <NetWorthTracker profile={profile} />
+            )}
+
+            {activeWidget === "cibil" && (
+              <CibilCheck profile={profile} />
             )}
 
             {activeWidget === "coach" && (
