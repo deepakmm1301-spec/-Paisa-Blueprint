@@ -107,10 +107,16 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
         throw new Error(data.error || "Centrex registration rejected.");
       }
 
-      setSuccessMsg("Locker successfully registered in the Paisa network center! You may sign in now.");
-      setIsSignUp(false);
-      setPassword("");
-      setConfirmPassword("");
+      setSuccessMsg("Locker successfully registered in the Paisa network center! Launching your financial portfolio...");
+      
+      // Auto login immediately with registered credentials
+      setTimeout(() => {
+        onLoginSuccess(
+          { name: data.user.name, email: data.user.email },
+          data.user.profilesList,
+          data.user.activeProfileId
+        );
+      }, 750);
     } catch (err: any) {
       setError(err.message || "Connection failure registering account.");
     } finally {

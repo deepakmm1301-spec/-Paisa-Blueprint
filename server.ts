@@ -171,7 +171,16 @@ app.post("/api/auth/register", (req, res) => {
     accountsMemory.push(newAccount);
     saveAccounts();
 
-    res.status(201).json({ success: true, message: "Locker successfully registered in the Paisa network." });
+    res.status(201).json({ 
+      success: true, 
+      message: "Locker successfully registered in the Paisa network.",
+      user: {
+        name: newAccount.name,
+        email: newAccount.email,
+        profilesList: newAccount.profilesList,
+        activeProfileId: newAccount.activeProfileId
+      }
+    });
   } catch (err: any) {
     console.error("Register Error:", err);
     res.status(500).json({ error: "Internal server error registering account." });
