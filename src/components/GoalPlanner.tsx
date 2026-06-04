@@ -1,46 +1,61 @@
-import React, { useState } from "react";
-import { Sparkles, Calendar, Plus, Trash2, HelpCircle, GraduationCap, Home, Car, Heart, Palmtree, Compass, AlertCircle } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Sparkles, Calendar, Plus, Trash2, HelpCircle, GraduationCap, Home, Car, Heart, Palmtree, Compass, AlertCircle, Pencil, Check, X } from "lucide-react";
 import { Goal } from "../types";
 
 export default function GoalPlanner() {
-  const [goals, setGoals] = useState<Goal[]>([
-    {
-      id: "goal-1",
-      name: "Child Higher Education",
-      category: "education",
-      targetAmount: 2500000,
-      yearsLeft: 12,
-      expectedReturn: 12,
-      inflationRate: 6,
-    },
-    {
-      id: "goal-2",
-      name: "House Purchase Downpayment",
-      category: "house",
-      targetAmount: 3500000,
-      yearsLeft: 7,
-      expectedReturn: 12,
-      inflationRate: 6,
-    },
-    {
-      id: "goal-3",
-      name: "New SUV Car Purchase",
-      category: "car",
-      targetAmount: 1200000,
-      yearsLeft: 4,
-      expectedReturn: 10,
-      inflationRate: 6,
-    },
-    {
-      id: "goal-4",
-      name: "Annual Europe Vacation",
-      category: "vacation",
-      targetAmount: 400000,
-      yearsLeft: 2,
-      expectedReturn: 8,
-      inflationRate: 5,
+  const [goals, setGoals] = useState<Goal[]>(() => {
+    const saved = localStorage.getItem("paisa_goal_planner_list");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error("Failed to parse saved goals", e);
+      }
     }
-  ]);
+    return [
+      {
+        id: "goal-1",
+        name: "Child Higher Education",
+        category: "education",
+        targetAmount: 2500000,
+        yearsLeft: 12,
+        expectedReturn: 12,
+        inflationRate: 6,
+      },
+      {
+        id: "goal-2",
+        name: "House Purchase Downpayment",
+        category: "house",
+        targetAmount: 3500000,
+        yearsLeft: 7,
+        expectedReturn: 12,
+        inflationRate: 6,
+      },
+      {
+        id: "goal-3",
+        name: "New SUV Car Purchase",
+        category: "car",
+        targetAmount: 1200000,
+        yearsLeft: 4,
+        expectedReturn: 10,
+        inflationRate: 6,
+      },
+      {
+        id: "goal-4",
+        name: "Annual Vacation",
+        category: "vacation",
+        targetAmount: 400000,
+        yearsLeft: 2,
+        expectedReturn: 8,
+        inflationRate: 5,
+      }
+    ];
+  });
+
+  // Persist goals to localized storage
+  useEffect(() => {
+    localStorage.setItem("paisa_goal_planner_list", JSON.stringify(goals));
+  }, [goals]);
 
   // Form states for creating custom goal
   const [showAddForm, setShowAddForm] = useState(false);
@@ -50,6 +65,49 @@ export default function GoalPlanner() {
   const [newYears, setNewYears] = useState<number>(5);
   const [newReturn, setNewReturn] = useState<number>(12);
   const [newInflation, setNewInflation] = useState<number>(6);
+
+  // States for live Editing capabilities
+  const [editingGoalId, setEditingGoalId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editCategory, setEditCategory] = useState<Goal["category"]>("other");
+  const [editTargetAmount, setEditTargetAmount] = useState<number>(0);
+  const [editYearsLeft, setEditYearsLeft] = useState<number>(0);
+  const [editExpectedReturn, setEditExpectedReturn] = useState<number>(0);
+  const [editInflationRate, setEditInflationRate] = useState<number>(0);
+
+  const startEditing = (goal: Goal) => {
+    setEditingGoalId(goal.id);
+    setEditName(goal.name);
+    setEditCategory(goal.category);
+    setEditTargetAmount(goal.targetAmount);
+    setEditYearsLeft(goal.yearsLeft);
+    setEditExpectedReturn(goal.expectedReturn);
+    setEditInflationRate(goal.inflationRate);
+  };
+
+  const handleSaveEdit = (id: string) => {
+    if (!editName.trim()) return;
+    setGoals((prev) =>
+      prev.map((g) =>
+        g.id === id
+          ? {
+              ...g,
+              name: editName.trim(),
+              category: editCategory,
+              targetAmount: editTargetAmount,
+              yearsLeft: editYearsLeft,
+              expectedReturn: editExpectedReturn,
+              inflationRate: editInflationRate,
+            }
+          : g
+      )
+    );
+    setEditingGoalId(null);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingGoalId(null);
+  };
 
   const handleAddGoal = (e: React.FormEvent) => {
     e.preventDefault();
@@ -240,7 +298,149 @@ export default function GoalPlanner() {
       {/* Goal Cards Grid List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {goals.map((goal) => {
-          const { inflatedTarget, monthlySip } = calculateGoalSip(goal);
+          const isEditing = editingGoalId === goal.id;
+          const { inflatedTarget, monthlySip } = calculateGoalSip(
+            isEditing
+              ? {
+                  id: goal.id,
+                  name: editName,
+                  category: editCategory,
+                  targetAmount: editTargetAmount,
+                  yearsLeft: editYearsLeft,
+                  expectedReturn: editExpectedReturn,
+                  inflationRate: editInflationRate,
+                }
+              : goal
+          );
+
+          if (isEditing) {
+            return (
+              <div
+                key={goal.id}
+                className="p-5 border border-bhagwa-300 rounded-2xl flex flex-col justify-between space-y-4 hover:shadow-xs transition-all bg-gradient-to-b from-slate-50 to-white"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <span className="text-xs font-bold text-bhagwa-600 uppercase tracking-wider flex items-center gap-1.5">
+                      <Pencil className="w-3.5 h-3.5" /> Edit Goal
+                    </span>
+                    <div className="flex gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => handleSaveEdit(goal.id)}
+                        className="p-1 px-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[10px] font-bold transition-colors flex items-center gap-1 cursor-pointer"
+                        title="Save Changes"
+                      >
+                        <Check className="w-3 h-3" /> Save
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleCancelEdit}
+                        className="p-1 px-2.5 bg-slate-200 hover:bg-slate-300 text-slate-600 rounded-lg text-[10px] font-bold transition-colors flex items-center gap-1 cursor-pointer"
+                        title="Cancel Editing"
+                      >
+                        <X className="w-3 h-3" /> Cancel
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2.5 text-xs">
+                    <div>
+                      <label className="block text-[9px] font-semibold uppercase tracking-wider text-slate-500 mb-0.5">Goal Name</label>
+                      <input
+                        type="text"
+                        required
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                        className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-bhagwa-500 font-medium"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-[9px] font-semibold uppercase tracking-wider text-slate-500 mb-0.5">Category</label>
+                        <select
+                          value={editCategory}
+                          onChange={(e) => setEditCategory(e.target.value as Goal["category"])}
+                          className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-bhagwa-500"
+                        >
+                          <option value="education">Education</option>
+                          <option value="marriage">Marriage</option>
+                          <option value="house">House</option>
+                          <option value="car">Car</option>
+                          <option value="vacation">Vacation</option>
+                          <option value="other">Other</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-[9px] font-semibold uppercase tracking-wider text-slate-500 mb-0.5">Today Cost (₹)</label>
+                        <input
+                          type="number"
+                          required
+                          min="1000"
+                          value={editTargetAmount}
+                          onChange={(e) => setEditTargetAmount(Math.max(0, Number(e.target.value)))}
+                          className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-mono text-slate-800 focus:outline-none focus:ring-1 focus:ring-bhagwa-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-1.5">
+                      <div>
+                        <label className="block text-[9px] font-semibold uppercase tracking-wider text-slate-500 mb-0.5" title="Years Left">Years</label>
+                        <input
+                          type="number"
+                          required
+                          min="1"
+                          max="40"
+                          value={editYearsLeft}
+                          onChange={(e) => setEditYearsLeft(Math.max(1, Number(e.target.value)))}
+                          className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-mono text-slate-800 focus:outline-none focus:ring-1 focus:ring-bhagwa-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[9px] font-semibold uppercase tracking-wider text-slate-500 mb-0.5" title="Expected CAGR">CAGR %</label>
+                        <input
+                          type="number"
+                          required
+                          min="1"
+                          max="30"
+                          step="0.5"
+                          value={editExpectedReturn}
+                          onChange={(e) => setEditExpectedReturn(Number(e.target.value))}
+                          className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-mono text-slate-800 focus:outline-none focus:ring-1 focus:ring-bhagwa-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[9px] font-semibold uppercase tracking-wider text-slate-500 mb-0.5" title="Inflation Rate">Inflation %</label>
+                        <input
+                          type="number"
+                          required
+                          min="0"
+                          max="20"
+                          step="0.5"
+                          value={editInflationRate}
+                          onChange={(e) => setEditInflationRate(Number(e.target.value))}
+                          className="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-mono text-slate-800 focus:outline-none focus:ring-1 focus:ring-bhagwa-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Required Monthly SIP</span>
+                    <span className="block text-md font-extrabold text-bhagwa-600 font-mono">₹{monthlySip.toLocaleString("en-IN")}</span>
+                  </div>
+                  <div className="text-[9px] text-emerald-600 font-bold bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded">
+                    Editing
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
           return (
             <div
               key={goal.id}
@@ -251,13 +451,22 @@ export default function GoalPlanner() {
                   <div className="p-2.5 bg-white border border-slate-100/80 rounded-xl shadow-xs">
                     {getCategoryIcon(goal.category)}
                   </div>
-                  <button
-                    onClick={() => handleDeleteGoal(goal.id)}
-                    className="p-1.5 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                    title="Remove Goal"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => startEditing(goal)}
+                      className="p-1.5 text-slate-400 hover:text-bhagwa-600 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer"
+                      title="Edit Goal Target"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteGoal(goal.id)}
+                      className="p-1.5 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                      title="Remove Goal"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
 
                 <div>
