@@ -163,6 +163,14 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
     setSuccessMsg("");
   };
 
+  const handleContinueAsGuest = () => {
+    onLoginSuccess(
+      { name: "Deepak Kumar", email: "paisa.mm1301@gmail.com" },
+      [{ ...defaultProfile, id: "profile-main" }],
+      "profile-main"
+    );
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 md:p-8 animate-fade-in text-slate-100">
       
@@ -287,6 +295,20 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
                     Continue to Locker <ArrowRight className="w-4 h-4" />
                   </>
                 )}
+              </button>
+
+              <div className="flex items-center py-2">
+                <hr className="flex-1 border-slate-800" />
+                <span className="px-3 text-[9px] text-slate-500 uppercase tracking-widest font-black">OR</span>
+                <hr className="flex-1 border-slate-800" />
+              </div>
+
+              <button
+                type="button"
+                onClick={handleContinueAsGuest}
+                className="w-full bg-slate-800/65 hover:bg-slate-750 border border-slate-800 hover:border-slate-700 text-slate-300 font-extrabold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all active:scale-[0.99] cursor-pointer"
+              >
+                Continue Offline (Guest Locker)
               </button>
             </form>
           ) : (
