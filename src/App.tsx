@@ -12,6 +12,7 @@ import ProfileManager from "./components/ProfileManager";
 import AuthScreen from "./components/AuthScreen";
 import CibilCheck from "./components/CibilCheck";
 import ArticlesColumn from "./components/ArticlesColumn";
+import { FooterSections } from "./components/FooterSections";
 // @ts-ignore
 import paisaLogo from "./assets/images/deep_paisa_logo_1780484307855.png";
 
@@ -1321,12 +1322,7 @@ export default function App() {
       </main>
 
       {/* Footer Design Credits Line */}
-      <footer className="bg-white border-t border-slate-100 py-6 mt-12 text-center text-xs text-slate-400 font-medium">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <span>🇮🇳 Paisa Blueprint is calibrated to standard Indian Union Income Tax Codes & 7th Pay Commission rules.</span>
-          <span>Crafted in full offline-first simulation. No real funds are moved.</span>
-        </div>
-      </footer>
+      <FooterSections />
     </div>
   );
 }
