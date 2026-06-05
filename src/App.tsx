@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion } from "motion/react";
 import { UserProfile, LoanDetails, InvestmentDetails } from "./types";
 import FinancialHealthCheck from "./components/FinancialHealthCheck";
 import SalaryPlanner from "./components/SalaryPlanner";
@@ -1074,7 +1075,7 @@ export default function App() {
 
           {/* Directory Active Glass Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
-            {profiles.map((p) => {
+            {profiles.map((p, idx) => {
               const isActive = p.id === activeProfileId;
               const nw = calculateNetWorth(p);
               
@@ -1092,8 +1093,11 @@ export default function App() {
               const sipLabel = p.customSip !== undefined ? "SIP TARGET:" : "SIP (20%):";
 
               return (
-                <div
+                <motion.div
                   key={p.id}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35, delay: idx * 0.08, ease: "easeOut" }}
                   onClick={() => setActiveProfileId(p.id!)}
                   className={`relative p-4 rounded-2xl border transition-all duration-300 flex flex-col gap-3 group cursor-pointer ${
                     isActive
@@ -1183,7 +1187,7 @@ export default function App() {
                       </div>
                     )}
                   </div>
-                </div>
+                </motion.div>
               );
             })}
           </div>
