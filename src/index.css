@@ -43,3 +43,225 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
 }
+
+/* ==========================================================================
+   HIGH-CONTRAST NIGHT-TIME DARK MODE RULES
+   ========================================================================== */
+.dark {
+  color-scheme: dark;
+}
+
+/* Base Document Overrides */
+.dark body {
+  background-color: #020617 !important; /* Pitch black slate */
+  color: #f1f5f9 !important;
+}
+
+/* Header & Glassmorphism Navigation */
+.dark header,
+.dark header.bg-white\/90 {
+  background-color: #0b0f19/95 !important;
+  border-color: #1e293b !important;
+}
+
+/* Card & Content Panel Backings */
+.dark .bg-white,
+.dark .bg-white\/80 {
+  background-color: #090d16 !important; /* Ultra-soothing midnight container dark */
+  border-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+/* Universal Boarders & Dividers for crisp layout */
+.dark .border-slate-50,
+.dark .border-slate-100,
+.dark .border-slate-110,
+.dark .border-slate-150,
+.dark .border-slate-200,
+.dark .border-slate-300,
+.dark .border-slate-100\/80 {
+  border-color: #1e293b !important;
+}
+
+/* Input elements and Form controls */
+.dark input[type="text"],
+.dark input[type="number"],
+.dark input[type="email"],
+.dark input[type="password"],
+.dark select,
+.dark textarea {
+  background-color: #111a2e !important;
+  border-color: #1e293b !important;
+  color: #ffffff !important;
+}
+
+.dark input[type="text"]:focus,
+.dark input[type="number"]:focus,
+.dark select:focus {
+  border-color: #f55a00 !important;
+  outline: none !important;
+}
+
+/* Soft, night-themed notification alerts & accent blocks */
+.dark .bg-slate-50,
+.dark .bg-slate-50\/40,
+.dark .bg-slate-50\/50,
+.dark .bg-slate-100\/60 {
+  background-color: #0d1527 !important;
+  color: #cbd5e1 !important;
+}
+
+.dark .bg-slate-100 {
+  background-color: #1e293b !important;
+}
+
+.dark .bg-slate-50\/50 {
+  background-color: #020617 !important;
+}
+
+/* Secondary & Muted Typography elements */
+.dark .text-slate-950,
+.dark .text-slate-900,
+.dark .text-slate-850,
+.dark .text-slate-800,
+.dark .text-slate-750,
+.dark .text-slate-700 {
+  color: #f8fafc !important;
+}
+
+.dark .text-slate-650,
+.dark .text-slate-600 {
+  color: #cbd5e1 !important;
+}
+
+.dark .text-slate-500,
+.dark .text-slate-450,
+.dark .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+/* Indian Premium Bhagwa & Orange Theme accents */
+.dark .bg-bhagwa-50 {
+  background-color: #241103 !important;
+  border-color: #4a1900 !important;
+  color: #ffaa55 !important;
+}
+
+.dark .text-bhagwa-600,
+.dark .text-orange-600 {
+  color: #ff8533 !important;
+}
+
+.dark .bg-orange-50 {
+  background-color: #241103 !important;
+  border-color: #4a1900 !important;
+}
+
+.dark .bg-bhagwa-100 {
+  background-color: #381500 !important;
+  color: #ffc499 !important;
+}
+
+/* Safe Green Highlights and Scoreboards */
+.dark .bg-emerald-50 {
+  background-color: #022c15 !important;
+  border-color: #054e20 !important;
+  color: #34d399 !important;
+}
+
+.dark .text-emerald-600,
+.dark .text-emerald-700 {
+  color: #4ade80 !important;
+}
+
+.dark .bg-emerald-500 {
+  background-color: #10b981 !important;
+  color: #ffffff !important;
+}
+
+/* Sky and Landmark assets */
+.dark .bg-sky-50 {
+  background-color: #032034 !important;
+  border-color: #054060 !important;
+}
+
+.dark .text-sky-600 {
+  color: #38bdf8 !important;
+}
+
+/* Net Worth trackers & Blue badges */
+.dark .bg-blue-50 {
+  background-color: #041a35 !important;
+  border-color: #07356a !important;
+}
+
+.dark .text-blue-600 {
+  color: #60a5fa !important;
+}
+
+/* Red flags, Warnings & Rose highlights */
+.dark .bg-rose-50 {
+  background-color: #300a10 !important;
+  border-color: #580d19 !important;
+}
+
+.dark .text-rose-600 {
+  color: #f87171 !important;
+}
+
+/* Violet and Compounding calculators */
+.dark .bg-violet-50 {
+  background-color: #200a35 !important;
+  border-color: #401060 !important;
+}
+
+.dark .text-violet-600 {
+  color: #c084fc !important;
+}
+
+/* Yellow and tax bracket configurations */
+.dark .bg-amber-50 {
+  background-color: #241c03 !important;
+  border-color: #483405 !important;
+}
+
+.dark .text-amber-600 {
+  color: #fbbf24 !important;
+}
+
+/* Active sidebar item font protection */
+.dark .bg-bhagwa-600.text-white {
+  background-color: #f55a00 !important;
+  color: #ffffff !important;
+}
+
+/* Secondary list items standard hover */
+.dark .hover\:bg-slate-50:hover {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+}
+
+/* Chart visualization dark adaptation */
+.dark .recharts-cartesian-grid-horizontal line,
+.dark .recharts-cartesian-grid-vertical line {
+  stroke: #1e293b !important;
+}
+
+.dark .recharts-text {
+  fill: #94a3b8 !important;
+}
+
+.dark .recharts-legend-item-text {
+  color: #cbd5e1 !important;
+}
+
+.dark .recharts-tooltip-cursor {
+  fill: #1e293b !important;
+}
+
+.dark .recharts-default-tooltip {
+  background-color: #090d16 !important;
+  border-color: #1e293b !important;
+  color: #ffffff !important;
+}
+
