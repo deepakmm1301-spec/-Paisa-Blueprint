@@ -115,6 +115,28 @@ export default function App() {
     return localStorage.getItem("paisa_theme") === "dark";
   });
 
+  // Custom dashboard fields active state
+  const [showDashboardSettings, setShowDashboardSettings] = useState(false);
+  const [dbOptions, setDbOptions] = useState(() => {
+    const saved = localStorage.getItem("paisa_active_directory_options");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {}
+    }
+    return {
+      name: true,
+      age: true,
+      grossMonthly: true,
+      investments: true,
+      monthlySip: true,
+    };
+  });
+
+  useEffect(() => {
+    localStorage.setItem("paisa_active_directory_options", JSON.stringify(dbOptions));
+  }, [dbOptions]);
+
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add("dark");
@@ -792,16 +814,175 @@ export default function App() {
                   Active Directories
                 </span>
               </div>
-              <span className="text-[8px] font-mono bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/20 font-extrabold tracking-wide">
-                SYNCED
-              </span>
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setShowDashboardSettings(!showDashboardSettings)}
+                  className={`p-1 rounded transition-colors cursor-pointer border ${
+                    showDashboardSettings 
+                      ? "bg-slate-850 border-emerald-500 text-emerald-450" 
+                      : "bg-slate-900 border-slate-800 text-slate-400 hover:text-emerald-400 hover:border-slate-700"
+                  }`}
+                  title="Customize metrics"
+                >
+                  <Sliders className="w-3 h-3" />
+                </button>
+                <span className="text-[8px] font-mono bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/20 font-extrabold tracking-wide">
+                  SYNCED
+                </span>
+              </div>
             </div>
 
+            {/* Customization Options Dropdown Area */}
+            {showDashboardSettings && (
+              <div className="bg-slate-900 border border-slate-800/80 p-2.5 rounded-xl text-[10px] text-slate-300 space-y-3 mt-1 font-mono">
+                <div className="border-b border-slate-800/50 pb-1">
+                  <span className="font-bold text-[9px] text-emerald-450 uppercase tracking-widest">
+                    View Customization
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5 select-none animate-fadeIn">
+                  <label className="flex items-center gap-1.5 cursor-pointer hover:text-white">
+                    <input
+                      type="checkbox"
+                      checked={dbOptions.name}
+                      onChange={() => setDbOptions((prev: any) => ({ ...prev, name: !prev.name }))}
+                      className="rounded border-slate-700 bg-slate-950 text-emerald-500 focus:ring-0 focus:ring-offset-0 w-3 h-3 cursor-pointer"
+                    />
+                    <span>Name</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer hover:text-white">
+                    <input
+                      type="checkbox"
+                      checked={dbOptions.age}
+                      onChange={() => setDbOptions((prev: any) => ({ ...prev, age: !prev.age }))}
+                      className="rounded border-slate-700 bg-slate-950 text-emerald-500 focus:ring-0 focus:ring-offset-0 w-3 h-3 cursor-pointer"
+                    />
+                    <span>Age</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer hover:text-white whitespace-nowrap">
+                    <input
+                      type="checkbox"
+                      checked={dbOptions.grossMonthly}
+                      onChange={() => setDbOptions((prev: any) => ({ ...prev, grossMonthly: !prev.grossMonthly }))}
+                      className="rounded border-slate-700 bg-slate-950 text-emerald-500 focus:ring-0 focus:ring-offset-0 w-3 h-3 cursor-pointer"
+                    />
+                    <span>Gross</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer hover:text-white">
+                    <input
+                      type="checkbox"
+                      checked={dbOptions.investments}
+                      onChange={() => setDbOptions((prev: any) => ({ ...prev, investments: !prev.investments }))}
+                      className="rounded border-slate-700 bg-slate-950 text-emerald-500 focus:ring-0 focus:ring-offset-0 w-3 h-3 cursor-pointer"
+                    />
+                    <span>Investments</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer hover:text-white whitespace-nowrap col-span-2">
+                    <input
+                      type="checkbox"
+                      checked={dbOptions.monthlySip}
+                      onChange={() => setDbOptions((prev: any) => ({ ...prev, monthlySip: !prev.monthlySip }))}
+                      className="rounded border-slate-700 bg-slate-950 text-emerald-500 focus:ring-0 focus:ring-offset-0 w-3 h-3 cursor-pointer"
+                    />
+                    <span>Monthly SIP</span>
+                  </label>
+                </div>
+
+                <div className="border-t border-slate-800/60 pt-2.5 space-y-2">
+                  <div className="flex justify-between items-center border-b border-slate-800/40 pb-1">
+                    <span className="font-bold text-[9px] text-emerald-400 uppercase tracking-widest">
+                      Edit Selected Wealth Path
+                    </span>
+                    <span className="text-[8px] text-slate-400 italic font-mono truncate max-w-[80px]">
+                      {profile.name}
+                    </span>
+                  </div>
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between items-center gap-2">
+                      <span className="text-slate-450 text-[9px]">Name:</span>
+                      <input
+                        type="text"
+                        value={profile.name}
+                        onChange={(e) => {
+                          handleUpdateProfile({
+                            ...profile,
+                            name: e.target.value
+                          });
+                        }}
+                        className="bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded px-1.5 py-0.5 text-right w-28 text-white text-[9px] font-mono outline-hidden"
+                      />
+                    </div>
+                    <div className="flex justify-between items-center gap-2">
+                      <span className="text-slate-450 text-[9px]">Age:</span>
+                      <input
+                        type="number"
+                        value={profile.age}
+                        onChange={(e) => {
+                          handleUpdateProfile({
+                            ...profile,
+                            age: Number(e.target.value) || 0
+                          });
+                        }}
+                        className="bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded px-1.5 py-0.5 text-right w-28 text-white text-[9px] font-mono outline-hidden"
+                      />
+                    </div>
+                    <div className="flex justify-between items-center gap-2">
+                      <span className="text-slate-450 text-[9px]">Gross/m (₹):</span>
+                      <input
+                        type="number"
+                        value={profile.salary}
+                        onChange={(e) => {
+                          handleUpdateProfile({
+                            ...profile,
+                            salary: Number(e.target.value) || 0
+                          });
+                        }}
+                        className="bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded px-1.5 py-0.5 text-right w-28 text-white text-[9px] font-mono outline-hidden"
+                      />
+                    </div>
+                    <div className="flex justify-between items-center gap-2">
+                      <span className="text-slate-450 text-[9px]">Invest (₹):</span>
+                      <input
+                        type="number"
+                        value={profile.investments?.mutualFunds || 0}
+                        onChange={(e) => {
+                          handleUpdateProfile({
+                            ...profile,
+                            investments: {
+                              ...(profile.investments || { mutualFunds: 0, stocks: 0, gold: 0, epf: 0, ppf: 0, nps: 0, realEstate: 0 }),
+                              mutualFunds: Number(e.target.value) || 0
+                            }
+                          });
+                        }}
+                        className="bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded px-1.5 py-0.5 text-right w-28 text-white text-[9px] font-mono outline-hidden"
+                      />
+                    </div>
+                    <div className="flex justify-between items-center gap-2">
+                      <span className="text-slate-450 text-[9px]">SIP Target (₹):</span>
+                      <input
+                        type="number"
+                        placeholder={`${Math.round(profile.salary * 0.20)} (20%)`}
+                        value={profile.customSip !== undefined ? profile.customSip : ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          handleUpdateProfile({
+                            ...profile,
+                            customSip: val === "" ? undefined : Number(val)
+                          });
+                        }}
+                        className="bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded px-1.5 py-0.5 text-right w-28 text-white text-[9px] font-mono outline-hidden placeholder-slate-650"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             {/* Directory stats panel */}
             <div className="grid grid-cols-2 gap-2 text-[10px] bg-slate-900/60 p-2 rounded-xl border border-slate-850 font-mono text-slate-400">
               <div>
-                <span className="block text-[8px] uppercase tracking-wider text-slate-500">Ledger Files</span>
-                <span className="font-bold text-slate-200">{profiles.length} Active {profiles.length === 1 ? 'Path' : 'Paths'}</span>
+                <span className="block text-[8px] uppercase tracking-wider text-slate-500">PAISA BLUEPRINT</span>
+                <span className="font-bold text-slate-200">{profiles.length} WEALTH HEALTH</span>
               </div>
               <div className="text-right">
                 <span className="block text-[8px] uppercase tracking-wider text-slate-500">Collective Wealth</span>
@@ -814,7 +995,20 @@ export default function App() {
               {profiles.map((p) => {
                 const isActive = p.id === activeProfileId;
                 const nw = calculateNetWorth(p);
-                const dirSlug = p.name.toLowerCase().replace(/[^a-z0-9]/g, "-").substring(0, 15);
+                
+                // Calculate investment base
+                const totalInv = (p.investments?.mutualFunds || 0) +
+                                 (p.investments?.stocks || 0) +
+                                 (p.investments?.gold || 0) +
+                                 (p.investments?.epf || 0) +
+                                 (p.investments?.ppf || 0) +
+                                 (p.investments?.nps || 0) +
+                                 (p.investments?.realEstate || 0);
+
+                // Custom monthly SIP or 20% fallback selection
+                const sipValue = p.customSip !== undefined ? p.customSip : Math.round(p.salary * 0.20);
+                const sipLabel = p.customSip !== undefined ? "SIP TARGET:" : "SIP (20%):";
+
                 return (
                   <button
                     key={p.id}
@@ -832,19 +1026,59 @@ export default function App() {
                         ) : (
                           <Folder className="w-3.5 h-3.5 text-slate-500 shrink-0 group-hover:text-slate-400" />
                         )}
-                        <span className="text-xs font-bold font-mono tracking-tight truncate">
-                          {`~/usr/${dirSlug}`}
+                        <span className="text-xs font-bold tracking-tight truncate text-slate-200 group-hover:text-white">
+                          {p.name}
                         </span>
                       </div>
                       
                       <span className="flex items-center gap-1">
-                        <span className={`h-1.5 w-1.5 rounded-full ${isActive ? "bg-emerald-400" : "bg-slate-700"}`} />
+                        <span className={`h-1.5 w-1.5 rounded-full ${isActive ? "bg-emerald-450" : "bg-slate-700"}`} />
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between text-[9px] pl-5.5 font-mono text-slate-500">
-                      <span>NW: <strong className={nw >= 0 ? "text-slate-300 font-bold" : "text-rose-450 font-bold"}>₹{nw.toLocaleString("en-IN")}</strong></span>
-                      <span>{p.age}y</span>
+                    {/* Customizable details list */}
+                    <div className="mt-1 pl-5.5 space-y-0.5 text-[9px] font-mono text-slate-500">
+                      <div className="flex justify-between items-center mr-1 pb-px border-b border-slate-800/10">
+                        <span>TOTAL WEALTH:</span>
+                        <strong className={nw >= 0 ? "text-slate-200 font-bold" : "text-rose-450 font-bold"}>
+                          ₹{nw.toLocaleString("en-IN")}
+                        </strong>
+                      </div>
+
+                      {dbOptions.name && (
+                        <div className="flex justify-between items-center mr-1 pb-px border-b border-slate-800/10">
+                          <span>NAME:</span>
+                          <span className="text-slate-300 font-bold truncate max-w-[90px]">{p.name}</span>
+                        </div>
+                      )}
+
+                      {dbOptions.age && (
+                        <div className="flex justify-between items-center mr-1 pb-px border-b border-slate-800/10">
+                          <span>AGE:</span>
+                          <span className="text-slate-300 font-bold">{p.age}y</span>
+                        </div>
+                      )}
+
+                      {dbOptions.grossMonthly && (
+                        <div className="flex justify-between items-center mr-1 pb-px border-b border-slate-800/10">
+                          <span>GROSS:</span>
+                          <span className="text-slate-300 font-bold">₹{p.salary.toLocaleString("en-IN")}/m</span>
+                        </div>
+                      )}
+
+                      {dbOptions.investments && (
+                        <div className="flex justify-between items-center mr-1 pb-px border-b border-slate-800/10">
+                          <span>INVEST:</span>
+                          <span className="text-slate-300 font-bold">₹{totalInv.toLocaleString("en-IN")}</span>
+                        </div>
+                      )}
+
+                      {dbOptions.monthlySip && (
+                        <div className="flex justify-between items-center mr-1 pb-px border-b border-slate-800/10">
+                          <span>{sipLabel}</span>
+                          <span className="text-emerald-400 font-bold font-sans">₹{sipValue.toLocaleString("en-IN")}/m</span>
+                        </div>
+                      )}
                     </div>
                   </button>
                 );

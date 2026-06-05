@@ -35,6 +35,7 @@ export interface UserProfile {
   loans: LoanDetails;
   investments: InvestmentDetails;
   monthlyExpenses: number;
+  customSip?: number;
   healthInsuranceCover?: number;
   termInsuranceCover?: number;
 }
