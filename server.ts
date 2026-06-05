@@ -356,15 +356,17 @@ Follow these instructions strictly:
 3. Suggest clear action items (e.g., "Park 6 months of expenses in an arbitrage fund or sweep-in FD for emergency").
 4. Keep answers concise, highly structured using markdown bolding and lists, and very action-oriented. Never write massive unbroken paragraphs.`;
 
-    // Filter out the static welcome message to ensure a clean history starting with the user's actual question
-    const filtered = messages.filter((m: any) => m.id !== "welcome-msg");
-    
     // Map the messages payload to the structure expected by the generateContent API
     // Roles must be "user" or "model" (replaces "assistant")
-    const contents = filtered.map((m: any) => ({
+    const contents = messages.map((m: any) => ({
       role: m.role === "assistant" ? "model" : "user",
       parts: [{ text: m.content }]
     }));
+
+    // Ensure the conversation starts with a "user" message by shifting out any leading model/assistant messages (such as the default welcome message)
+    while (contents.length > 0 && contents[0].role === "model") {
+      contents.shift();
+    }
 
     // If history is empty for any reason, provide a baseline fallback prompt
     if (contents.length === 0) {
