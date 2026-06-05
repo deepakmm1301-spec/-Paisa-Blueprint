@@ -43,7 +43,9 @@ import {
   Network,
   Folder,
   FolderOpen,
-  Activity
+  Activity,
+  Plus,
+  Trash2
 } from "lucide-react";
 
 // Default profile setup
@@ -800,49 +802,98 @@ export default function App() {
       </header>
 
       {/* Main Container Layout */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full flex flex-col gap-8">
         
-        {/* Left Side Navigation Rails */}
-        <section className="lg:col-span-3 space-y-6">
+        {/* Concept 2: Elegant and futuristic glassmorphic dashboard panel representing directories */}
+        <div className="w-full bg-slate-950 text-slate-100 border border-slate-800/90 rounded-3xl p-6 shadow-2xl relative overflow-hidden bg-radial from-slate-900 via-slate-950 to-slate-950">
+          {/* Holographic background glows */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
 
-          {/* Active Directories Dashboard mini-panel */}
-          <div className="bg-slate-950 text-slate-100 border border-slate-800/80 rounded-2xl p-4 shadow-md space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-800/60 pb-2">
+          {/* Header of Concept 2 widget */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-800/80 gap-4">
+            <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <Network className="w-4 h-4 text-emerald-400 animate-pulse" />
-                <span className="text-[10px] font-black uppercase tracking-wider text-slate-300">
-                  Active Directories
-                </span>
+                <Network className="w-5 h-5 text-emerald-400 animate-pulse" />
+                <h2 className="text-sm font-black tracking-widest uppercase font-mono bg-clip-text text-transparent bg-gradient-to-r from-emerald-450 to-cyan-400">
+                  WEALTH HEALTH / PAISA BLUEPRINT
+                </h2>
               </div>
-              <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => setShowDashboardSettings(!showDashboardSettings)}
-                  className={`p-1 rounded transition-colors cursor-pointer border ${
-                    showDashboardSettings 
-                      ? "bg-slate-850 border-emerald-500 text-emerald-450" 
-                      : "bg-slate-900 border-slate-800 text-slate-400 hover:text-emerald-400 hover:border-slate-700"
-                  }`}
-                  title="Customize metrics"
-                >
-                  <Sliders className="w-3 h-3" />
-                </button>
-                <span className="text-[8px] font-mono bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/20 font-extrabold tracking-wide">
-                  SYNCED
-                </span>
-              </div>
+              <p className="text-[10px] text-slate-400 font-mono">
+                Active portfolios cockpit with real-time union tax sync & 7th pay appraisals.
+              </p>
             </div>
 
-            {/* Customization Options Dropdown Area */}
-            {showDashboardSettings && (
-              <div className="bg-slate-900 border border-slate-800/80 p-2.5 rounded-xl text-[10px] text-slate-300 space-y-3 mt-1 font-mono">
-                <div className="border-b border-slate-800/50 pb-1">
-                  <span className="font-bold text-[9px] text-emerald-450 uppercase tracking-widest">
-                    View Customization
-                  </span>
+            {/* Panel quick dashboard metrics and view customization controls */}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="bg-slate-900/80 border border-slate-800/50 px-3 py-1.5 rounded-xl font-mono text-[10px] text-slate-300 flex items-center gap-4">
+                <div>
+                  <span className="text-slate-500 uppercase text-[8px] tracking-wider block">ACTIVE PATHS</span>
+                  <span className="font-bold text-white text-xs">{profiles.length} Directories</span>
                 </div>
-                <div className="grid grid-cols-2 gap-1.5 select-none animate-fadeIn">
-                  <label className="flex items-center gap-1.5 cursor-pointer hover:text-white">
+                <div className="h-6 w-px bg-slate-800" />
+                <div>
+                  <span className="text-slate-500 uppercase text-[8px] tracking-wider block">COLLECTIVE WEALTH</span>
+                  <span className="font-bold text-emerald-400 text-xs">₹{combinedWealth.toLocaleString("en-IN")}</span>
+                </div>
+              </div>
+
+              {/* Action buttons */}
+              <button
+                type="button"
+                onClick={() => {
+                  const id = "profile-" + Date.now();
+                  const newProfile: UserProfile = {
+                    id,
+                    name: `Scenario ${profiles.length + 1}`,
+                    age: 30,
+                    retirementAge: 60,
+                    salary: 100000,
+                    city: "tier1",
+                    maritalStatus: "single",
+                    dependentsCount: 0,
+                    currentSavings: 150000,
+                    loans: { homeLoan: 0, carLoan: 0, personalLoan: 0, otherLoan: 0 },
+                    investments: { mutualFunds: 60000, stocks: 0, gold: 0, epf: 0, ppf: 0, nps: 0, realEstate: 0 },
+                    monthlyExpenses: 30000
+                  };
+                  handleCreateProfile(newProfile);
+                }}
+                className="py-2 px-3 bg-emerald-500 hover:bg-emerald-600 border border-emerald-400/20 text-white font-bold text-[10px] rounded-xl flex items-center gap-1.5 transition-all shadow-md active:scale-95 cursor-pointer font-mono"
+                title="Create a new family active directory portfolio"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>NEW PATH</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowDashboardSettings(!showDashboardSettings)}
+                className={`py-2 px-3 rounded-xl transition-all cursor-pointer font-mono font-bold text-[10px] flex items-center gap-1.5 border ${
+                  showDashboardSettings 
+                    ? "bg-emerald-500/10 border-emerald-500 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.2)]" 
+                    : "bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white"
+                }`}
+                title="Toggle dashboard view options and edit portfolios"
+              >
+                <Sliders className="w-3.5 h-3.5" />
+                <span>CUSTOMIZE DIRECTORY</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Dropdown Customization Controls Component */}
+          {showDashboardSettings && (
+            <div className="bg-slate-900/60 border border-slate-800/60 backdrop-blur-md p-4 rounded-2xl text-[11px] text-slate-300 space-y-4 mt-4 font-mono animate-fadeIn">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/50 pb-3">
+                <div className="space-y-0.5">
+                  <span className="font-bold text-[10px] text-emerald-400 uppercase tracking-widest block">
+                    DIRECTORY VISIBILITY FILTERS
+                  </span>
+                  <p className="text-[9px] text-slate-400">Toggle which parameters show up on your glass active cards.</p>
+                </div>
+                <div className="flex flex-wrap gap-4 items-center bg-slate-950/40 p-2 rounded-xl border border-slate-800/30 font-sans font-medium text-xs">
+                  <label className="flex items-center gap-1.5 cursor-pointer hover:text-white transition-colors">
                     <input
                       type="checkbox"
                       checked={dbOptions.name}
@@ -851,7 +902,7 @@ export default function App() {
                     />
                     <span>Name</span>
                   </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer hover:text-white">
+                  <label className="flex items-center gap-1.5 cursor-pointer hover:text-white transition-colors">
                     <input
                       type="checkbox"
                       checked={dbOptions.age}
@@ -860,16 +911,16 @@ export default function App() {
                     />
                     <span>Age</span>
                   </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer hover:text-white whitespace-nowrap">
+                  <label className="flex items-center gap-1.5 cursor-pointer hover:text-white transition-colors whitespace-nowrap">
                     <input
                       type="checkbox"
                       checked={dbOptions.grossMonthly}
                       onChange={() => setDbOptions((prev: any) => ({ ...prev, grossMonthly: !prev.grossMonthly }))}
                       className="rounded border-slate-700 bg-slate-950 text-emerald-500 focus:ring-0 focus:ring-offset-0 w-3 h-3 cursor-pointer"
                     />
-                    <span>Gross</span>
+                    <span>Gross Salary</span>
                   </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer hover:text-white">
+                  <label className="flex items-center gap-1.5 cursor-pointer hover:text-white transition-colors">
                     <input
                       type="checkbox"
                       checked={dbOptions.investments}
@@ -878,225 +929,270 @@ export default function App() {
                     />
                     <span>Investments</span>
                   </label>
-                  <label className="flex items-center gap-1.5 cursor-pointer hover:text-white whitespace-nowrap col-span-2">
+                  <label className="flex items-center gap-1.5 cursor-pointer hover:text-white transition-colors whitespace-nowrap">
                     <input
                       type="checkbox"
                       checked={dbOptions.monthlySip}
                       onChange={() => setDbOptions((prev: any) => ({ ...prev, monthlySip: !prev.monthlySip }))}
                       className="rounded border-slate-700 bg-slate-950 text-emerald-500 focus:ring-0 focus:ring-offset-0 w-3 h-3 cursor-pointer"
                     />
-                    <span>Monthly SIP</span>
+                    <span>Monthly SIP Target</span>
                   </label>
                 </div>
+              </div>
 
-                <div className="border-t border-slate-800/60 pt-2.5 space-y-2">
-                  <div className="flex justify-between items-center border-b border-slate-800/40 pb-1">
-                    <span className="font-bold text-[9px] text-emerald-400 uppercase tracking-widest">
-                      Edit Selected Wealth Path
-                    </span>
-                    <span className="text-[8px] text-slate-400 italic font-mono truncate max-w-[80px]">
-                      {profile.name}
-                    </span>
+              {/* Dynamic Information Customization Form - Write directly to active path! */}
+              <div className="bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 space-y-3">
+                <div className="flex justify-between items-center border-b border-slate-800/50 pb-2">
+                  <span className="font-black text-[10px] text-cyan-400 uppercase tracking-widest flex items-center gap-1.5">
+                    <Edit2 className="w-3.5 h-3.5 text-cyan-400" />
+                    FILL PORTFOLIO DATA FOR: <span className="text-white underline">{profile.name}</span>
+                  </span>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const duplicate: UserProfile = {
+                          ...profile,
+                          id: "profile-" + Date.now(),
+                          name: `${profile.name} (Copy)`,
+                          pin: undefined
+                        };
+                        handleCreateProfile(duplicate);
+                      }}
+                      className="px-2 py-1 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-300 hover:text-white rounded text-[9px] hover:bg-slate-850 cursor-pointer font-bold transition-all"
+                    >
+                      CLONE PATH
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (profiles.length <= 1) {
+                          alert("At least one active directory path must exist.");
+                          return;
+                        }
+                        if (window.confirm(`Delete directory '${profile.name}'?`)) {
+                          handleDeleteProfile(profile.id!);
+                        }
+                      }}
+                      className="px-2 py-1 bg-rose-950/30 border border-rose-900/60 hover:bg-rose-950/50 hover:border-rose-700 text-rose-300 hover:text-rose-200 rounded text-[9px] cursor-pointer font-bold transition-all"
+                    >
+                      DELETE PATH
+                    </button>
                   </div>
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between items-center gap-2">
-                      <span className="text-slate-450 text-[9px]">Name:</span>
-                      <input
-                        type="text"
-                        value={profile.name}
-                        onChange={(e) => {
-                          handleUpdateProfile({
-                            ...profile,
-                            name: e.target.value
-                          });
-                        }}
-                        className="bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded px-1.5 py-0.5 text-right w-28 text-white text-[9px] font-mono outline-hidden"
-                      />
-                    </div>
-                    <div className="flex justify-between items-center gap-2">
-                      <span className="text-slate-450 text-[9px]">Age:</span>
-                      <input
-                        type="number"
-                        value={profile.age}
-                        onChange={(e) => {
-                          handleUpdateProfile({
-                            ...profile,
-                            age: Number(e.target.value) || 0
-                          });
-                        }}
-                        className="bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded px-1.5 py-0.5 text-right w-28 text-white text-[9px] font-mono outline-hidden"
-                      />
-                    </div>
-                    <div className="flex justify-between items-center gap-2">
-                      <span className="text-slate-450 text-[9px]">Gross/m (₹):</span>
-                      <input
-                        type="number"
-                        value={profile.salary}
-                        onChange={(e) => {
-                          handleUpdateProfile({
-                            ...profile,
-                            salary: Number(e.target.value) || 0
-                          });
-                        }}
-                        className="bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded px-1.5 py-0.5 text-right w-28 text-white text-[9px] font-mono outline-hidden"
-                      />
-                    </div>
-                    <div className="flex justify-between items-center gap-2">
-                      <span className="text-slate-450 text-[9px]">Invest (₹):</span>
-                      <input
-                        type="number"
-                        value={profile.investments?.mutualFunds || 0}
-                        onChange={(e) => {
-                          handleUpdateProfile({
-                            ...profile,
-                            investments: {
-                              ...(profile.investments || { mutualFunds: 0, stocks: 0, gold: 0, epf: 0, ppf: 0, nps: 0, realEstate: 0 }),
-                              mutualFunds: Number(e.target.value) || 0
-                            }
-                          });
-                        }}
-                        className="bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded px-1.5 py-0.5 text-right w-28 text-white text-[9px] font-mono outline-hidden"
-                      />
-                    </div>
-                    <div className="flex justify-between items-center gap-2">
-                      <span className="text-slate-450 text-[9px]">SIP Target (₹):</span>
-                      <input
-                        type="number"
-                        placeholder={`${Math.round(profile.salary * 0.20)} (20%)`}
-                        value={profile.customSip !== undefined ? profile.customSip : ""}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          handleUpdateProfile({
-                            ...profile,
-                            customSip: val === "" ? undefined : Number(val)
-                          });
-                        }}
-                        className="bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded px-1.5 py-0.5 text-right w-28 text-white text-[9px] font-mono outline-hidden placeholder-slate-650"
-                      />
-                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-slate-450 text-[9px] block uppercase tracking-wider font-extrabold text-emerald-400">Path/Name:</label>
+                    <input
+                      type="text"
+                      value={profile.name}
+                      onChange={(e) => {
+                        handleUpdateProfile({
+                          ...profile,
+                          name: e.target.value
+                        });
+                      }}
+                      className="bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-1.5 text-left w-full text-white text-xs font-mono outline-hidden"
+                      placeholder="e.g. Deepak Portfolios"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-slate-450 text-[9px] block uppercase tracking-wider font-extrabold text-emerald-400">User Age (yrs):</label>
+                    <input
+                      type="number"
+                      value={profile.age}
+                      onChange={(e) => {
+                        handleUpdateProfile({
+                          ...profile,
+                          age: Number(e.target.value) || 0
+                        });
+                      }}
+                      className="bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-1.5 text-left w-full text-white text-xs font-mono outline-hidden"
+                      placeholder="e.g. 32"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-slate-450 text-[9px] block uppercase tracking-wider font-extrabold text-emerald-400">Gross Monthly (₹):</label>
+                    <input
+                      type="number"
+                      value={profile.salary}
+                      onChange={(e) => {
+                        handleUpdateProfile({
+                          ...profile,
+                          salary: Number(e.target.value) || 0
+                        });
+                      }}
+                      className="bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-1.5 text-left w-full text-white text-xs font-mono outline-hidden"
+                      placeholder="e.g. 150000"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-slate-450 text-[9px] block uppercase tracking-wider font-extrabold text-emerald-400">Total Investment Base (₹):</label>
+                    <input
+                      type="number"
+                      value={profile.investments?.mutualFunds || 0}
+                      onChange={(e) => {
+                        handleUpdateProfile({
+                          ...profile,
+                          investments: {
+                            ...(profile.investments || { mutualFunds: 0, stocks: 0, gold: 0, epf: 0, ppf: 0, nps: 0, realEstate: 0 }),
+                            mutualFunds: Number(e.target.value) || 0
+                          }
+                        });
+                      }}
+                      className="bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-1.5 text-left w-full text-white text-xs font-mono outline-hidden"
+                      placeholder="e.g. 500000"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-slate-450 text-[9px] block uppercase tracking-wider font-extrabold text-emerald-400">SIP Target Override (₹):</label>
+                    <input
+                      type="number"
+                      placeholder={`${Math.round(profile.salary * 0.20)} (Auto 20%)`}
+                      value={profile.customSip !== undefined ? profile.customSip : ""}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        handleUpdateProfile({
+                          ...profile,
+                          customSip: val === "" ? undefined : Number(val)
+                        });
+                      }}
+                      className="bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-1.5 text-left w-full text-white text-xs font-mono outline-hidden placeholder-slate-650"
+                    />
                   </div>
                 </div>
               </div>
-            )}
-            {/* Directory stats panel */}
-            <div className="grid grid-cols-2 gap-2 text-[10px] bg-slate-900/60 p-2 rounded-xl border border-slate-850 font-mono text-slate-400">
-              <div>
-                <span className="block text-[8px] uppercase tracking-wider text-slate-500">PAISA BLUEPRINT</span>
-                <span className="font-bold text-slate-200">{profiles.length} WEALTH HEALTH</span>
-              </div>
-              <div className="text-right">
-                <span className="block text-[8px] uppercase tracking-wider text-slate-500">Collective Wealth</span>
-                <span className="font-bold text-emerald-400">₹{combinedWealth.toLocaleString("en-IN")}</span>
-              </div>
             </div>
+          )}
 
-            {/* Directory Path Tree */}
-            <div className="space-y-1 max-h-[190px] overflow-y-auto pr-1">
-              {profiles.map((p) => {
-                const isActive = p.id === activeProfileId;
-                const nw = calculateNetWorth(p);
-                
-                // Calculate investment base
-                const totalInv = (p.investments?.mutualFunds || 0) +
-                                 (p.investments?.stocks || 0) +
-                                 (p.investments?.gold || 0) +
-                                 (p.investments?.epf || 0) +
-                                 (p.investments?.ppf || 0) +
-                                 (p.investments?.nps || 0) +
-                                 (p.investments?.realEstate || 0);
+          {/* Directory Active Glass Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+            {profiles.map((p) => {
+              const isActive = p.id === activeProfileId;
+              const nw = calculateNetWorth(p);
+              
+              // Calculate investment base
+              const totalInv = (p.investments?.mutualFunds || 0) +
+                               (p.investments?.stocks || 0) +
+                               (p.investments?.gold || 0) +
+                               (p.investments?.epf || 0) +
+                               (p.investments?.ppf || 0) +
+                               (p.investments?.nps || 0) +
+                               (p.investments?.realEstate || 0);
 
-                // Custom monthly SIP or 20% fallback selection
-                const sipValue = p.customSip !== undefined ? p.customSip : Math.round(p.salary * 0.20);
-                const sipLabel = p.customSip !== undefined ? "SIP TARGET:" : "SIP (20%):";
+              // Custom monthly SIP or 20% fallback selection
+              const sipValue = p.customSip !== undefined ? p.customSip : Math.round(p.salary * 0.20);
+              const sipLabel = p.customSip !== undefined ? "SIP TARGET:" : "SIP (20%):";
 
-                return (
-                  <button
-                    key={p.id}
-                    onClick={() => setActiveProfileId(p.id!)}
-                    className={`w-full text-left p-2 rounded-lg border transition-all flex flex-col gap-0.5 ring-offset-slate-900 group cursor-pointer ${
-                      isActive
-                        ? "bg-slate-900 border-emerald-500 text-white shadow-xs"
-                        : "bg-transparent border-transparent hover:bg-slate-900/40 text-slate-400 hover:text-slate-200"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-2 truncate">
-                        {isActive ? (
-                          <FolderOpen className="w-3.5 h-3.5 text-emerald-450 shrink-0" />
-                        ) : (
-                          <Folder className="w-3.5 h-3.5 text-slate-500 shrink-0 group-hover:text-slate-400" />
-                        )}
-                        <span className="text-xs font-bold tracking-tight truncate text-slate-200 group-hover:text-white">
+              return (
+                <div
+                  key={p.id}
+                  onClick={() => setActiveProfileId(p.id!)}
+                  className={`relative p-4 rounded-2xl border transition-all duration-300 flex flex-col gap-3 group cursor-pointer ${
+                    isActive
+                      ? "bg-slate-900/60 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.15)] ring-1 ring-emerald-500/30"
+                      : "bg-slate-950/20 border-slate-850 hover:bg-slate-900/40 hover:border-slate-700"
+                  }`}
+                >
+                  <div className="flex items-start justify-between w-full">
+                    <div className="flex items-center gap-2 truncate">
+                      {isActive ? (
+                        <FolderOpen className="w-5 h-5 text-emerald-450 shrink-0" />
+                      ) : (
+                        <Folder className="w-5 h-5 text-slate-500 shrink-0 group-hover:text-slate-400" />
+                      )}
+                      
+                      <div className="flex flex-col truncate">
+                        <span className="text-xs font-black tracking-tight truncate text-slate-200 group-hover:text-white">
                           {p.name}
                         </span>
+                        <span className="text-[8px] text-slate-550 uppercase tracking-widest font-mono">
+                          {isActive ? "ACTIVE PORTFOLIO" : "INACTIVE PATH"}
+                        </span>
                       </div>
-                      
-                      <span className="flex items-center gap-1">
-                        <span className={`h-1.5 w-1.5 rounded-full ${isActive ? "bg-emerald-450" : "bg-slate-700"}`} />
-                      </span>
+                    </div>
+                    
+                    <div className="flex items-center gap-1.5 self-center">
+                      {profiles.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (window.confirm(`Delete directory '${p.name}'?`)) {
+                              handleDeleteProfile(p.id!);
+                            }
+                          }}
+                          className="p-1 rounded text-slate-500 hover:text-rose-400 hover:bg-slate-850/50 transition-all cursor-pointer"
+                          title="Delete active path portfolio"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      <span className={`h-2 w-2 rounded-full ${isActive ? "bg-emerald-450 shadow-[0_0_8px_#10b981]" : "bg-slate-800"}`} />
+                    </div>
+                  </div>
+
+                  {/* Customizable metrics list */}
+                  <div className="space-y-1.5 pt-1.5 border-t border-slate-850/50 text-[10px] font-mono text-slate-450">
+                    <div className="flex justify-between items-center pb-1 border-b border-slate-900">
+                      <span className="text-[8.5px] uppercase text-slate-500 font-bold">TOTAL WEALTH:</span>
+                      <strong className={nw >= 0 ? "text-emerald-400 font-bold" : "text-rose-450 font-bold"}>
+                        ₹{nw.toLocaleString("en-IN")}
+                      </strong>
                     </div>
 
-                    {/* Customizable details list */}
-                    <div className="mt-1 pl-5.5 space-y-0.5 text-[9px] font-mono text-slate-500">
-                      <div className="flex justify-between items-center mr-1 pb-px border-b border-slate-800/10">
-                        <span>TOTAL WEALTH:</span>
-                        <strong className={nw >= 0 ? "text-slate-200 font-bold" : "text-rose-450 font-bold"}>
-                          ₹{nw.toLocaleString("en-IN")}
-                        </strong>
+                    {dbOptions.name && (
+                      <div className="flex justify-between items-center pb-1 border-b border-slate-900">
+                        <span className="text-[8.5px] uppercase text-slate-550">NAME:</span>
+                        <span className="text-slate-300 font-extrabold truncate max-w-[120px]">{p.name}</span>
                       </div>
+                    )}
 
-                      {dbOptions.name && (
-                        <div className="flex justify-between items-center mr-1 pb-px border-b border-slate-800/10">
-                          <span>NAME:</span>
-                          <span className="text-slate-300 font-bold truncate max-w-[90px]">{p.name}</span>
-                        </div>
-                      )}
+                    {dbOptions.age && (
+                      <div className="flex justify-between items-center pb-1 border-b border-slate-900">
+                        <span className="text-[8.5px] uppercase text-slate-550">AGE:</span>
+                        <span className="text-slate-300 font-extrabold">{p.age}y</span>
+                      </div>
+                    )}
 
-                      {dbOptions.age && (
-                        <div className="flex justify-between items-center mr-1 pb-px border-b border-slate-800/10">
-                          <span>AGE:</span>
-                          <span className="text-slate-300 font-bold">{p.age}y</span>
-                        </div>
-                      )}
+                    {dbOptions.grossMonthly && (
+                      <div className="flex justify-between items-center pb-1 border-b border-slate-900">
+                        <span className="text-[8.5px] uppercase text-slate-555">GROSS:</span>
+                        <span className="text-slate-300 font-extrabold">₹{p.salary.toLocaleString("en-IN")}/m</span>
+                      </div>
+                    )}
 
-                      {dbOptions.grossMonthly && (
-                        <div className="flex justify-between items-center mr-1 pb-px border-b border-slate-800/10">
-                          <span>GROSS:</span>
-                          <span className="text-slate-300 font-bold">₹{p.salary.toLocaleString("en-IN")}/m</span>
-                        </div>
-                      )}
+                    {dbOptions.investments && (
+                      <div className="flex justify-between items-center pb-1 border-b border-slate-900">
+                        <span className="text-[8.5px] uppercase text-slate-550">INVEST:</span>
+                        <span className="text-slate-300 font-extrabold">₹{totalInv.toLocaleString("en-IN")}</span>
+                      </div>
+                    )}
 
-                      {dbOptions.investments && (
-                        <div className="flex justify-between items-center mr-1 pb-px border-b border-slate-800/10">
-                          <span>INVEST:</span>
-                          <span className="text-slate-300 font-bold">₹{totalInv.toLocaleString("en-IN")}</span>
-                        </div>
-                      )}
-
-                      {dbOptions.monthlySip && (
-                        <div className="flex justify-between items-center mr-1 pb-px border-b border-slate-800/10">
-                          <span>{sipLabel}</span>
-                          <span className="text-emerald-400 font-bold font-sans">₹{sipValue.toLocaleString("en-IN")}/m</span>
-                        </div>
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="pt-2 flex items-center justify-between text-[10px] text-slate-500 border-t border-slate-900">
-              <span className="flex items-center gap-1 font-mono text-[8px] uppercase tracking-wider text-slate-500">
-                <Activity className="w-2.5 h-2.5 text-slate-400" /> Auto-indexed
-              </span>
-              <button 
-                onClick={() => setActiveWidget("profiles")}
-                className="text-emerald-400 hover:text-emerald-300 font-bold tracking-tight hover:underline flex items-center gap-0.5 bg-transparent border-0 cursor-pointer p-0"
-              >
-                Config Folders →
-              </button>
-            </div>
+                    {dbOptions.monthlySip && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-[8.5px] uppercase text-slate-550">{sipLabel}</span>
+                        <span className="text-cyan-400 font-extrabold">₹{sipValue.toLocaleString("en-IN")}/m</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
+        </div>
+
+        {/* Dynamic Column Layout Workspace */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
+          
+          {/* Left Side Navigation Rails */}
+          <section className="lg:col-span-3 space-y-6">
 
           <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-3xs space-y-2">
             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider px-3 block mb-1">
@@ -1221,6 +1317,7 @@ export default function App() {
           />
         </section>
 
+        </div>
       </main>
 
       {/* Footer Design Credits Line */}
