@@ -68,7 +68,7 @@ export default function NetWorthTracker({ profile }: Props) {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-100 pb-5 mb-6">
         <div>
           <span className="text-xs font-semibold uppercase tracking-wider text-bhagwa-600 bg-bhagwa-50 px-2.5 py-1 rounded-full">Balance Sheet</span>
-          <h2 className="text-2xl font-bold text-slate-800 mt-2 font-display">Net Worth Ledger Tracker</h2>
+          <h2 className="text-2xl font-bold text-slate-800 mt-2 font-display">My Wealth Tracker</h2>
           <p className="text-slate-500 text-sm mt-1">
             Track total accumulated assets (safe investments, liquidity schemes) against active loan liabilities.
           </p>

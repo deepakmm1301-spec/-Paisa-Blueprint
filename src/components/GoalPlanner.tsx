@@ -172,7 +172,7 @@ export default function GoalPlanner() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-100 pb-5 mb-6">
         <div>
           <span className="text-xs font-semibold uppercase tracking-wider text-bhagwa-600 bg-bhagwa-50 px-2.5 py-1 rounded-full">Target Based Investing</span>
-          <h2 className="text-2xl font-bold text-slate-800 mt-2 font-display">Goal Blueprint Planner</h2>
+          <h2 className="text-2xl font-bold text-slate-800 mt-2 font-display">My Goal Planner</h2>
           <p className="text-slate-500 text-sm mt-1">
             Map out life's biggest milestones. Enter targets today, and calculate exact inflation-protected SIP requirements.
           </p>

@@ -487,7 +487,7 @@ export default function App() {
     },
     {
       id: "goals" as ActiveWidget,
-      label: "Milestone Goals",
+      label: "My Goal Planner",
       desc: "Plan weddings, homes, cars",
       icon: <Sparkles className="w-5 h-5" />,
       color: "text-rose-600 bg-rose-50 border-rose-100",
@@ -501,7 +501,7 @@ export default function App() {
     },
     {
       id: "networth" as ActiveWidget,
-      label: "Net Worth Ledger",
+      label: "My Wealth Tracker",
       desc: "Map assets against active loans",
       icon: <Wallet className="w-5 h-5" />,
       color: "text-blue-600 bg-blue-50 border-blue-100",
