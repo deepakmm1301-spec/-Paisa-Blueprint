@@ -345,32 +345,34 @@ Follow these instructions strictly:
 3. Suggest clear action items (e.g., "Park 6 months of expenses in an arbitrage fund or sweep-in FD for emergency").
 4. Keep answers concise, highly structured using markdown bolding and lists, and very action-oriented. Never write massive unbroken paragraphs.`;
 
-    // Map messages payload to structure for general generateContent
-    // The last message is the prompt. We can concatenate history or use chats API.
-    // Let's use the chats API to keep it simple and robust, or pass the full list.
-    // To keep it simple and compliant with chats.create:
-    const chatInstance = ai.chats.create({
+    // Filter out the static welcome message to ensure a clean history starting with the user's actual question
+    const filtered = messages.filter((m: any) => m.id !== "welcome-msg");
+    
+    // Map the messages payload to the structure expected by the generateContent API
+    // Roles must be "user" or "model" (replaces "assistant")
+    const contents = filtered.map((m: any) => ({
+      role: m.role === "assistant" ? "model" : "user",
+      parts: [{ text: m.content }]
+    }));
+
+    // If history is empty for any reason, provide a baseline fallback prompt
+    if (contents.length === 0) {
+      contents.push({
+        role: "user",
+        parts: [{ text: "Hello, I want to talk about personal finance." }]
+      });
+    }
+
+    const result = await ai.models.generateContent({
       model: "gemini-3.5-flash",
+      contents: contents,
       config: {
         systemInstruction,
         temperature: 0.7,
       }
     });
 
-    // Send history first if any, then the last message
-    // To support multiple turns seamlessly:
-    let responseText = "";
-    if (messages.length > 1) {
-      // Re-feed chat history
-      for (let i = 0; i < messages.length - 1; i++) {
-        await chatInstance.sendMessage({ message: messages[i].content });
-      }
-    }
-    
-    const lastMessage = messages[messages.length - 1]?.content || "Hello";
-    const result = await chatInstance.sendMessage({ message: lastMessage });
-    
-    responseText = result.text || "I was unable to formulate a response. Please try again.";
+    const responseText = result.text || "I was unable to formulate a response. Please try again.";
 
     res.json({
       role: "assistant",
