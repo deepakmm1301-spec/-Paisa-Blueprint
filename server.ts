@@ -90,11 +90,22 @@ loadAccounts();
 
 // Lazy-loaded or guarded initialization of Gemini API
 let aiInstance: GoogleGenAI | null = null;
-function getAIClient(): GoogleGenAI {
+function getAIClient(customApiKey?: string): GoogleGenAI {
+  if (customApiKey && customApiKey.trim() !== "") {
+    return new GoogleGenAI({
+      apiKey: customApiKey.trim(),
+      httpOptions: {
+        headers: {
+          'User-Agent': 'aistudio-build',
+        }
+      }
+    });
+  }
+
   if (!aiInstance) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      throw new Error("GEMINI_API_KEY is not configured in your environment secrets.");
+      throw new Error("GEMINI_API_KEY is not configured in your environment secrets on this server host. To proceed, please provide your own custom Gemini API Key in the Coach settings panel.");
     }
     aiInstance = new GoogleGenAI({
       apiKey: apiKey,
@@ -318,13 +329,13 @@ app.get("/api/auth/get-profiles", (req, res) => {
 // AI Financial Coach Chat Endpoint
 app.post("/api/chat", async (req, res) => {
   try {
-    const { messages, userProfile } = req.body;
+    const { messages, userProfile, customApiKey } = req.body;
     if (!messages || !Array.isArray(messages)) {
       res.status(400).json({ error: "Missing or invalid 'messages' array" });
       return;
     }
 
-    const ai = getAIClient();
+    const ai = getAIClient(customApiKey);
 
     // Inject profile and guidelines as a strong system instruction
     const systemInstruction = `You are "Paisa Blueprint AI Coach", an expert personal financial adviser specializing in Indian personal finance, salaried employees, and government salary structures.
@@ -382,7 +393,7 @@ Follow these instructions strictly:
     console.error("AI Coach Error:", error);
     res.status(500).json({ 
       error: error.message || "An internal error occurred with the AI Coach.",
-      isConfigError: !process.env.GEMINI_API_KEY
+      isConfigError: !process.env.GEMINI_API_KEY && !req.body.customApiKey
     });
   }
 });

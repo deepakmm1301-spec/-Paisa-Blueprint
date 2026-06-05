@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { UserProfile, ChatMessage } from "../types";
-import { Sparkles, Send, Bot, User, Trash2, HelpCircle, Loader2, AlertCircle } from "lucide-react";
+import { Sparkles, Send, Bot, User, Trash2, HelpCircle, Loader2, AlertCircle, Key, Eye, EyeOff, Save } from "lucide-react";
 
 interface Props {
   profile: UserProfile;
@@ -23,6 +23,11 @@ Here are some helpful presets you can ask me, or type your own question below:`,
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorStatus, setErrorStatus] = useState<string | null>(null);
+
+  const [customApiKey, setCustomApiKey] = useState(() => localStorage.getItem("paisa_user_gemini_key") || "");
+  const [showKeyInput, setShowKeyInput] = useState(false);
+  const [inputKey, setInputKey] = useState(customApiKey);
+  const [showKeyText, setShowKeyText] = useState(false);
   
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -52,6 +57,7 @@ Here are some helpful presets you can ask me, or type your own question below:`,
         body: JSON.stringify({
           messages: [...messages, userMsg].map((m) => ({ role: m.role, content: m.content })),
           userProfile: profile,
+          customApiKey: customApiKey || undefined,
         }),
       });
 
@@ -60,17 +66,17 @@ Here are some helpful presets you can ask me, or type your own question below:`,
         try {
           const errorText = await response.text();
           if (errorText.includes("GEMINI_API_KEY") || errorText.includes("ApiKey")) {
-            serverErrorMsg = "Your Gemini API Key is missing. Access the Secrets panel in Settings to provide your GEMINI_API_KEY.";
+            serverErrorMsg = "The Gemini API Key is missing or invalid on the server. Access the key icon 🔑 at the top right of this coach panel to add your own personal Gemini API key.";
           } else {
             try {
               const parsed = JSON.parse(errorText);
               serverErrorMsg = parsed.error || "Failed to parse error description.";
             } catch (jsonErr) {
-              serverErrorMsg = "Failed to connect to AI server. This usually happens when GEMINI_API_KEY is not configured in the Secrets manager, or the server is still booting up.";
+              serverErrorMsg = "Failed to connect to AI server. This usually happens when the Gemini API key is not configured of the server host. Please click the key icon 🔑 at the top right to use your own personal API key.";
             }
           }
         } catch (readErr) {
-          serverErrorMsg = "Failed to match AI server response. Please verify your GEMINI_API_KEY configured in Settings > Secrets.";
+          serverErrorMsg = "Failed to match AI server response. Click the key icon 🔑 at the top right of this panel to provide your own Gemini API key.";
         }
         throw new Error(serverErrorMsg);
       }
@@ -87,8 +93,8 @@ Here are some helpful presets you can ask me, or type your own question below:`,
     } catch (err: any) {
       console.error(err);
       setErrorStatus(
-        err.message?.includes("GEMINI_API_KEY") 
-          ? "Your Gemini API Key is missing or invalid. Access the Secrets panel in Settings to provide your GEMINI_API_KEY."
+        err.message?.includes("GEMINI_API_KEY") || err.message?.includes("key") || err.message?.includes("Key")
+          ? "The Gemini API Key is missing or invalid. Please click the key icon 🔑 at the top right of this Coach panel to configure your own personal API key and try again."
           : err.message || "Something went wrong. Please check your network connection or try again."
       );
     } finally {
@@ -138,14 +144,98 @@ Here are some helpful presets you can ask me, or type your own question below:`,
             </span>
           </div>
         </div>
-        <button
-          onClick={clearChat}
-          className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
-          title="Clear Conversation"
-        >
-          <Trash2 className="w-4 h-4" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              setShowKeyInput(!showKeyInput);
+              setInputKey(customApiKey);
+            }}
+            className={`p-1.5 rounded-lg transition-colors cursor-pointer relative ${
+              customApiKey 
+                ? "text-emerald-400 hover:text-emerald-300 hover:bg-slate-800" 
+                : "text-slate-400 hover:text-white hover:bg-slate-800"
+            }`}
+            title="Configure Custom Gemini API Key"
+          >
+            <Key className="w-4 h-4" />
+            {customApiKey && (
+              <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-emerald-400 rounded-full" />
+            )}
+          </button>
+          <button
+            onClick={clearChat}
+            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+            title="Clear Conversation"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
       </div>
+
+      {/* Custom Key Dropdown Panel */}
+      {showKeyInput && (
+        <div className="bg-slate-900 border-b border-slate-800 text-slate-100 p-4 transition-all animate-fadeIn">
+          <div className="flex items-start gap-2.5 mb-2.5 text-xs text-slate-300">
+            <Key className="w-4.5 h-4.5 text-bhagwa-400 shrink-0 mt-0.5" />
+            <div>
+              <span className="font-semibold text-slate-100">Optional: Custom Gemini API Key</span>
+              <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                If the shared server API key is temporary, missing or invalid on this device, you can enter your personal Gemini API key. It is saved <strong>only locally</strong> in this browser memory.
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <input
+                type={showKeyText ? "text" : "password"}
+                value={inputKey}
+                onChange={(e) => setInputKey(e.target.value)}
+                placeholder="AIzaSy..."
+                className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-3 pr-8 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-bhagwa-500"
+              />
+              <button
+                type="button"
+                onClick={() => setShowKeyText(!showKeyText)}
+                className="absolute right-2 top-1.5 text-slate-500 hover:text-slate-300"
+              >
+                {showKeyText ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+              </button>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                const trimmed = inputKey.trim();
+                setCustomApiKey(trimmed);
+                if (trimmed) {
+                  localStorage.setItem("paisa_user_gemini_key", trimmed);
+                } else {
+                  localStorage.removeItem("paisa_user_gemini_key");
+                }
+                setShowKeyInput(false);
+                setErrorStatus(null);
+              }}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer"
+            >
+              Save
+            </button>
+            {customApiKey && (
+              <button
+                type="button"
+                onClick={() => {
+                  setCustomApiKey("");
+                  setInputKey("");
+                  localStorage.removeItem("paisa_user_gemini_key");
+                  setShowKeyInput(false);
+                  setErrorStatus(null);
+                }}
+                className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:text-white transition-colors cursor-pointer"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-slate-50/40">
