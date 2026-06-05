@@ -39,7 +39,11 @@ import {
   Check,
   CreditCard,
   Sun,
-  Moon
+  Moon,
+  Network,
+  Folder,
+  FolderOpen,
+  Activity
 } from "lucide-react";
 
 // Default profile setup
@@ -533,6 +537,25 @@ export default function App() {
 
   const isDefaultUser = sessionUser.email === "paisa.mm1301@gmail.com";
 
+  // Helper to calculate net worth for active directories dashboard
+  const calculateNetWorth = (p: UserProfile) => {
+    const assets = (p.investments?.mutualFunds || 0) +
+                   (p.investments?.stocks || 0) +
+                   (p.investments?.gold || 0) +
+                   (p.investments?.epf || 0) +
+                   (p.investments?.ppf || 0) +
+                   (p.investments?.nps || 0) +
+                   (p.investments?.realEstate || 0) +
+                   (p.currentSavings || 0);
+    const liabilities = (p.loans?.homeLoan || 0) +
+                        (p.loans?.carLoan || 0) +
+                        (p.loans?.personalLoan || 0) +
+                        (p.loans?.otherLoan || 0);
+    return assets - liabilities;
+  };
+
+  const combinedWealth = profiles.reduce((sum, p) => sum + calculateNetWorth(p), 0);
+
   return (
     <div className="min-h-screen bg-slate-50/50 flex flex-col justify-between text-slate-800 antialiased font-sans">
       {/* Top Main Navigation Bar */}
@@ -760,6 +783,86 @@ export default function App() {
         {/* Left Side Navigation Rails */}
         <section className="lg:col-span-3 space-y-6">
 
+          {/* Active Directories Dashboard mini-panel */}
+          <div className="bg-slate-950 text-slate-100 border border-slate-800/80 rounded-2xl p-4 shadow-md space-y-3">
+            <div className="flex items-center justify-between border-b border-slate-800/60 pb-2">
+              <div className="flex items-center gap-2">
+                <Network className="w-4 h-4 text-emerald-400 animate-pulse" />
+                <span className="text-[10px] font-black uppercase tracking-wider text-slate-300">
+                  Active Directories
+                </span>
+              </div>
+              <span className="text-[8px] font-mono bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/20 font-extrabold tracking-wide">
+                SYNCED
+              </span>
+            </div>
+
+            {/* Directory stats panel */}
+            <div className="grid grid-cols-2 gap-2 text-[10px] bg-slate-900/60 p-2 rounded-xl border border-slate-850 font-mono text-slate-400">
+              <div>
+                <span className="block text-[8px] uppercase tracking-wider text-slate-500">Ledger Files</span>
+                <span className="font-bold text-slate-200">{profiles.length} Active {profiles.length === 1 ? 'Path' : 'Paths'}</span>
+              </div>
+              <div className="text-right">
+                <span className="block text-[8px] uppercase tracking-wider text-slate-500">Collective Wealth</span>
+                <span className="font-bold text-emerald-400">₹{combinedWealth.toLocaleString("en-IN")}</span>
+              </div>
+            </div>
+
+            {/* Directory Path Tree */}
+            <div className="space-y-1 max-h-[190px] overflow-y-auto pr-1">
+              {profiles.map((p) => {
+                const isActive = p.id === activeProfileId;
+                const nw = calculateNetWorth(p);
+                const dirSlug = p.name.toLowerCase().replace(/[^a-z0-9]/g, "-").substring(0, 15);
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => setActiveProfileId(p.id!)}
+                    className={`w-full text-left p-2 rounded-lg border transition-all flex flex-col gap-0.5 ring-offset-slate-900 group cursor-pointer ${
+                      isActive
+                        ? "bg-slate-900 border-emerald-500 text-white shadow-xs"
+                        : "bg-transparent border-transparent hover:bg-slate-900/40 text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center gap-2 truncate">
+                        {isActive ? (
+                          <FolderOpen className="w-3.5 h-3.5 text-emerald-450 shrink-0" />
+                        ) : (
+                          <Folder className="w-3.5 h-3.5 text-slate-500 shrink-0 group-hover:text-slate-400" />
+                        )}
+                        <span className="text-xs font-bold font-mono tracking-tight truncate">
+                          {`~/usr/${dirSlug}`}
+                        </span>
+                      </div>
+                      
+                      <span className="flex items-center gap-1">
+                        <span className={`h-1.5 w-1.5 rounded-full ${isActive ? "bg-emerald-400" : "bg-slate-700"}`} />
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[9px] pl-5.5 font-mono text-slate-500">
+                      <span>NW: <strong className={nw >= 0 ? "text-slate-300 font-bold" : "text-rose-450 font-bold"}>₹{nw.toLocaleString("en-IN")}</strong></span>
+                      <span>{p.age}y</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="pt-2 flex items-center justify-between text-[10px] text-slate-500 border-t border-slate-900">
+              <span className="flex items-center gap-1 font-mono text-[8px] uppercase tracking-wider text-slate-500">
+                <Activity className="w-2.5 h-2.5 text-slate-400" /> Auto-indexed
+              </span>
+              <button 
+                onClick={() => setActiveWidget("profiles")}
+                className="text-emerald-400 hover:text-emerald-300 font-bold tracking-tight hover:underline flex items-center gap-0.5 bg-transparent border-0 cursor-pointer p-0"
+              >
+                Config Folders →
+              </button>
+            </div>
+          </div>
 
           <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-3xs space-y-2">
             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider px-3 block mb-1">
