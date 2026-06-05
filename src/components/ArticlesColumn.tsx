@@ -83,7 +83,7 @@ export default function ArticlesColumn({ onNavigateToWidget, userMonthlySalary }
           "However, the Old Tax Regime allows extensive deductions that remain incredibly powerful for certain brackets:",
           "• Section 80C limit: Up to ₹1.5 Lakhs (EPF, PPF, ELSS, School fees, principal house loan repayment).",
           "• Section 24b House Loan Interest: Up to ₹2 Lakhs on home loan interest payments.",
-          "• Section 80D Mediclaim: Up to ₹75,000 (for self, dependents, and senior citizen parents' healthcare premium).",
+          "• Section 80D Mediclaim: Up to ₹75,050 (for self, dependents, and senior citizen parents' healthcare premium).",
           "• HRA component exemption: Complete deduction on house rent paid according to metro or non-metro formulas.",
           "Rule of thumb: If your combined tax-saving deductions exceed ₹3,75,000 a year, the Old Tax Regime will likely save you more taxes. Go to the Tax Planner to run a side-by-side simulation tailored to your active profile salary."
         ]
@@ -124,10 +124,10 @@ export default function ArticlesColumn({ onNavigateToWidget, userMonthlySalary }
       },
       hi: {
         title: "पारम्परिक यूलिप (ULIP) और एंडोमेंट पॉलिसियां क्यों हैं वेल्थ डिस्ट्रॉयर?",
-        summary: "बीमा और निवेश को मिलाना अक्सर घाटे का सौदा होता है। यूलिप के लॉक-इन चक्र को तोड़ें और 'टर्म इंश्योरेंस + डायरेक्ट म्यूचुअल फंड' की बेहतरीन रणनीति अपनाएं।",
+        summary: "बीमा व निवेश को मिलाना अक्सर घाटे का सौदा होता है। यूलिप के लॉक-इन चक्र को तोड़ें और 'टर्म इंश्योरेंस + डायरेक्ट म्यूचुअल फंड' की बेहतरीन रणनीति अपनाएं।",
         content: [
           "यूनिट लिंक्ड इंश्योरेंस प्लान (ULIP) और पारंपरिक मनीबैक पॉलिसियां सुरक्षा के साथ गारंटीड रिटर्न का वादा करती हैं, लेकिन ये बहुत कम मुनाफा देती हैं।",
-          "इन योजनाओं में शुरुआती 5 वर्षों में पॉलिसी एडमिनिस्ट्रेशन, मृत्यु दर शुल्क (Mortality charges) और आवंटन शुल्क काफी अधिक काटे जाते हैं, जिससे आपका मूलधन बहुत कम रह जाता है।",
+          "इन योजनाओं में शुरुआती 5 वर्षों में पॉलिसी एडमिनिस्ट्रेशन, मृत्यु दर शुल्क (Mortality charges) व आवंटन शुल्क काफी अधिक काटे जाते हैं, जिससे आपका मूलधन बहुत कम रह जाता है।",
           "ऐसी पॉलिसियों का औसत सालाना रिटर्न केवल 4.5% से 6% के आसपास रहता है, जो महंगाई दर को भी मात नहीं दे पाता।",
           "इसका सबसे सरल, सुरक्षित और पावरफुल विकल्प इंश्योरेंस व इन्वेस्टमेंट को हमेशा अलग रखना है:",
           "1. अपने सालाना पैकेज/वेतन का कम से कम 15 से 20 गुना का एक प्योर टर्म इंश्योरेंस लें (जो बहुत कम खर्च में मिल जाता है)।",
@@ -195,6 +195,482 @@ export default function ArticlesColumn({ onNavigateToWidget, userMonthlySalary }
           "• विकल्प अ (स्थिर ₹10,000/माह): कुल निवेश ₹24 लाख होगा, तथा मैच्योरिटी वैल्यू लगभग ₹99.9 लाख होगी।",
           "• विकल्प ब (10% वार्षिक स्टेप-अप): आपकी किस्त पहले वर्ष ₹10,000, दूसरे वर्ष ₹11,000, तीसरे वर्ष ₹12,100 होगी। इससे कुल निवेश ₹68.7 लाख होगा और अंतिम कॉपर्स ₹2.07 करोड़ की भारी-भरकम राशि बन जाएगा!",
           "एक छोटा सा 10% का वार्षिक अपग्रेड आपके अंतिम कॉर्पस को दोगुने से भी अधिक बढ़ा देता है। इसके कैलकुलेशन की जांच आज ही हमारे रिटायरमेंट प्लानर (Retirement Planner) में करें।"
+        ]
+      }
+    },
+    {
+      id: "art-6",
+      category: "Saving",
+      readTime: language === "hi" ? "4 मिनट" : "4 mins read",
+      importance: "High",
+      targetedWidget: "health",
+      icon: <Milestone className="w-4 h-4 text-sky-500" />,
+      en: {
+        title: "Renting vs Buying a House in India: The Real Opportunity Cost",
+        summary: "Most middle-class families lock major wealth in high-cost real estate. Explore the rent-and-invest strategy vs standard home loan EMIs.",
+        content: [
+          "In metropolitan India, the rental yield of residential property is extremely low—hovering around 2% to 3% annually.",
+          "In comparison, home loan interest rates usually sit around 8.5% to 9.5% per annum, creating a massive 6% 'interest-yield deficit'.",
+          "If you buy a house worth ₹1 Crore, your monthly EMI for 20 years at 8.5% is approximately ₹86,700, and you pay about ₹1.08 Crores in total interest alone.",
+          "However, renting the same ₹1 Crore house would cost around ₹20,000 to ₹25,000 monthly.",
+          "If you rent the house and invest the monthly difference of ₹60,000 in a diversified Nifty index fund (earning ~12% CAGR), your compounding corpus over 20 years swells to nearly ₹6 Crores!",
+          "While buying a house offers emotional stability, doing so early using expensive debt can seriously damage your compounding capacity. Evaluate carefully before committing to decades of EMIs."
+        ]
+      },
+      hi: {
+        title: "किराए पर रहना बनाम खुद का घर खरीदना: भारतीय शहरों का सच्चा वित्तीय गणित",
+        summary: "ज्यादातर मध्यमवर्गीय परिवार भारी होम लोन में अपनी संपत्ति फंसा देते हैं। जानें क्यों किराया देकर बाकी पैसे को निवेश करना घर खरीदने से अधिक पैसा कमा सकता है।",
+        content: [
+          "भारतीय मेट्रो शहरों में आवासीय संपत्ति का वार्षिक रेंटल यील्ड (किराए से होने वाली वास्तविक कमाई) बहुत कम है—यह केवल 2% से 3% के बीच ही रहता है।",
+          "इसकी तुलना में, होम लोन की ब्याज दरें आमतौर पर 8.5% से 9.5% सालाना के बीच होती हैं, जो एक भारी वास्तविक नुकसान पैदा करती हैं।",
+          "यदि आप ₹1 करोड़ का घर खरीदते हैं, तो 8.5% ब्याज पर 20 वर्षों के लिए आपकी मासिक ईएमआई (EMI) लगभग ₹86,700 होगी, और आप केवल ब्याज में ₹1.08 करोड़ अतिरिक्त चुकाएंगे।",
+          "जबकि उसी ₹1 करोड़ के घर को किराए पर लेने का खर्च केवल ₹20,000 से ₹25,000 मासिक होगा।",
+          "यदि आप किराए पर रहकर बची हुई ₹60,000 की राशि को किसी इंडेक्स फंड (12% सालाना रिटर्न) में निवेश करते हैं, तो 20 वर्षों में आपका अंतिम कॉपर्स लगभग ₹6 करोड़ बन सकता है।",
+          "घर खरीदना भावनात्मक सुरक्षा जरूर देता है, लेकिन जल्दबाजी में महंगा होम लोन लेकर ऐसा करने से आपकी कम्पाउंडिंग क्षमता पर गंभीर असर पड़ सकता है।"
+        ]
+      }
+    },
+    {
+      id: "art-7",
+      category: "Investment",
+      readTime: language === "hi" ? "3 मिनट" : "3 mins read",
+      importance: "High",
+      targetedWidget: "sip",
+      icon: <Coins className="w-4 h-4 text-emerald-500" />,
+      en: {
+        title: "Sovereign Gold Bonds (SGB): Earn Extra 2.5% Annual Interest Bonus",
+        summary: "Stop buying physical gold or digital gold with high making charges. Learn why RBI-backed SGBs offer premium tax-free compounding.",
+        content: [
+          "Sovereign Gold Bonds are government-backed securities issued by the Reserve Bank of India representing gold weights.",
+          "Unlike physical gold, you pay zero lockers charges, zero GST, and zero making charges. Furthermore, SGBs offer an additional guaranteed 2.5% interest per year on your initial investment, disbursed bi-annually.",
+          "The biggest advantage: Under Section 47(viib) of the Income Tax Act, the capital gains tax at the time of maturity (8 years) is 100% tax-free.",
+          "This makes SGB the absolute cleanest and most high-yielding way to hold gold in your portfolio as an inflation hedge. Keep gold exposure capped at 5% to 10% of total wealth."
+        ]
+      },
+      hi: {
+        title: "सॉवरेन गोल्ड बॉन्ड (SGB): सोने के भाव बढ़ने के साथ हर साल पाएं 2.5% सुरक्षित सरकारी ब्याज",
+        summary: "मेकिंग चार्ज और जीएसटी वाले पारंपरिक भौतिक सोने से बचें। जानिए आरबीआई (RBI) के सॉवरेन गोल्ड बॉन्ड क्यों निवेश का सबसे शानदार और टैक्स-फ्री माध्यम हैं।",
+        content: [
+          "सॉवरेन गोल्ड बॉन्ड भारत सरकार की ओर से रिज़र्व बैंक (RBI) द्वारा जारी की जाने वाली सुरक्षित स्वर्ण प्रतिभूतियां हैं।",
+          "भौतिक सोने के विपरीत, इसमें कोई लॉकर चार्ज, जीएसटी (GST) या मेकिंग चार्ज नहीं देना होता है और इस पर आपकी शुरुआती निवेश राशि पर प्रति वर्ष 2.5% अतिरिक्त ब्याज भी मिलता है।",
+          "सबसे बड़ा लाभ: आयकर अधिनियम की धारा 47(viib) के तहत, मैच्योरिटी (8 वर्ष) के समय होने वाला पूरा कैपिटल गेन टैक्स (पूंजीगत लाभ कर) 100% टैक्स-फ्री होता है।",
+          "अपने कुल पोर्टफोलियो में सोने की हिस्सेदारी को 5% से 10% तक सीमित रखें, तथा निवेश के लिए SGB को ही प्राथमिकता दें।"
+        ]
+      }
+    },
+    {
+      id: "art-8",
+      category: "Tax",
+      readTime: language === "hi" ? "4 मिनट" : "4 mins read",
+      importance: "Standard",
+      targetedWidget: "tax",
+      icon: <Percent className="w-4 h-4 text-orange-500" />,
+      en: {
+        title: "Tax Harvesting under Section 112A: Save ₹10,000 on Equities Yearly",
+        summary: "Are you paying 12.5% LTCG on all equity profits? Learn how to book and reinvest your ₹1.25 Lakhs tax-exempt quota every financial year.",
+        content: [
+          "As per the latest tax rules, Long-Term Capital Gains (LTCG) on equity mutual funds and stocks are exempt up to ₹1.25 Lakhs in a financial year. Any profit beyond this is taxed at 12.5%.",
+          "Tax Harvesting is the technique of selling mutual funds every year to book profits up to ₹1.25 Lakhs, and immediately buying them back.",
+          "By doing this, you step-up your purchase acquisition cost without paying a single rupee of LTCG tax, effectively wiping out future tax burdens.",
+          "For instance, if you have ₹1.2 Lakh profit, redeem it and reinvest immediately. This keeps your taxable capital gains ledger clean. Track your total portfolio yields in the Net Worth tracker."
+        ]
+      },
+      hi: {
+        title: "धारा 112A के तहत टैक्स हार्वेस्टिंग: इक्विटी प्रॉफिट पर हर साल बचाएं टैक्स",
+        summary: "क्या आप सभी इक्विटी मुनाफे पर LTCG टैक्स दे रहे हैं? जानिए कैसे हर साल ₹1.25 लाख की कर-मुक्त सीमा का फायदा उठाकर भारी टैक्स बचाया जा सकता है।",
+        content: [
+          "नए नियमों के अनुसार, भारत में इक्विटी म्यूचुअल फंड और शेयरों पर हर वित्त वर्ष में ₹1.25 लाख तक लॉन्ग-टर्म资本गेंस (LTCG) टैक्स-फ्री है। इसके ऊपर के लाभ पर 12.5% टैक्स लगता है।",
+          "टैक्स हार्वेस्टिंग एक कमाल की तकनीक है जिसमें आप हर साल ₹1.25 लाख तक के शेयर बेचकर अपना मुनाफा पक्का करते हैं और उसे तुरंत फिर से निवेश कर देते हैं।",
+          "ऐसा करने से बिना कोई टैक्स चुकाए आपके पोर्टफोलियो की खरीद लागत (acquisition cost) बढ़ जाती है, जिससे भविष्य में मैच्योरिटी के समय टैक्स बहुत कम हो जाता है।",
+          "यदि आपके पास ₹1.2 लाख का अनरियलाइज्ड प्रॉफिट है, तो उसे बेचकर तुरंत फिर से निवेश करना समझदारी है।"
+        ]
+      }
+    },
+    {
+      id: "art-9",
+      category: "Saving",
+      readTime: language === "hi" ? "3 मिनट" : "3 mins read",
+      importance: "High",
+      targetedWidget: "salary",
+      icon: <HelpCircle className="w-4 h-4 text-sky-500" />,
+      en: {
+        title: "The Power of Voluntary Provident Fund (VPF) for Debt Allocations",
+        summary: "Tired of falling fixed deposit returns? See how salaried employees can safely push extra funds into VPF to secure a high government interest rate.",
+        content: [
+          "Voluntary Provident Fund (VPF) is an extension of your Employee Provident Fund (EPF), allowing you to contribute beyond the mandatory 12% of basic salary, up to 100% of basic and DA.",
+          "VPF offers the exact interest rate as EPF—typically around 8.15% to 8.25%—which is significantly superior to normal banking FDs and debt mutual funds.",
+          "The interest earned on contributions up to ₹2.5 Lakhs per year is completely tax-free under section 10(11).",
+          "For salaried professionals looking for risk-free, safe retirement assets, VPF is one of the most brilliant tools available. Check the Salary Planner to see your monthly basic pay status."
+        ]
+      },
+      hi: {
+        title: "वॉलंटरी प्रोविडेंट फंड (VPF): सरकारी सुरक्षा के साथ कमाएं सबसे ज्यादा फिक्स्ड रिटर्न",
+        summary: "फिक्स डिपॉजिट (FD) की गिरती ब्याज दरों से परेशान हैं? जानिए नौकरीपेशा लोग सरकारी ब्याज दर पर सुरक्षित पैसे जोड़ने के लिए कैसे वीपीएफ (VPF) का फायदा उठा सकते हैं।",
+        content: [
+          "वॉलंटरी प्रोविडेंट फंड (VPF) आपके सामान्य पीएफ (EPF) का ही एक हिस्सा है, जिसमें आप मूल वेतन के अनिवार्य 12% से अधिक (मूल वेतन का 100% तक) स्वैच्छिक योगदान कर सकते हैं।",
+          "वीपीएफ (VPF) पर ईपीएफ (EPF) के बराबर ही ब्याज मिलता है—आमतौर पर 8.15% से 8.25%—जो सामान्य बैंक एफडी या सरकारी बॉन्ड्स से काफी बेहतर है।",
+          "सालाना ₹2.5 लाख तक के पीएफ योगदान पर मिलने वाला पूरा ब्याज पूरी तरह से टैक्स-फ्री होता है।",
+          "जो लोग सुरक्षित और तय रिटर्न वाले फिक्स्ड एसेट्स की तलाश में हैं, उनके लिए वीपीएफ सबसे बेहतरीन साधन है।"
+        ]
+      }
+    },
+    {
+      id: "art-10",
+      category: "Saving",
+      readTime: language === "hi" ? "3 मिनट" : "3 mins read",
+      importance: "High",
+      targetedWidget: "sip",
+      icon: <Coins className="w-4 h-4 text-emerald-500" />,
+      en: {
+        title: "Demystifying PPF: The Exempt-Exempt-Exempt (EEE) Sovereign Giant",
+        summary: "No market risk, zero taxes, and absolute safety. Read how the Public Provident Fund remains the premier wealth anchor for long-term goals.",
+        content: [
+          "Public Provident Fund (PPF) is a 15-year government savings scheme designed to encourage long-term wealth compounding with 100% principal protection.",
+          "PPF enjoys the rare Exempt-Exempt-Exempt (EEE) tax designation:",
+          "• Deduction: Contribution up to ₹1.5 Lakhs is deductible under Section 80C.",
+          "• Accumulation: Yearly compounded interest earned is completely tax-exempt.",
+          "• Withdrawal: The entire maturity amount after 15 years is tax-free.",
+          "You can open a PPF account at any leading bank or post office. To avoid missing interest compounding, always deposit your annual PPF contribution between the 1st and 5th of April each financial year."
+        ]
+      },
+      hi: {
+        title: "पब्लिक प्रोविडेंट फंड (PPF): ट्रिपल टैक्स-फ्री (EEE) का सबसे बड़ा सरकारी राजा",
+        summary: "बिना किसी मार्केट रिस्क के टैक्स-फ्री मुनाफा। जानिए पब्लिक प्रोविडेंट फंड कैसे मध्यमवर्गीय भारतीयों का सबसे पसंदीदा सुरक्षा-कवच बना हुआ है।",
+        content: [
+          "पब्लिक प्रोविडेंट फंड (PPF) 15 साल की एक बेहद लोकप्रिय सरकारी योजना है जो 100% सुरक्षा के साथ लंबी अवधि के निवेश को बढ़ावा देती है।",
+          "पीपीएफ को भारत की चुनिंदा ट्रिपल टैक्स-फ्री (EEE) योजनाओं का दर्जा प्राप्त है:",
+          "• पहली छूट: धारा 80C के तहत ₹1.5 लाख तक के सालाना निवेश पर सीधी कर छूट।",
+          "• दूसरी छूट: हर साल चक्रवर्ती ब्याज के रूप में जमा होने वाली पूरी राशि टैक्स-फ्री।",
+          "• तीसरी छूट: 15 साल के बाद मिलने वाली मैच्योरिटी और निकासी की पूरी राशि पर कोई टैक्स नहीं।",
+          "याद रखें: ब्याज का अधिकतम लाभ प्राप्त करने के लिए हर साल 1 से 5 अप्रैल के बीच ही अपनी पीपीएफ किस्त जमा कर दें।"
+        ]
+      }
+    },
+    {
+      id: "art-11",
+      category: "Saving",
+      readTime: language === "hi" ? "3 मिनट" : "3 mins read",
+      importance: "Critical",
+      targetedWidget: "health",
+      icon: <HeartPulse className="w-4 h-4 text-rose-500" />,
+      en: {
+        title: "Emergency Fund Architecture: Shorter Path to Financial Peace",
+        summary: "A single medical crisis or job loss can drag a middle-class family into toxic debt. Learn to compute and secure 6 months of absolute expenses.",
+        content: [
+          "An Emergency Fund acts as a financial shock absorber. It prevents you from liquidating long-term equity plans or taking expensive personal/credit card loans.",
+          "How to compute your fund block:",
+          "• Essential Survival Expenses = rent + food/groceries + child's fee + utilities + mandatory EMIs + insurance premium.",
+          "• Target Corpus: At least 6 months of these essential survival components.",
+          "Where to store it: Keep 20% in standard cash/savings bank account for instant withdrawal, 40% in instant-redemption liquid mutual funds, and 40% in secure sweep-in banking FDs.",
+          "Never deploy this money into volatile stock accounts. Ensure this safety cushion in Paisa Blueprints' health dashboard."
+        ]
+      },
+      hi: {
+        title: "आपातकालीन फंड (Emergency Fund): अचानक नौकरी जाने या बीमारी से निपटने का सुरक्षा चक्र",
+        summary: "एक अकेली मेडिकल इमरजेंसी या अचानक नौकरी खोना किसी भी परिवार को कर्ज में डुबो सकता है। सीखें कैसे बनाएं 6 महीने का मजबूत इमर्जेंसी बैंक बैकअप।",
+        content: [
+          "इमर्जेंसी फंड आपके वित्तीय जीवन का सबसे बड़ा शॉक एब्जॉर्बर है। यह आपको संकट के समय होम लोन म्यूचुअल फंड को घाटे में बेचने या क्रेडिट कार्ड के कर्ज में फंसने से बचाता है।",
+          "मजबूत फंड के निर्धारण का साधारण सूत्र:",
+          "• आवश्यक मासिक खर्च = किराया + राशन/भोजन + बच्चों की फीस + लोन की ईएमआई + इंश्योरेंस प्रीमियम।",
+          "• लक्ष्य: कम से कम 6 महीने के बराबर के आवश्यक खर्च का संचय।",
+          "कहाँ रखें: 20% तुरंत निकासी के लिए बचत खाते में, 40% इंस्टेंट रिडेम्पशन वाले लिक्विड म्यूचुअल फंड में, तथा 40% को बैंक की स्वीप-इन एफडी (FD) में रखें।",
+          "इस आपातकालीन पैसे को कभी भी जोखिम भरे इक्विटी या स्टॉक मार्केट में निवेश न करें।"
+        ]
+      }
+    },
+    {
+      id: "art-12",
+      category: "Saving",
+      readTime: language === "hi" ? "4 मिनट" : "4 mins read",
+      importance: "Critical",
+      targetedWidget: "health",
+      icon: <HelpCircle className="w-4 h-4 text-rose-500" />,
+      en: {
+        title: "Direct Term Insurance vs. Agent Rider Policies: Avoiding Mis-selling",
+        summary: "Do not buy insurance that promises to pay money back if you survive. Discover why clean, pure online Term Insurance is 10x cheaper.",
+        content: [
+          "Agents constantly push 'Return of Premium' or endowment riders because they carry massive hidden commissions of up to 40% in Year 1.",
+          "A regular Term plan covering ₹1 Crore usually costs around ₹1,000 to ₹1,500 monthly for a healthy 30-year-old.",
+          "If you buy a 'Return of Premium' option, the cost swells to ₹3,000 to ₹4,000 for the same coverage, defeating the purpose of cheap safety.",
+          "Buy a pure vanilla online term policy from the insurer direct. Declare all health metrics (drinking, smoking, existing diseases) with absolute honesty to ensure seamless claim payouts for your family."
+        ]
+      },
+      hi: {
+        title: "ऑनलाइन टर्म इंश्योरेंस बनाम एजेंट्स के महंगे प्लान: सही पॉलिसी कैसे चुनें",
+        summary: "वापसी का लालच देने वाली बीमा पॉलिसियों के झांसे में न आएं। जानें क्यों रिस्क-फ्री ऑनलाइन टर्म इंश्योरेंस आपके बजट में 10 गुना सस्ता और भरोसेमंद पड़ता है।",
+        content: [
+          "बीमा एजेंट्स अक्सर प्रीमियम वापसी की गारंटी वाले प्लान बेचते हैं क्योंकि इन पर कंपनी से उन्हें 30-40% तक का भारी कमीशन मिलता है।",
+          "एक स्वस्थ 30 वर्षीय व्यक्ति के लिए ₹1 करोड़ का शुद्ध टर्म प्लान केवल ₹1,000 से ₹1,500 प्रति माह में आसानी से ऑनलाइन मिल जाता है।",
+          "वहीं प्रीमियम वापसी वाले टर्म प्लान के लिए आपको उसी ₹1 करोड़ की सुरक्षा के लिए ₹3,000 से ₹4,000 प्रतिमाह चुकाने पड़ते हैं।",
+          "पॉलिसी लेते समय अपनी स्वास्थ्य आदतों (बीड़ी, सिगरेट, शराब या बीमारी) की जानकारी बीमा कंपनी से बिल्कुल भी न छुपाएं ताकि क्लेम आसानी से मिल सके।"
+        ]
+      }
+    },
+    {
+      id: "art-13",
+      category: "Retirement",
+      readTime: language === "hi" ? "3 मिनट" : "3 mins read",
+      importance: "Standard",
+      targetedWidget: "retirement",
+      icon: <Milestone className="w-4 h-4 text-sky-500" />,
+      en: {
+        title: "Unpacking Gratuity Laws: Calculation Formulas, Limits and Tax Exemptions",
+        summary: "Completed 5 consecutive years in your private or government firm? Learn to calculate your statutory tax-exempt retirement payout.",
+        content: [
+          "Gratuity is a lump sum statutory monetary benefit paid by employers under the Payment of Gratuity Act, 1972, to employees who complete 5 or more years of continuous service.",
+          "How to compute your Gratuity payoff:",
+          "• Formula: (15 * Last Drawn Basic Salary along with Dearness Allowance * Total Completed Years of Service) / 26.",
+          "• Tax rules: Gratuity earned up to ₹20 Lakhs (tax-exempt limit increased to ₹25 Lakhs as per recent updates for central/salaried employees) is entirely exempt from income tax.",
+          "This serves as an excellent lump-sum retirement buffer. Run scenarios on our Retirement Planner to align your absolute net worth targets."
+        ]
+      },
+      hi: {
+        title: "ग्रेच्युटी (Gratuity) नियम और गणना: नौकरी बदलने या रिटायरमेंट पर एक्स्ट्रा बोनस",
+        summary: "क्या आपने एक ही कंपनी में लगातार 5 साल पूरे कर लिए हैं? जानिए कानूनन कितना बोनस/ग्रेच्युटी चुकाना आपकी कंपनी का कर्तव्य है और इसकी टैक्स छूट के क्या नियम हैं।",
+        content: [
+          "ग्रेच्युटी अधिनियम 1972 के अनुसार, कंपनियों में लगातार 5 वर्ष या उससे अधिक समय तक काम करने वाले सभी कर्मचारी एकमुश्त ग्रेच्युटी राशि के हकदार होते हैं।",
+          "ग्रेच्युटी निकालने का सरल फार्मूला:",
+          "• सूत्र: (15 * आखिरी मूल वेतन + महंगाई भत्ता * कंपनी में सेवा के कुल वर्ष) / 26।",
+          "• टैक्स छूट के नियम: वेतनभोगी कर्मचारियों के लिए कुल प्राप्त ग्रेच्युटी राशि ₹25 लाख तक आयकर से पूरी तरह कर-मुक्त होती है।",
+          "अगर आप 5 साल बाद नौकरी बदल रहे हैं, तो कंपनी एचआर से इस कानूनी सेटलमेंट बोनस के दावे के बारे में अवश्य चर्चा करें।"
+        ]
+      }
+    },
+    {
+      id: "art-14",
+      category: "Saving",
+      readTime: language === "hi" ? "4 मिनट" : "4 mins read",
+      importance: "High",
+      targetedWidget: "health",
+      icon: <Flame className="w-4 h-4 text-rose-500" />,
+      en: {
+        title: "Home Loan Prepays: The '1 Extra EMI Every Year' Financial Hack",
+        summary: "Wiping out a 20-year home debt in 10-12 years is remarkably easy. Explore simple prepayment schedules that save you lakhs in future interest.",
+        content: [
+          "Due to front-loaded amortization schedules, banks collect nearly 70% of their interest in the first half of your loan duration. A ₹50 Lakh home loan easily costs ₹1.05 Crores over 20 years.",
+          "A simple hack to bypass this is paying just 1 additional EMI every calendar year directly towards the loan principal.",
+          "By prepaying 1 extra EMI annually, you pull down your loan tenure from 20 years to a brisk 16 years, saving almost ₹12 Lakhs in net interest payments.",
+          "If you also increase your monthly EMI by offset of just 5% every year as your salary increases, you will settle the entire 20-year loan in less than 11 years!",
+          "Use the Home Loan amortization and balance simulators to trace out potential prepayment gains."
+        ]
+      },
+      hi: {
+        title: "होम लोन से जल्दी आज़ादी: 'हर साल 1 अतिरिक्त EMI' देने वाली जादुई तकनीक",
+        summary: "20 साल का भारी होम लोन 10 से 12 साल में चुकाना बेहद आसान है। जानें कैसे केवल 1 अतिरिक्त ईएमआई देकर लाखों रुपयों का ब्याज बचाया जा सकता है।",
+        content: [
+          "अमोर्टाइजेशन शेड्यूल के नियम के कारण, बैंक होम लोन के शुरुआती 8-10 सालों में आपसे 70% तक सिर्फ ब्याज वसूलते हैं। ₹50 लाख का लोन 20 साल में ब्याज जोड़कर ₹1 करोड़ से अधिक का बन जाता है।",
+          "इससे बचने का शानदार तरीका है: हर वित्तीय वर्ष में बैंक को अपनी नियमित किस्तों के अलावा केवल 1 अतिरिक्त ईएमआई का एकमुश्त भुगतान करें।",
+          "हर साल सिर्फ 1 अतिरिक्त EMI देने से आपका 20 साल का लोन घटकर मात्र 16 साल रह जाएगा और आप ₹12 लाख से ज्यादा का शुद्ध ब्याज बचाएंगे।",
+          "यदि आप नौकरी बढ़ने के साथ अपनी किस्त 5% बढ़ा दें, तो आप पूरा लोन 11 वर्षों से पहले चुका देंगे।"
+        ]
+      }
+    },
+    {
+      id: "art-15",
+      category: "Tax",
+      readTime: language === "hi" ? "3 मिनट" : "3 mins read",
+      importance: "Standard",
+      targetedWidget: "tax",
+      icon: <Percent className="w-4 h-4 text-orange-500" />,
+      en: {
+        title: "ELSS Mutual Funds: The 3-Year Lock-In Under Section 80C",
+        summary: "Still locking capital in 5-year FDs or 15-year insurance policies for 80C? Learn why Equity Linked Savings Schemes offer maximum compounding power.",
+        content: [
+          "Under Section 80C of the Old Tax Regime, you can deduct up to ₹1.5 Lakhs by investing in tax-saving instruments.",
+          "Equity Linked Savings Schemes (ELSS) are diversified equity mutual funds with the shortest lock-in period of only 3 years.",
+          "In comparison, Tax-Saving FDs lock your capital for 5 years at a low return of 7%, while PPF locks you for 15 years.",
+          "ELSS funds historical 10-year average yield sits at an impressive 14% to 16% CAGR, easily beating traditional fixed assets.",
+          "Always remember that while ELSS carries equity market risk, it's one of the finest vehicles to compound tax-saving capital. Plan Section 80C in our Tax Planner dashboard."
+        ]
+      },
+      hi: {
+        title: "ELSS म्यूचुअल फंड्स: केवल 3 साल के लॉक-इन वाला सबसे तेज कंपाउंडिंग टैक्स सेवर",
+        summary: "टैक्स बचाने के लिए क्या पीपीएफ (PPF) या 5 साल की बैंक एफडी (FD) में पैसा फंसा रहे हैं? जानिए क्यों ELSS फंड्स में वेल्थ बढ़ाने की बेहतरीन क्षमता छिपी है।",
+        content: [
+          "पुरानी टैक्स प्रणाली की धारा 80C के तहत टैक्स-बचत करने के लिए ₹1.5 लाख तक के निवेश निवेश की अनुमति है।",
+          "ELSS (इक्विटी लिंक्ड सेविंग्स स्कीम्स) वे टैक्स-सेविंग म्यूचुअल फंड्स हैं जिनमें सबसे कम लॉक-इन अवधि सिर्फ 3 साल की होती है।",
+          "इसकी तुलना में, टैक्स-सेविंग बैंक एफडी आपके पैसे को 5 साल के लिए लॉक करती है और पीपीएफ 15 साल के लिए लॉक करता है।",
+          "ऐतिहासिक रूप से, बेहतरीन ELSS फंड्स ने 14% से 16% तक का औसत वार्षिक रिटर्न प्रदान किया है, जो इंफ्लेशन को पछाड़ने में सबसे आगे है।",
+          "म्यूचुअल फंड्स बाजार जोखिमों के अधीन हैं, परंतु पुरानी व्यवस्था में कर छूट पाने का यह सबसे स्मार्ट जरिया है।"
+        ]
+      }
+    },
+    {
+      id: "art-16",
+      category: "Saving",
+      readTime: language === "hi" ? "4 मिनट" : "4 mins read",
+      importance: "Standard",
+      targetedWidget: "health",
+      icon: <HelpCircle className="w-4 h-4 text-sky-500" />,
+      en: {
+        title: "Pre-EMI vs Full-EMI: Crucial Traps in Under-Construction Flats",
+        summary: "Taking a builder-subvention loan for a modern flat? Learn the hidden interest costs of choosing Pre-EMI over full EMIs during delays.",
+        content: [
+          "When you book an under-construction apartment, the bank disburses the loan directly to the builder in staggered installments depending on completion phases.",
+          "The bank offers you two repayment structures during construction:",
+          "1. Pre-EMI option: You only pay interest on the money disbursed so far. While your monthly outflow is small, your principal is NOT reduced, and the 20-year term hasn't even started yet!",
+          "2. Full-EMI option: You pay a larger monthly installment containing both principal and interest components.",
+          "Choosing Pre-EMI is a severe trap if construction is delayed: you could pay lakhs in interest for 5 years without dropping your actual debt by a single rupee.",
+          "For maximum safety, always choose Full-EMI or pay extra block amounts to suppress builder delays."
+        ]
+      },
+      hi: {
+        title: "प्री-ईएमआई (Pre-EMI) बनाम फुल-ईएमआई (Full-EMI): नए मकान क्रेताओं के लिए बड़ा जाल",
+        summary: "निर्माणाधीन या अंडर-कंस्ट्रक्शन फ्लैट ले रहे हैं? प्री-ईएमआई और फुल-ईएमआई का सही फर्क जानें ताकि बिल्डर की लेट-लतीफी में आपका ब्याज व्यर्थ न बहे।",
+        content: [
+          "जब आप नया फ्लैट बुक करते हैं, तो बैंक कंस्ट्रक्शन के स्तर के अनुसार बिल्डर को किस्तों में पैसा देता है।",
+          "कंस्ट्रक्शन अवधि के दौरान बैंक आपको भुगतान के दो मुख्य रास्ते प्रदान करता है:",
+          "1. प्री-ईएमआई का विकल्प: इसमें आप केवल जारी किए गए पैसों पर केवल ब्याज चुकाते हैं। हालांकि पॉकेट फ्रेंडली लगता है, लेकिन इससे आपका लोन रत्ती भर भी कम नहीं होता!",
+          "2. फुल-ईएमआई का विकल्प: इसमें आप पहले दिन से वास्तविक लोन की पूरी किस्त चुकाना शुरू करते हैं जिसमें मूलधन (principal) भी घटता है।",
+          "यदि बिल्डर डिलीवरी में देरी करता है, तो प्री-ईएमआई चुनने से आपका लाखों रुपया सिर्फ ब्याज में डूब जाएगा और कर्ज जस के तस बना रहेगा।"
+        ]
+      }
+    },
+    {
+      id: "art-17",
+      category: "Saving",
+      readTime: language === "hi" ? "3 मिनट" : "3 mins read",
+      importance: "High",
+      targetedWidget: "health",
+      icon: <HeartPulse className="w-4 h-4 text-rose-500" />,
+      en: {
+        title: "Why Corporate Health Insurance is Never Enough: Super Top-Ups",
+        summary: "Relying on your employer's ₹5 Lakh group mediclaim policy is highly dangerous. Learn how Super Top-Up plans offer ₹20L safety at dirt-cheap prices.",
+        content: [
+          "Group corporate health insurances offered by employers are brilliant, but they disappear the instant you switch jobs or face corporate restructuring.",
+          "Moreover, a standard base capacity of ₹3L to ₹5L is simply insufficient for complex organ surgeries, ICU admissions, or prolonged treatments.",
+          "You do not need to buy an expensive secondary private policy. Instead, buy a dedicated private Base Policy of ₹5 Lakhs along with a Super Top-Up plan of ₹20 Lakhs.",
+          "A Super Top-Up policy is incredibly cheap because it has a 'deductible' equal to your base policy limit. If your hospital bill is ₹15L, your corporate/base policy pays first ₹5L, and the Top-Up pays the remaining ₹10L.",
+          "This hybrid insurance architecture ensures premium multi-million survival plans on a highly optimized budget."
+        ]
+      },
+      hi: {
+        title: "कंपनी की मेडिकल पॉलिसी क्यों काफी नहीं है? सुपर टॉप-अप प्लान का जादू",
+        summary: "क्या आप सिर्फ कंपनी के ₹5 लाख वाले ग्रुप इंश्योरेंस पर निर्भर हैं? जानिए कैसे सुपर टॉप-अप लेकर बेहद कम खर्च में पा सकते हैं ₹20 लाख की बड़ी सुरक्षा।",
+        content: [
+          "कंपनी द्वारा दिया गया ग्रुप हेल्थ इंश्योरेंस अच्छा होता है, लेकिन नौकरी बदलने, छूटने या मंदी के समय यह तुरंत अमान्य हो जाता है।",
+          "इसके अलावा, आज के दौर में ₹3 से ₹5 लाख का कवर गंभीर बीमारियों, आईसीयू (ICU) के खर्चों को पूरी तरह नहीं संभाल पाता।",
+          "कवर बढ़ाने के लिए नया महंगा इंश्योरेंस लेने के बजाय, एक ₹5 लाख की पर्सनल ... पर्सनल पॉलिसी लेकर उसके ऊपर ₹20 लाख का 'सुपर टॉप-अप (Super Top-up)' लें।",
+          "सुपर टॉप-अप प्लान बहुत सस्ते होते हैं क्योंकि ये शुरुआती सीमा तक का खर्च बेस कवर से चुकता होने के बाद ही एक्टिवेट होते हैं। इससे आपको कम से कम प्रीमियम में लाखों का हेल्थ कवर मिल जाता है।"
+        ]
+      }
+    },
+    {
+      id: "art-18",
+      category: "Saving",
+      readTime: language === "hi" ? "3 मिनट" : "3 mins read",
+      importance: "Standard",
+      targetedWidget: "salary",
+      icon: <HelpCircle className="w-4 h-4 text-emerald-500" />,
+      en: {
+        title: "The Balanced 50-30-20 Rule: Designed for Indian Metropolitan Costs of Living",
+        summary: "Struggling to budget while paying high EMIs, inflation, and lifestyle expenses? Fit your salary into three simple, rigid compartments.",
+        content: [
+          "The traditional 50-30-20 rule formulated by Elizabeth Warren is a robust foundation to manage take-home income:",
+          "• 50% for Needs: Absolute essentials (house rent, utilities, food, school fees, current minimum EMIs).",
+          "• 30% for Wants: Personal style, electronics, weekend dining, travel, OTT subscriptions.",
+          "• 20% for Savings: Direct step-up SIPs, EPF/PPF contributions, emergency blocks, equity index investments.",
+          "In high-cost Indian cities like Bangalore, Mumbai, or Delhi, house rent can push Needs up to 60%. In such scenarios, aggressively pull down 'Wants' to 20% to keep your 20% compounding savings rate untouched.",
+          "Input your current figures in the Salary Planner to evaluate your personal structural health ratios."
+        ]
+      },
+      hi: {
+        title: "फ्यूचर-प्रूफ बजटिंग का 50-30-20 नियम: भारतीय शहरों के रहन-सहन का सही गणित",
+        summary: "महंगाई और फिजूलखर्ची के शोर में बजट बनाने में दिक्कत आ रही है? सीखें अपने वेतन को 3 बुनियादी हिस्सों में बांटने की सबसे सरल और असरदार वैज्ञानिक विधि।",
+        content: [
+          "दुनिया भर के वित्तीय विशेषज्ञों द्वारा सुझाया गया 50-30-20 नियम आपके वेतन को संतुलित करने का सबसे मजबूत पैमाना है:",
+          "• 50% 'जरूरतें' (Needs): अनिवार्य खर्च (किराया, राशन, बच्चों की फीस, न्यूनतम ईएमआई और इंश्योरेंस)।",
+          "• 30% 'चाहतें' (Wants): मनोरंजन, शौक, नए गैजेट्स, वीकेंड डिनर, यात्राएं और सब्सक्रिप्शन पैकेज।",
+          "• 20% 'बचत' (Savings): भविष्य की वेल्थ के लिए डायरेक्ट एसआईपी, पीपीएफ निवेश और गोल्ड सेविंग्स।",
+          "यदि मुंबई या बेंगलुरु जैसे महंगे शहरों में रहने के कारण आपका किराया जरूरत के हिस्से को 60% तक बढ़ा देता है, तो अपने 'चाहतों' के बजट को तुरंत घटाकर 10-15% करें ताकि आपकी 20% कम्पाउंडिंग बचत दर कतई प्रभावित न हो।"
+        ]
+      }
+    },
+    {
+      id: "art-19",
+      category: "Retirement",
+      readTime: language === "hi" ? "4 मिनट" : "4 mins read",
+      importance: "High",
+      targetedWidget: "retirement",
+      icon: <Sparkles className="w-4 h-4 text-amber-500" />,
+      en: {
+        title: "The EPFO Higher Pension Conundrum: Demystifying the Complex Options",
+        summary: "Should you opt for EPFO's higher pension plan by diverting massive funds from EPF? Review the critical trade-offs between cash-in-hand and regular pensions.",
+        content: [
+          "Under the EPFO Higher Pension scheme, employees can divert 8.33% of their actual basic salary (instead of a static capped wage ceiling of ₹15,000) directly to the Pension Scheme (EPS).",
+          "Pros: You secure a highly stable, life-long guaranteed pension linked heavily to your average salary drawn during the last 60 months of employment.",
+          "Cons: High diversion means a major reduction in your lump-sum tax-free EPF withdrawal corpus at age 58. Furthermore, EPS has no return-of-capital feature—if both employee and spouse pass away, the accumulated reserves vanish instead of passing to heirs as standard inheritance.",
+          "If you prefer absolute control over your retirement wealth, keeping money in EPF and investing independently in high-CAGR mutual funds is often the superior financial pathway."
+        ]
+      },
+      hi: {
+        title: "EPFO की अधिक पेंशन योजना (Higher Pension Option): फायदे और असल नुकसान की कड़वी सच्चाई",
+        summary: "क्या आपको जीवन भर की पेंशन के लालच में पीएफ से ज्यादा पैसा डाइवर्ट करना चाहिए? जानिए क्यों यह पेंशन स्कीम आपके बच्चों और उत्तराधिकारियों के लिए नुकसानदेह हो सकती है।",
+        content: [
+          "ईपीएफओ (EPFO) की अधिक पेंशन स्कीम में कर्मचारियों को बेसिक सैलरी के वास्तविक अनुपात (₹15,000 की वैधानिक सीमा से हटकर) में ईपीएस (EPS) पेंशन खाते में योगदान करने की स्वीकृति दी जाती है।",
+          "फायदा: इससे आपको रिटायरमेंट के समय आपके सर्विस के अंतिम 5 सालों की बेसिक सैलरी के आधार पर आजीवन बड़ी सरकारी पेंशन मिलना तय हो जाता है।",
+          "नुकसान: पेंशन के चक्कर में आपके रिटायरमेंट पर मिलने वाला एकमुश्त पीएफ पॉकेट का पैसा बेहद कम हो जाता है। इसके अलावा, दुर्भाग्यवश कर्मचारी और जीवनसाथी के निधन के बाद यह जमा पूंजी आपके बच्चों में नहीं बांटी जाती बल्कि समाप्त हो जाती है।",
+          "स्वतंत्र होकर वेल्थ कम्पाउंड करने और अपने वारिसों को मजबूत वसीयत सौंपने की इच्छा रखने वालों के लिए ईपीएफ फंड के साथ डायरेक्ट म्यूचुअल फंड का मेल सबसे बढ़िया विकल्प है।"
+        ]
+      }
+    },
+    {
+      id: "art-20",
+      category: "Retirement",
+      readTime: language === "hi" ? "4 मिनट" : "4 mins read",
+      importance: "High",
+      targetedWidget: "retirement",
+      icon: <Flame className="w-4 h-4 text-orange-500" />,
+      en: {
+        title: "The Indian FIRE Movement: Accelerate Financial Independence for Techies",
+        summary: "Burned out in software cycles? Discover how a disciplined 50%+ savings rate coupled with Nifty CAGR can trigger retirement in your 40s.",
+        content: [
+          "FIRE (Financial Independence, Retire Early) is rapidly expanding among Indian software graduates, corporate consultants, and private professionals.",
+          "To secure early retirement, you must compute your 'FIRE number' representing 30x to 40x of your actual annual expenses.",
+          "The Core Engine: If your annual expenses are ₹10 Lakhs, your fire corpus target is ₹3 to ₹4 Crores.",
+          "By lifestyle optimization and maintaining a strict 50% savings rate (meaning you save half of your take-home pay every month directly in low-cost index funds), you reach early retirement in less than 15-18 years.",
+          "Keep checking the Retirement Planner index to run multiple simulations of inflation adjustments and survival rates."
+        ]
+      },
+      hi: {
+        title: "भारतीय युवाओं के लिए तेजी से रिटायर होने (FIRE) का मार्ग: सपनों से हकीकत तक",
+        summary: "जॉब की थकान और कॉर्पोरेट प्रेशर से तंग आ चुके हैं? सीखें 40-45 वर्ष की आयु में वित्तीय आजादी और जॉब छोड़ने की वो अनूठी 'फायर' आंदोलन की रणनीति।",
+        content: [
+          "वित्तीय स्वतंत्रता और समय से पूर्व रिटायरमेंट (FIRE - Financial Independence, Retire Early) का विचार भारत के आईटी प्रोफेशनल्स और नौकरीपेशा युवाओं में तेजी से लोकप्रिय हो रहा है।",
+          "समय से पहले रिटायरमेंट लेने का मूल फार्मूला: आपके वार्षिक पारिवारिक खर्च का कम से कम 30 से 40 गुना कॉर्पस इकट्ठा होना अनिवार्य है।",
+          "यदि आपका सालाना खर्च ₹10 लाख है, तो आपकी वित्तीय आजादी का कड़ा लक्ष्य ₹3 से ₹4 करोड़ की संचित पूंजी का निर्माण होगा।",
+          "यदि आप वेतन मिलते ही कम से कम 50% भाग को अनुशासित रूप से इंडैक्स फंड्स में सीधे निवेश करते हैं, तो आप मात्र 15 से 16 वर्षों में पूर्ण वित्तीय आजादी प्राप्त कर सकते हैं।"
+        ]
+      }
+    },
+    {
+      id: "art-21",
+      category: "Investment",
+      readTime: language === "hi" ? "3 मिनट" : "3 mins read",
+      importance: "Standard",
+      targetedWidget: "health",
+      icon: <HelpCircle className="w-4 h-4 text-rose-500" />,
+      en: {
+        title: "Deciphering the CIBIL Score Algorithm: Raising It Above 780 Safely",
+        summary: "High credit card balances and missing EMIs can block future house/car loans. Discover simple habits that optimize your financial health reputation.",
+        content: [
+          "In India, a credit rating score from CIBIL (Credit Information Bureau India Limited) over 750 is considered good, while 780+ guarantees peak interest discounts on home loans.",
+          "How to safely structure and push your rating upward:",
+          "• Paying on time (35% impact): Set up auto-debit loops on all EMIs and credit cards. A single delay can drop your rating score by 40-50 points.",
+          "• Credit Utilization Ratio (30% impact): Keep card usage strictly capped below 30% of total limit. If your limit is ₹1 Lakh, do not cross ₹30,000 in monthly spends.",
+          "• Hard Enquiries: Avoid applying for multiple loan products simultaneously. Each rejection triggers a hard inquiry log that flags desperate behavior.",
+          "Calibrate credit cards with extreme discipline, and verify your buffer scores inside our CIBIL Tracker dashboard module."
+        ]
+      },
+      hi: {
+        title: "सिबिल (CIBIL) स्कोर सुधारने का पक्का तरीका: जानिए इसे 780 से ऊपर कैसे रखें",
+        summary: "क्रेडिट कार्ड का अधिक उपयोग और लोन न चुकाना आपके भविष्य के सस्ते कर्ज मिलने को ब्लॉक कर सकता है। सीक्रेट आदतों से सुधारें अपना फाइनेंशियल रिकॉर्ड।",
+        content: [
+          "भारत में सिबिल (CIBIL) स्कोर सिमुलेशन में 750 से ऊपर का स्कोर उत्तम माना जाता है, तथा 780 से अधिक रहने पर बैंकों द्वारा गोल्ड क्लास कैटेगरी का सबसे सस्ता होम लोन ब्याज मिलता है।",
+          "स्कोर सुधारने की वैज्ञानिक आदतें:",
+          "• समय पर भुगतान (35% महत्वपूर्ण): सभी मासिक किस्तों (EMI) और कार्ड भुगतानों को ऑटो-डेबिट मोड पर रखें। एक ही लेट पेमेंट सिबिल को 50 पॉइंट तक गिरा सकती है।",
+          "• क्रेडिट उपयोग अनुपात (30% महत्वपूर्ण): क्रेडिट सीमा के 30% से कम का ही उपयोग करें। अगर आपकी सीमा ₹1 लाख है, तो महीने में ₹30,000 से अधिक न खर्च करें।",
+          "पार्टनर टूल्स में जाकर अपने क्रेडिट रिकॉर्ड एवं सिबिल सिमुलेटर की तत्काल जांच करें।"
         ]
       }
     }
