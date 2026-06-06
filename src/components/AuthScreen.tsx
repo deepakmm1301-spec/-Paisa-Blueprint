@@ -194,7 +194,7 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
 
   const handleContinueAsGuest = () => {
     onLoginSuccess(
-      { name: "Deepak Kumar", email: "paisa.mm1301@gmail.com" },
+      { name: "Deepak Kumar (Scenario Model)", email: "paisa.mm1301@gmail.com" },
       [{ ...defaultProfile, id: "profile-main" }],
       "profile-main"
     );
@@ -362,7 +362,7 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Deepak Kumar"
+                    placeholder="e.g. Deepak Kumar (Scenario Model)"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm"
@@ -399,7 +399,7 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
                   <input
                     type="email"
                     required
-                    placeholder="e.g. deepak@paisa.in"
+                    placeholder="e.g. scenario@paisa.in"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm"

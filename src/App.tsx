@@ -69,7 +69,7 @@ const initialInvestments: InvestmentDetails = {
 };
 
 const defaultProfile: UserProfile = {
-  name: "Deepak Kumar",
+  name: "Deepak Kumar (Scenario Model)",
   age: 32,
   retirementAge: 60,
   salary: 75000, // Monthly general base
@@ -120,7 +120,7 @@ export default function App() {
         console.error("Failed to parse active session", err);
       }
     }
-    return { name: "Deepak Kumar", email: "paisa.mm1301@gmail.com" };
+    return { name: "Deepak Kumar (Scenario Model)", email: "paisa.mm1301@gmail.com" };
   });
 
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -865,7 +865,7 @@ export default function App() {
                             onClick={() => {
                               setIsProfileDropdownOpen(false);
                               if (window.confirm("Do you want to sign out of your cloud session? Your active profiles will remain in this browser cache.")) {
-                                setSessionUser({ name: "Deepak Kumar", email: "paisa.mm1301@gmail.com" });
+                                setSessionUser({ name: "Deepak Kumar (Scenario Model)", email: "paisa.mm1301@gmail.com" });
                               }
                             }}
                             className="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 border border-rose-100 text-rose-700 font-extrabold text-[11px] rounded-lg transition-all flex items-center gap-1 hover:text-rose-800 cursor-pointer"
@@ -1080,7 +1080,7 @@ export default function App() {
                         });
                       }}
                       className="bg-slate-950 border border-slate-800 focus:border-emerald-500 rounded-xl px-3 py-1.5 text-left w-full text-white text-xs font-mono outline-hidden"
-                      placeholder="e.g. Deepak Portfolios"
+                      placeholder="e.g. Scenario Portfolios"
                     />
                   </div>
 

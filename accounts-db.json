@@ -1,12 +1,12 @@
 [
   {
     "email": "advisor@paisa.in",
-    "name": "Deepak Kumar",
+    "name": "Deepak Kumar (Scenario Model)",
     "passwordHash": "paisa",
     "profilesList": [
       {
         "id": "profile-main",
-        "name": "Deepak Kumar",
+        "name": "Deepak Kumar (Scenario Model)",
         "age": 32,
         "salary": 150000,
         "monthlyExpenses": 60000,
@@ -35,11 +35,11 @@
   },
   {
     "email": "paisa.mm1301@gmail.com",
-    "name": "DEEPAK KUMAR",
+    "name": "DEEPAK KUMAR (SCENARIO MODEL)",
     "passwordHash": "Deep@1357",
     "profilesList": [
       {
-        "name": "DEEPAK KUMAR",
+        "name": "DEEPAK KUMAR (SCENARIO MODEL)",
         "age": 32,
         "retirementAge": 60,
         "salary": 75000,

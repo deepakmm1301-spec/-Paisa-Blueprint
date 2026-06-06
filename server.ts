@@ -28,12 +28,12 @@ interface ServerUserAccount {
 // Initial seed
 const DEFAULT_ACCOUNT: ServerUserAccount = {
   email: "advisor@paisa.in",
-  name: "Deepak Kumar",
+  name: "Deepak Kumar (Scenario Model)",
   passwordHash: "paisa",
   profilesList: [
     {
       id: "profile-main",
-      name: "Deepak Kumar",
+      name: "Deepak Kumar (Scenario Model)",
       age: 32,
       salary: 150000,
       monthlyExpenses: 60000,
