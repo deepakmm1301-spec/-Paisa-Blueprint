@@ -228,6 +228,18 @@ export function FooterSections() {
                   <span>Contact Us</span>
                 </button>
               </li>
+              <li>
+                <button 
+                  onClick={() => {
+                    const message = "Check out Paisa Blueprint - The Indian salaried personal finance adviser! Formulate your portfolio, optimize tax, simulate SIP and retirement targets. Try it live at: " + window.location.href;
+                    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, "_blank");
+                  }}
+                  className="hover:text-emerald-400 text-slate-400 text-left transition-all cursor-pointer inline-flex items-center gap-1 hover:translate-x-0.5"
+                >
+                  <ArrowRight className="w-2.5 h-2.5 opacity-60 text-emerald-450" />
+                  <span className="text-emerald-450 font-extrabold">Share App to WhatsApp 🚀</span>
+                </button>
+              </li>
             </ul>
           </div>
 
