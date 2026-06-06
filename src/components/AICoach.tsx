@@ -31,9 +31,24 @@ Here are some helpful presets you can ask me, or type your own question below:`,
   
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  const [serverHasKey, setServerHasKey] = useState<boolean | null>(null);
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    fetch("/api/chat/status")
+      .then((res) => res.json())
+      .then((data) => {
+        if (typeof data.hasApiKey === "boolean") {
+          setServerHasKey(data.hasApiKey);
+        }
+      })
+      .catch((err) => {
+        console.error("Error checking assistant server status:", err);
+      });
+  }, []);
 
   const handleSend = async (textToSend: string) => {
     if (!textToSend.trim() || loading) return;
@@ -233,6 +248,45 @@ Here are some helpful presets you can ask me, or type your own question below:`,
                 Clear
               </button>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Embedded API key instructions when missing both on server and locally */}
+      {serverHasKey === false && !customApiKey && (
+        <div className="bg-amber-50 border-b border-amber-200 p-4 text-xs text-amber-800 animate-fade-in shrink-0">
+          <div className="flex items-start gap-2.5">
+            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <span className="font-bold text-amber-950 block">AI Financial Coach Offline (API Key Needed)</span>
+              <p className="text-slate-600 mt-1 leading-relaxed">
+                The hosting server's <code>GEMINI_API_KEY</code> environment secret is not configured yet. 
+                Configure it in <strong>Settings → Secrets</strong>, or enter your personal Gemini API Key below to activate the coach immediately:
+              </p>
+              <div className="flex gap-2 mt-3 max-w-md">
+                <input
+                  type="password"
+                  placeholder="Paste your API key here (AIzaSy...)"
+                  className="bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs flex-1 focus:outline-none focus:border-bhagwa-500 font-mono text-slate-800"
+                  onChange={(e) => setInputKey(e.target.value)}
+                  value={inputKey}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const trimmed = inputKey.trim();
+                    if (trimmed) {
+                      setCustomApiKey(trimmed);
+                      localStorage.setItem("paisa_user_gemini_key", trimmed);
+                      setErrorStatus(null);
+                    }
+                  }}
+                  className="bg-bhagwa-600 hover:bg-bhagwa-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer shrink-0"
+                >
+                  Save Key
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
