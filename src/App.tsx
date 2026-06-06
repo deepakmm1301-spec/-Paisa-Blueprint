@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { UserProfile, LoanDetails, InvestmentDetails } from "./types";
 import FinancialHealthCheck from "./components/FinancialHealthCheck";
 import SalaryPlanner from "./components/SalaryPlanner";
@@ -97,6 +97,15 @@ type ActiveWidget =
   | "cibil";
 
 export default function App() {
+  const [showWelcomePopup, setShowWelcomePopup] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowWelcomePopup(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Lock to prevent overwriting server-side state during profile loading race conditions
   const [isLoadingProfiles, setIsLoadingProfiles] = useState(false);
 
@@ -584,6 +593,80 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50/50 flex flex-col justify-between text-slate-800 antialiased font-sans">
+      {/* 2-Second Welcome Note Popup Overlay */}
+      <AnimatePresence>
+        {showWelcomePopup && (
+          <motion.div
+            id="welcome-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md"
+          >
+            <motion.div
+              id="welcome-card"
+              initial={{ scale: 0.9, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.95, y: -10, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 350 }}
+              className="relative max-w-sm w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl text-center overflow-hidden"
+            >
+              {/* Premium Background Glow FX */}
+              <div className="absolute -top-16 -left-16 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute -bottom-16 -right-16 w-36 h-36 bg-orange-500/10 rounded-full blur-2xl pointer-events-none" />
+
+              <div className="relative flex flex-col items-center gap-4">
+                {/* Brand Logo & Decorative Accent */}
+                <div className="h-14 w-14 rounded-2xl bg-gradient-to-tr from-slate-950 to-slate-800 flex items-center justify-center shadow-lg border border-slate-700/50">
+                  <img
+                    src={paisaLogo}
+                    alt="Paisa Blueprint"
+                    className="w-10 h-10 object-cover shrink-0"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <h3 className="text-xl font-extrabold text-white tracking-tight uppercase font-display">
+                    Paisa Blueprint
+                  </h3>
+                  <div className="flex items-center justify-center gap-1.5">
+                    <span className="text-[9px] font-extrabold uppercase bg-emerald-500 text-white px-1.5 py-0.5 rounded-sm">
+                      Salaried 🇮🇳
+                    </span>
+                    <span className="text-[10px] font-medium text-slate-400">
+                      Smart Personal Finance
+                    </span>
+                  </div>
+                </div>
+
+                {/* Core Welcome Announcement */}
+                <div className="mt-2 space-y-1">
+                  <p className="text-base font-bold text-slate-100">
+                    Thank You For Visiting Us!
+                  </p>
+                  <p className="text-xs text-slate-400 max-w-xs leading-relaxed">
+                    Loading your personalized salaried financial workspace. Get ready to compound savings, optimize taxes, and map out your dynamic wealth targets.
+                  </p>
+                </div>
+
+                {/* 2-Second Linear Animation Progress Indicator bar */}
+                <div className="w-full h-1.5 bg-slate-800/80 rounded-full overflow-hidden mt-3">
+                  <motion.div
+                    id="welcome-progress"
+                    initial={{ width: "0%" }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: 2, ease: "linear" }}
+                    className="h-full bg-gradient-to-r from-emerald-500 via-orange-500 to-emerald-500"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Top Main Navigation Bar */}
       <header className="bg-white border-b border-slate-100 sticky top-0 z-40 backdrop-blur-md bg-white/90">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
