@@ -106,6 +106,57 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Automatic client-side cache migration to ensure "Scenario Model" label changes are rendered instantly
+  useEffect(() => {
+    try {
+      const activeSess = localStorage.getItem("paisa_active_session");
+      if (activeSess) {
+        const parsed = JSON.parse(activeSess);
+        if (parsed && parsed.email) {
+          let updated = false;
+          if (parsed.name === "Deepak Kumar" || parsed.name === "Scenario Model") {
+            parsed.name = "Deepak Kumar (Scenario Model)";
+            updated = true;
+          } else if (parsed.name === "DEEPAK KUMAR" || parsed.name === "SCENARIO MODEL") {
+            parsed.name = "DEEPAK KUMAR (SCENARIO MODEL)";
+            updated = true;
+          }
+          if (updated) {
+            localStorage.setItem("paisa_active_session", JSON.stringify(parsed));
+            setSessionUser(parsed);
+          }
+        }
+      }
+
+      setProfiles(prevProfiles => {
+        let changed = false;
+        const updated = prevProfiles.map(p => {
+          if (p.name === "Deepak Kumar" || p.name === "Scenario Model") {
+            changed = true;
+            return { ...p, name: "Deepak Kumar (Scenario Model)" };
+          }
+          if (p.name === "DEEPAK KUMAR" || p.name === "SCENARIO MODEL") {
+            changed = true;
+            return { ...p, name: "DEEPAK KUMAR (SCENARIO MODEL)" };
+          }
+          return p;
+        });
+        if (changed) {
+          // Sync migrated profiles back to localStorage
+          if (activeSess) {
+            const parsed = JSON.parse(activeSess);
+            localStorage.setItem(`paisa_family_profiles_list_${parsed.email.toLowerCase()}`, JSON.stringify(updated));
+          }
+          localStorage.setItem("paisa_family_profiles_list", JSON.stringify(updated));
+          return updated;
+        }
+        return prevProfiles;
+      });
+    } catch (err) {
+      console.warn("Client-side migration warning:", err);
+    }
+  }, []);
+
   // Lock to prevent overwriting server-side state during profile loading race conditions
   const [isLoadingProfiles, setIsLoadingProfiles] = useState(false);
 
