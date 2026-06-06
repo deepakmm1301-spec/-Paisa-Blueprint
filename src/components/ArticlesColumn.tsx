@@ -35,6 +35,74 @@ export default function ArticlesColumn({ onNavigateToWidget, userMonthlySalary }
 
   const articles: Article[] = [
     {
+      id: "bpsc-teach-1",
+      category: "Saving",
+      readTime: language === "hi" ? "4 मिनट" : "4 mins read",
+      importance: "Critical",
+      targetedWidget: "salary",
+      icon: <Milestone className="w-4 h-4 text-emerald-500" />,
+      en: {
+        title: "BPSC Teacher Salary Structure (Classes 1 to 8): Complete Breakdown",
+        summary: "Are you preparing for or recruited in Bihar BPSC TRE Class 1-8? Learn about basic pay (₹25k-₹28k), Dearness Allowance (DA), HRA, Medical allowance, and NPS savings.",
+        content: [
+          "BPSC Primary Teachers (Classes 1-5) start with a Basic Pay of ₹25,000, while Middle School Teachers (Classes 6-8) have a Basic Pay of ₹28,000.",
+          "On top of the Basic Pay, Bihar Government pays Dearness Allowance (DA) (currently at 50% of basic pay), House Rent Allowance (HRA) (ranging between 4%, 8%, 16% depending on rural, semi-urban, or metro posting), and a fixed Medical Allowance of ₹1,000 per month.",
+          "Let's calculate the Gross and In-hand Salary structures:",
+          "• For Primary Teacher (Classes 1-5): Basic ₹25,000 + DA ₹12,500 + HRA (at 8% urban rate) ₹2,000 + Medical ₹1,000 = Gross Salary of ₹40,500.",
+          "• For Middle Teacher (Classes 6-8): Basic ₹28,000 + DA ₹14,000 + HRA (at 8% urban rate) ₹2,240 + Medical ₹1,000 = Gross Salary of ₹45,240.",
+          "Deductions: Contribution to the National Pension Scheme (NPS) is mandatory at 10% of (Basic + DA), which amounts to ₹3,750 for primary teachers and ₹4,200 for middle schools. State insurance (GIS) of ₹30 is also deducted.",
+          "Net In-Hand Payouts: Approximately ₹36,720 for Primary Teachers and ₹41,010 for Middle School Teachers under rural-to-urban standard post. Learn how to allocate these earnings in our Salary Planner!"
+        ]
+      },
+      hi: {
+        title: "BPSC शिक्षक वेतन संरचना (कक्षा 1 से 8): मूल वेतन, महंगाई भत्ता (DA) और पूरी गणना",
+        summary: "क्या आप बिहार BPSC TRE 1-8 परीक्षा की तैयारी कर रहे हैं? जानिए मूल वेतन (₹25,000-₹28,000), महंगाई भत्ता (DA), मकान किराया (HRA), चिकित्सा भत्ता और NPS कटौती का विवरण।",
+        content: [
+          "BPSC प्राथमिक शिक्षकों (कक्षा 1-5) का मूल वेतन ₹25,000 से शुरू होता है, जबकि मध्य विद्यालय शिक्षकों (कक्षा 6-8) का शुरुआती मूल वेतन ₹28,000 है।",
+          "इस मूल वेतन के अलावा, बिहार सरकार महंगाई भत्ता (DA) (वर्तमान में मूल वेतन का 50%), मकान किराया भत्ता (HRA) (ग्रामीण, अर्ध-शहरी या मेट्रो स्तर के आधार पर 4%, 8%, 16%) और ₹1,000 मासिक चिकित्सा भत्ता देती है।",
+          "आइए कुल ग्रॉस तथा इन-हैंड वेतन संरचना की गणना देखें (8% शहरी HRA मानते हुए):",
+          "• प्राथमिक शिक्षक (कक्षा 1-5): मूल वेतन ₹25,000 + DA ₹12,500 + HRA ₹2,000 + चिकित्सा ₹1,000 = कुल ग्रॉस वेतन ₹40,500।",
+          "• मध्य शिक्षक (कक्षा 6-8): मूल वेतन ₹28,000 + DA ₹14,000 + HRA ₹2,240 + चिकित्सा ₹1,000 = कुल ग्रॉस वेतन ₹45,240।",
+          "कटौतियां: राष्ट्रीय पेंशन योजना (NPS) में योगदान (मूल वेतन + DA का 10%) अनिवार्य है, जो प्राथमिक शिक्षकों के लिए ₹3,750 और मध्य विद्यालय शिक्षकों के लिए ₹4,200 है। ₹30 का राज्य समूह बीमा (GIS) भी काटा जाता है।",
+          "वास्तविक इन-हैंड सैलरी: प्राथमिक शिक्षकों को लगभग ₹36,720 और मध्य विद्यालय शिक्षकों को लगभग ₹41,010 मिलते हैं। इस सैलरी को बेहतर तरीके से प्रबंधित करने के लिए हमारे सैलरी प्लानर का उपयोग करें!"
+        ]
+      }
+    },
+    {
+      id: "bpsc-teach-2",
+      category: "Retirement",
+      readTime: language === "hi" ? "4 मिनट" : "4 mins read",
+      importance: "Critical",
+      targetedWidget: "salary",
+      icon: <Sparkles className="w-4 h-4 text-amber-500" />,
+      en: {
+        title: "BPSC TGT & PGT High School Teacher Salary Breakdown (Classes 9 to 12)",
+        summary: "Discover the detailed pay structure for Class 9-10 (TGT) and Class 11-12 (PGT) teachers recruited under BPSC TRE. Includes NPS pensions and HRA perks.",
+        content: [
+          "BPSC Secondary School Teachers (TGT Classes 9-10) start with a Basic Pay of ₹31,000, while Higher Secondary Teachers (PGT Classes 11-12) command a Basic Pay of ₹32,000.",
+          "Just like primary schools, high school teachers enjoy a 50% Dearness Allowance (DA), HRA (4% to 16%), and ₹1,000 medical allowances, yielding stronger cash compensation.",
+          "Let's compute the monthly earning ledger (assuming standard 8% HRA zone):",
+          "• TGT High School Teacher (Classes 9-10): Basic ₹31,000 + DA ₹15,500 + HRA ₹2,480 + Medical ₹1,000 = Gross Salary of ₹49,980.",
+          "• PGT Higher Secondary Teacher (Classes 11-12): Basic ₹32,000 + DA ₹16,000 + HRA ₹2,560 + Medical ₹1,000 = Gross Salary of ₹51,560.",
+          "Compulsory Pension Deductions: NPS deduction at 10% of (Basic + DA) accounts for ₹4,650 for TGTs and ₹4,800 for PGTs. Additionally, the Government of Bihar matches with a generous 14% NPS contribution (added directly to your Tier 1 pension ledger).",
+          "Total Net In-Hand Salary: TGT teachers take home approx ₹45,300 per month, while higher secondary PGT post-holders clean up approx ₹46,730 per month. Check your compounding pension corpus using our Retirement limits tab."
+        ]
+      },
+      hi: {
+        title: "BPSC TGT और PGT हाई स्कूल शिक्षक वेतन: कक्षा 9 से 12 तक पूरा ब्यौरा",
+        summary: "BPSC TRE के तहत नियुक्त होने वाले कक्षा 9-10 (TGT) और कक्षा 11-12 (PGT) शिक्षकों के वेतनमान, महंगाई भत्ता, एनपीएस पेंशन स्कीम तथा मकान किराए भत्ते की संपूर्ण जानकारी।",
+        content: [
+          "BPSC माध्यमिक विद्यालय शिक्षकों (TGT कक्षा 9-10) का मूल वेतन ₹31,000 से शुरू होता है, जबकि उच्च माध्यमिक शिक्षकों (PGT कक्षा 11-12) का मूल वेतन ₹32,000 है।",
+          "हाई स्कूल शिक्षकों को 50% महंगाई भत्ता (DA) मिलता है, तथा नियुक्ति स्थान के अनुसार 4% से 16% तक मकान किराया भत्ता (HRA) व ₹1,000 चिकित्सा भत्ता प्रदान किया जाता है।",
+          "आइए मासिक ग्रॉस वेतन की विस्तृत गणना देखें (8% शहरी HRA के अनुसार):",
+          "• TGT हाई स्कूल शिक्षक (कक्षा 9-10): मूल वेतन ₹31,000 + DA ₹15,500 + HRA ₹2,480 + चिकित्सा ₹1,000 = ग्रॉस सैलरी ₹49,980।",
+          "• PGT उच्च माध्यमिक शिक्षक (कक्षा 11-12): मूल वेतन ₹32,000 + DA ₹16,000 + HRA ₹2,560 + चिकित्सा ₹1,000 = ग्रॉस सैलरी ₹51,560।",
+          "एनपीएस पेंशन कटौती: मूल वेतन + DA का 10% अनिवार्य एनपीएस खाता कटौती है। यानी TGT के खाते से ₹4,650 तथा PGT के खाते से ₹4,800 कटते हैं। इसके संरेखित बिहार सरकार भी 14% अतिरिक्त नियोक्ता योगदान सीधे आपके NPS खाते में जमा करती है।",
+          "वास्तविक इन-हैंड नेट सैलरी: TGT शिक्षकों को लगभग ₹45,300 और PGT शिक्षकों को लगभग ₹46,730 मासिक प्राप्त होते हैं। भविष्य की बचत और निवेश की योजना बनाने के लिए हमारे टूल्स का लाभ लें!"
+        ]
+      }
+    },
+    {
       id: "art-1",
       category: "Investment",
       readTime: language === "hi" ? "4 मिनट" : "4 mins read",
