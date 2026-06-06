@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   X, 
   Info, 
@@ -11,15 +11,39 @@ import {
   Heart, 
   ArrowRight,
   Sparkles,
-  Award
+  Award,
+  Users
 } from "lucide-react";
 
 type FooterTab = "about" | "contact" | "privacy" | "disclaimer" | "terms" | null;
 
 export function FooterSections() {
   const [activeTab, setActiveTab] = useState<FooterTab>(null);
+  const [visitorCount, setVisitorCount] = useState<number | null>(null);
 
   const closeModal = () => setActiveTab(null);
+
+  useEffect(() => {
+    // Record page view on load
+    fetch("/api/visitors/hit", { method: "POST" })
+      .then((res) => res.json())
+      .then((data) => {
+        if (typeof data.count === "number") {
+          setVisitorCount(data.count);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to post visitor hit, fetching count via GET fallback...", err);
+        fetch("/api/visitors")
+          .then((res) => res.json())
+          .then((data) => {
+            if (typeof data.count === "number") {
+              setVisitorCount(data.count);
+            }
+          })
+          .catch((e) => console.error("Could not fetch visitors", e));
+      });
+  }, []);
 
   // Render content dynamically based on the clicked link
   const renderContent = () => {
@@ -253,6 +277,49 @@ export function FooterSections() {
             </ul>
           </div>
 
+        </div>
+
+        {/* Visitor Counter Section */}
+        <div id="footer-visitors-section" className="mb-8 pt-6 border-t border-slate-900/65 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="text-center sm:text-left">
+            <span className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-emerald-400 font-mono block">
+              THANK YOU FOR VISITING US
+            </span>
+            <span className="text-[10px] text-slate-500 font-sans mt-0.5 block">
+              Your personalized, private salaried income helper cockpit.
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3 bg-slate-900/40 px-4 py-2.5 rounded-2xl border border-slate-900 shadow-lg">
+            <div className="flex flex-col items-end">
+              <span className="text-[9px] font-black uppercase tracking-wider text-slate-450 font-mono">
+                TOTAL VISITORS
+              </span>
+              <span className="text-[8px] text-slate-500 font-mono uppercase">
+                (as counting)
+              </span>
+            </div>
+            <div className="h-6 w-[1px] bg-slate-800" />
+            <div className="flex items-center gap-1.5">
+              <Users className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
+              {visitorCount !== null ? (
+                <div className="flex gap-1 animate-fadeIn">
+                  {String(visitorCount)
+                    .split("")
+                    .map((digit, idx) => (
+                      <span
+                        key={idx}
+                        className="inline-flex items-center justify-center w-5.5 h-7 bg-slate-950 text-emerald-400 rounded-md border border-slate-800 font-mono text-xs font-black shadow-md"
+                      >
+                        {digit}
+                      </span>
+                    ))}
+                </div>
+              ) : (
+                <span className="text-[10px] text-slate-500 font-mono animate-pulse">Counting...</span>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Bottom Credits */}
