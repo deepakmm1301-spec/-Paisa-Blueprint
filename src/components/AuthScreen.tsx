@@ -73,7 +73,12 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
     setSuccessMsg("");
     
     if (!password) {
-      setError("Please input your password.");
+      setError(authMethod === "phone" ? "Please input your 4-digit passcode." : "Please input your password.");
+      return;
+    }
+
+    if (authMethod === "phone" && !/^\d{4}$/.test(password)) {
+      setError("Please enter a valid 4-digit numeric passcode.");
       return;
     }
 
@@ -88,7 +93,7 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Password matched inaccurately or locker does not exist.");
+        throw new Error(data.error || (authMethod === "phone" ? "Passcode matched inaccurately or locker does not exist." : "Password matched inaccurately or locker does not exist."));
       }
 
       setSuccessMsg("Locker file authenticated! Launching financial engine...");
@@ -117,15 +122,22 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
       return;
     }
     if (!password) {
-      setError("Please declare a secure account password.");
+      setError(authMethod === "phone" ? "Please declare a secure 4-digit passcode." : "Please declare a secure account password.");
       return;
     }
-    if (password.length < 5) {
-      setError("For safety, use at least 5 character symbols.");
-      return;
+    if (authMethod === "phone") {
+      if (!/^\d{4}$/.test(password)) {
+        setError("For phone signups, your passcode must be exactly 4 digits (0-9).");
+        return;
+      }
+    } else {
+      if (password.length < 5) {
+        setError("For safety, use at least 5 character symbols.");
+        return;
+      }
     }
     if (password !== confirmPassword) {
-      setError("Passwords confirmed do not match. Check spelling.");
+      setError(authMethod === "phone" ? "Passcodes confirmed do not match. Check spelling." : "Passwords confirmed do not match. Check spelling.");
       return;
     }
 
@@ -425,17 +437,36 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
               {/* Password Input */}
               <div className="space-y-1">
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                  Password
+                  {authMethod === "phone" ? "4-Digit Passcode" : "Password"}
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                   <input
                     type={showPassword ? "text" : "password"}
                     required
-                    placeholder={isRegistered ? "Enter account password" : "Define password (min 5 symbols)"}
+                    maxLength={authMethod === "phone" ? 4 : undefined}
+                    pattern={authMethod === "phone" ? "\\d{4}" : undefined}
+                    inputMode={authMethod === "phone" ? "numeric" : undefined}
+                    placeholder={
+                      authMethod === "phone"
+                        ? isRegistered
+                          ? "Enter 4-digit passcode"
+                          : "Define 4-digit passcode (numbers only)"
+                        : isRegistered
+                        ? "Enter account password"
+                        : "Define password (min 5 symbols)"
+                    }
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-10 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm"
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (authMethod === "phone") {
+                        const cleaned = val.replace(/\D/g, "");
+                        setPassword(cleaned);
+                      } else {
+                        setPassword(val);
+                      }
+                    }}
+                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-10 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm font-mono tracking-widest"
                   />
                   <button
                     type="button"
@@ -451,17 +482,28 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
               {!isRegistered && (
                 <div className="space-y-1 animate-fade-in">
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                    Confirm Password
+                    {authMethod === "phone" ? "Confirm 4-Digit Passcode" : "Confirm Password"}
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                     <input
                       type="password"
                       required
-                      placeholder="Re-verify password"
+                      maxLength={authMethod === "phone" ? 4 : undefined}
+                      pattern={authMethod === "phone" ? "\\d{4}" : undefined}
+                      inputMode={authMethod === "phone" ? "numeric" : undefined}
+                      placeholder={authMethod === "phone" ? "Re-verify 4-digit passcode" : "Re-verify password"}
                       value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm"
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (authMethod === "phone") {
+                          const cleaned = val.replace(/\D/g, "");
+                          setConfirmPassword(cleaned);
+                        } else {
+                          setConfirmPassword(val);
+                        }
+                      }}
+                      className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm font-mono tracking-widest"
                     />
                   </div>
                 </div>
