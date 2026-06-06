@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Lock, Mail, User, ShieldCheck, Sparkles, LogIn, UserPlus, ArrowRight, Eye, EyeOff, ChevronLeft, RefreshCw, Phone } from "lucide-react";
+import { Lock, Mail, User, ShieldCheck, Sparkles, LogIn, UserPlus, ArrowRight, Eye, EyeOff, ChevronLeft, Phone } from "lucide-react";
 // @ts-ignore
 import paisaLogo from "../assets/images/deep_paisa_logo_1780484307855.png";
 
@@ -9,13 +9,15 @@ interface AuthScreenProps {
 }
 
 export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScreenProps) {
-  // Common inputs & state
-  const [authMethod, setAuthMethod] = useState<"email" | "phone">("email");
+  // Main Tab State: "signin" | "signup"
+  const [activeTab, setActiveTab] = useState<"signin" | "signup">("signin");
+  
+  // Auth Method within files: "email" | "phone"
+  const [authMethod, setAuthMethod] = useState<"email" | "phone">("phone"); // default to phone as requested
+  
+  // Fields & Inputs
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [emailChecked, setEmailChecked] = useState(false);
-  const [isRegistered, setIsRegistered] = useState(false);
-  
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -25,15 +27,29 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
   const [successMsg, setSuccessMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Dynamic step detection: checks standard network registry for matching email/phone
-  const handleCheckEmail = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+  // Clear states when toggling tabs
+  const handleTabChange = (tab: "signin" | "signup") => {
+    setActiveTab(tab);
     setError("");
     setSuccessMsg("");
-    
+    setPassword("");
+    setConfirmPassword("");
+  };
+
+  // Perform secure sign-up
+  const handleSignUpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSuccessMsg("");
+
+    if (!name.trim()) {
+      setError("Please key in your full name for the master portfolio profile.");
+      return;
+    }
+
     const valueStr = authMethod === "email" ? email.trim() : phone.trim();
     if (!valueStr) {
-      setError(authMethod === "email" ? "Please key in your email address." : "Please key in your phone number.");
+      setError(authMethod === "email" ? "Please enter your email address." : "Please enter your phone number.");
       return;
     }
 
@@ -44,36 +60,94 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
       }
     } else {
       const digitsOnly = valueStr.replace(/\D/g, "");
-      if (digitsOnly.length < 10 || digitsOnly.length > 13) {
+      if (digitsOnly.length < 10) {
         setError("Please enter a valid 10-digit mobile number.");
         return;
       }
     }
 
+    if (!password) {
+      setError(authMethod === "phone" ? "Please define your secure 4-digit passcode." : "Please define a secure password.");
+      return;
+    }
+
+    if (authMethod === "phone") {
+      if (!/^\d{4}$/.test(password)) {
+        setError("Your passcode must be exactly 4 digits (0-9).");
+        return;
+      }
+    } else {
+      if (password.length < 5) {
+        setError("For safety, your password must contain at least 5 characters.");
+        return;
+      }
+    }
+
+    if (password !== confirmPassword) {
+      setError(authMethod === "phone" ? "Passcodes entered do not match. Check spelling." : "Passwords entered do not match. Check spelling.");
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/auth/check-email?email=${encodeURIComponent(valueStr)}`);
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: authMethod === "email" ? valueStr : "",
+          phone: authMethod === "phone" ? valueStr : "",
+          name: name.trim(),
+          password,
+          defaultProfile
+        })
+      });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Paisa center ledger query failed.");
+        throw new Error(data.error || "Registry error setting up files.");
       }
-      setIsRegistered(data.registered);
-      setEmailChecked(true);
+
+      setSuccessMsg("Locker file registered and seeded successfully! Logging in...");
+      setTimeout(() => {
+        onLoginSuccess(
+          { name: data.user.name, email: data.user.email },
+          data.user.profilesList || [{ ...defaultProfile, id: "profile-main" }],
+          data.user.activeProfileId || "profile-main"
+        );
+      }, 800);
     } catch (err: any) {
-      setError(err.message || "Failed to reach the Paisa central directory.");
+      setError(err.message || "Failed to create your database locker.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Perform standard secure sign in
-  const handleLogin = async (e: React.FormEvent) => {
+  // Perform secure sign-in
+  const handleSignInSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccessMsg("");
-    
+
+    const valueStr = authMethod === "email" ? email.trim() : phone.trim();
+    if (!valueStr) {
+      setError(authMethod === "email" ? "Please enter your email address." : "Please enter your phone number.");
+      return;
+    }
+
+    if (authMethod === "email") {
+      if (!valueStr.includes("@") || valueStr.length < 5) {
+        setError("Please present a valid standard Email format.");
+        return;
+      }
+    } else {
+      const digitsOnly = valueStr.replace(/\D/g, "");
+      if (digitsOnly.length < 10) {
+        setError("Please enter a valid 10-digit mobile number.");
+        return;
+      }
+    }
+
     if (!password) {
-      setError(authMethod === "phone" ? "Please input your 4-digit passcode." : "Please input your password.");
+      setError(authMethod === "phone" ? "Please type in your 4-digit passcode." : "Please type in your password.");
       return;
     }
 
@@ -81,8 +155,6 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
       setError("Please enter a valid 4-digit numeric passcode.");
       return;
     }
-
-    const valueStr = authMethod === "email" ? email.trim() : phone.trim();
 
     setIsLoading(true);
     try {
@@ -93,7 +165,7 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || (authMethod === "phone" ? "Passcode matched inaccurately or locker does not exist." : "Password matched inaccurately or locker does not exist."));
+        throw new Error(data.error || (authMethod === "phone" ? "Locker matched incorrectly or does not exist." : "Password matched incorrectly or locker does not exist."));
       }
 
       setSuccessMsg("Locker file authenticated! Launching financial engine...");
@@ -111,85 +183,13 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
     }
   };
 
-  // Perform standard secure signup
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setSuccessMsg("");
-
-    if (!name.trim()) {
-      setError("Please present your full name for the master portfolio profile.");
-      return;
-    }
-    if (!password) {
-      setError(authMethod === "phone" ? "Please declare a secure 4-digit passcode." : "Please declare a secure account password.");
-      return;
-    }
-    if (authMethod === "phone") {
-      if (!/^\d{4}$/.test(password)) {
-        setError("For phone signups, your passcode must be exactly 4 digits (0-9).");
-        return;
-      }
-    } else {
-      if (password.length < 5) {
-        setError("For safety, use at least 5 character symbols.");
-        return;
-      }
-    }
-    if (password !== confirmPassword) {
-      setError(authMethod === "phone" ? "Passcodes confirmed do not match. Check spelling." : "Passwords confirmed do not match. Check spelling.");
-      return;
-    }
-
-    const valueStr = authMethod === "email" ? email.trim() : phone.trim();
-
-    setIsLoading(true);
-    try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: authMethod === "email" ? valueStr : "",
-          phone: authMethod === "phone" ? valueStr : "",
-          name: name.trim(),
-          password,
-          defaultProfile
-        })
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Centrex registration rejected.");
-      }
-
-      setSuccessMsg("Locker file registered and seeded successfully! Logging in...");
-      setTimeout(() => {
-        onLoginSuccess(
-          { name: data.user.name, email: data.user.email },
-          data.user.profilesList,
-          data.user.activeProfileId
-        );
-      }, 800);
-    } catch (err: any) {
-      setError(err.message || "Error setting up your database files.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const loadPromoCreds = () => {
     setError("");
     setSuccessMsg("");
+    setActiveTab("signin");
     setAuthMethod("email");
     setEmail("advisor@paisa.in");
     setPassword("paisa");
-    setIsRegistered(true);
-    setEmailChecked(true);
-  };
-
-  const handleResetEmail = () => {
-    setEmailChecked(false);
-    setError("");
-    setSuccessMsg("");
   };
 
   const handleContinueAsGuest = () => {
@@ -260,19 +260,46 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
         {/* Right Aspect: Authentication Interactive Dynamic Panel */}
         <div className="md:col-span-7 p-8 md:p-12 flex flex-col justify-center space-y-6 bg-slate-900/20">
           
-          <div>
-            <h2 className="text-2xl font-bold text-white tracking-tight">
-              {!emailChecked ? "Access Portfolio Locker" : isRegistered ? "Unlock Secure Locker" : "Create Modern Account"}
-            </h2>
-            <p className="text-slate-400 text-xs mt-1">
-              {!emailChecked 
-                ? "Input your credentials. We will instantly locate your ledger or set up a brand new one."
-                : isRegistered 
-                ? "Account found in central database! Enter your locker password to access." 
-                : "New ID identified! Enter your name and password to seal your new ledger."
-              }
-            </p>
+          {/* Main Toggle Tab Switcher (Sign In vs Sign Up) */}
+          <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
+            <div>
+              <h2 className="text-2xl font-bold text-white tracking-tight">
+                {activeTab === "signin" ? "Unlock Portfolio Locker" : "Create Modern Account"}
+              </h2>
+              <p className="text-slate-400 text-xs mt-1">
+                {activeTab === "signin" 
+                  ? "Access your sandbox budgets, profiles and financial advisors"
+                  : "Register your own insulated and encrypted ledger folder"
+                }
+              </p>
+            </div>
           </div>
+
+          {/* Symmetrical Dual Page Toggle Tabs */}
+          <nav className="flex space-x-2 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800/90" aria-label="Tabs">
+            <button
+              onClick={() => handleTabChange("signin")}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                activeTab === "signin"
+                  ? "bg-bhagwa-600 text-white shadow-md shadow-bhagwa-600/10"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/40"
+              }`}
+            >
+              <LogIn className="w-4 h-4" />
+              Sign In
+            </button>
+            <button
+              onClick={() => handleTabChange("signup")}
+              className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                activeTab === "signup"
+                  ? "bg-bhagwa-600 text-white shadow-md shadow-bhagwa-600/10"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/40"
+              }`}
+            >
+              <UserPlus className="w-4 h-4" />
+              Sign Up
+            </button>
+          </nav>
 
           {/* Messages info box */}
           {error && (
@@ -289,269 +316,235 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
             </div>
           )}
 
-          {/* STEP 1: Email/Phone Form */}
-          {!emailChecked ? (
-            <form onSubmit={handleCheckEmail} className="space-y-4">
-              {/* Toggle Tab */}
-              <div className="bg-slate-950/60 p-1 rounded-xl border border-slate-800/85 flex">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAuthMethod("email");
-                    setError("");
-                  }}
-                  className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                    authMethod === "email"
-                      ? "bg-bhagwa-600 text-white shadow"
-                      : "text-slate-400 hover:text-slate-200"
-                  }`}
-                >
-                  <Mail className="w-3.5 h-3.5" /> Email Address
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAuthMethod("phone");
-                    setError("");
-                  }}
-                  className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                    authMethod === "phone"
-                      ? "bg-bhagwa-600 text-white shadow"
-                      : "text-slate-400 hover:text-slate-200"
-                  }`}
-                >
-                  <Phone className="w-3.5 h-3.5" /> Phone Number
-                </button>
-              </div>
-
-              {authMethod === "email" ? (
-                <div className="space-y-1">
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                    Email Address
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                    <input
-                      type="email"
-                      required
-                      placeholder="e.g. deepak@paisa.in"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm animate-fade-in"
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-1">
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                    Mobile Number
-                  </label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                    <input
-                      type="tel"
-                      required
-                      placeholder="e.g. 9876543210"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm animate-fade-in"
-                    />
-                  </div>
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-bhagwa-600 hover:bg-bhagwa-700 text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-bhagwa-600/10 hover:shadow-bhagwa-600/20 active:scale-[0.99] cursor-pointer mt-4"
-              >
-                {isLoading ? (
-                  <span className="flex items-center gap-2">
-                    <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
-                    Searching central registry...
-                  </span>
-                ) : (
-                  <>
-                    Continue to Locker <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
-              </button>
-
-              <div className="flex items-center py-2">
-                <hr className="flex-1 border-slate-800" />
-                <span className="px-3 text-[9px] text-slate-500 uppercase tracking-widest font-black">OR</span>
-                <hr className="flex-1 border-slate-800" />
-              </div>
-
+          {/* Form wrapper */}
+          <form onSubmit={activeTab === "signin" ? handleSignInSubmit : handleSignUpSubmit} className="space-y-4">
+            
+            {/* Choose Registration Method: Phone vs Email */}
+            <div className="bg-slate-950/40 p-1 rounded-xl border border-slate-850 flex">
               <button
                 type="button"
-                onClick={handleContinueAsGuest}
-                className="w-full bg-slate-800/65 hover:bg-slate-750 border border-slate-800 hover:border-slate-700 text-slate-300 font-extrabold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all active:scale-[0.99] cursor-pointer"
+                onClick={() => {
+                  setAuthMethod("phone");
+                  setError("");
+                }}
+                className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                  authMethod === "phone"
+                    ? "bg-slate-800 text-white shadow-sm"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
               >
-                Continue Offline (Guest Locker)
+                <Phone className="w-3.5 h-3.5 text-emerald-400" /> Phone & 4-Digit PIN
               </button>
-            </form>
-          ) : (
-            /* STEP 2: Password (and optionally Name) Form */
-            <form onSubmit={isRegistered ? handleLogin : handleSignUp} className="space-y-4">
-              
-              {/* Dynamic Information Pill */}
-              <div className={`p-3 rounded-xl border text-[11px] font-medium flex items-center gap-2 ${
-                isRegistered 
-                  ? "bg-slate-950/50 text-slate-300 border-slate-800" 
-                  : "bg-emerald-950/30 text-emerald-400 border-emerald-900/50"
-              }`}>
-                <div className={`w-2 h-2 rounded-full ${isRegistered ? "bg-emerald-500" : "bg-bhagwa-500"}`}></div>
-                <div className="flex-1 truncate">
-                  Registered account for <span className="font-bold">{authMethod === "email" ? email : phone}</span> {isRegistered ? "exists." : "will be created."}
-                </div>
-                <button 
-                  type="button" 
-                  onClick={handleResetEmail} 
-                  className="text-[10px] text-slate-400 hover:text-white underline cursor-pointer"
-                >
-                  Change {authMethod === "email" ? "Email" : "Phone"}
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setAuthMethod("email");
+                  setError("");
+                }}
+                className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                  authMethod === "email"
+                    ? "bg-slate-800 text-white shadow-sm"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                <Mail className="w-3.5 h-3.5 text-blue-400" /> Email & Password
+              </button>
+            </div>
 
-              {/* Full Name input for registration */}
-              {!isRegistered && (
-                <div className="space-y-1">
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                    Full Name
-                  </label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Deepak Kumar"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Password Input */}
+            {/* Dynamic Name Input (Sign Up ONLY) */}
+            {activeTab === "signup" && (
               <div className="space-y-1">
                 <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                  {authMethod === "phone" ? "4-Digit Passcode" : "Password"}
+                  Full Name
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Deepak Kumar"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Dynamic Credentials Input */}
+            {authMethod === "phone" ? (
+              <div className="space-y-1">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                  Mobile Number
+                </label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                  <input
+                    type="tel"
+                    required
+                    placeholder="e.g. 9876543210"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                  <input
+                    type="email"
+                    required
+                    placeholder="e.g. deepak@paisa.in"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Passcode / Password Input */}
+            <div className="space-y-1">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                {authMethod === "phone" ? "4-Digit Passcode PIN" : "Lock Password"}
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  maxLength={authMethod === "phone" ? 4 : undefined}
+                  pattern={authMethod === "phone" ? "\\d{4}" : undefined}
+                  inputMode={authMethod === "phone" ? "numeric" : undefined}
+                  placeholder={
+                    authMethod === "phone"
+                      ? "Enter 4-digit passcode PIN"
+                      : activeTab === "signup"
+                      ? "Define password (min 5 symbols)"
+                      : "Enter lock password"
+                  }
+                  value={password}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (authMethod === "phone") {
+                      const cleaned = val.replace(/\D/g, "");
+                      setPassword(cleaned);
+                    } else {
+                      setPassword(val);
+                    }
+                  }}
+                  className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-10 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm font-mono tracking-widest"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 pointer-events-auto p-1"
+                >
+                  {showPassword ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Confirm Passcode PIN input (Sign Up ONLY) */}
+            {activeTab === "signup" && (
+              <div className="space-y-1 animate-fade-in">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                  {authMethod === "phone" ? "Confirm 4-Digit Passcode PIN" : "Confirm Password"}
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                   <input
-                    type={showPassword ? "text" : "password"}
+                    type="password"
                     required
                     maxLength={authMethod === "phone" ? 4 : undefined}
                     pattern={authMethod === "phone" ? "\\d{4}" : undefined}
                     inputMode={authMethod === "phone" ? "numeric" : undefined}
                     placeholder={
                       authMethod === "phone"
-                        ? isRegistered
-                          ? "Enter 4-digit passcode"
-                          : "Define 4-digit passcode (numbers only)"
-                        : isRegistered
-                        ? "Enter account password"
-                        : "Define password (min 5 symbols)"
+                        ? "Verify 4-digit passcode PIN"
+                        : "Verify your password choice"
                     }
-                    value={password}
+                    value={confirmPassword}
                     onChange={(e) => {
                       const val = e.target.value;
                       if (authMethod === "phone") {
                         const cleaned = val.replace(/\D/g, "");
-                        setPassword(cleaned);
+                        setConfirmPassword(cleaned);
                       } else {
-                        setPassword(val);
+                        setConfirmPassword(val);
                       }
                     }}
-                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-10 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm font-mono tracking-widest"
+                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm font-mono tracking-widest"
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 pointer-events-auto p-1"
-                  >
-                    {showPassword ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
-                  </button>
                 </div>
               </div>
+            )}
 
-              {/* Confirm Password input for registration */}
-              {!isRegistered && (
-                <div className="space-y-1 animate-fade-in">
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                    {authMethod === "phone" ? "Confirm 4-Digit Passcode" : "Confirm Password"}
-                  </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                    <input
-                      type="password"
-                      required
-                      maxLength={authMethod === "phone" ? 4 : undefined}
-                      pattern={authMethod === "phone" ? "\\d{4}" : undefined}
-                      inputMode={authMethod === "phone" ? "numeric" : undefined}
-                      placeholder={authMethod === "phone" ? "Re-verify 4-digit passcode" : "Re-verify password"}
-                      value={confirmPassword}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        if (authMethod === "phone") {
-                          const cleaned = val.replace(/\D/g, "");
-                          setConfirmPassword(cleaned);
-                        } else {
-                          setConfirmPassword(val);
-                        }
-                      }}
-                      className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm font-mono tracking-widest"
-                    />
-                  </div>
-                </div>
+            {/* Action Submit Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full bg-bhagwa-600 hover:bg-bhagwa-700 text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-bhagwa-600/10 hover:shadow-bhagwa-600/20 active:scale-[0.99] cursor-pointer mt-4 ${isLoading ? "opacity-75 cursor-not-allowed" : ""}`}
+            >
+              {isLoading ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
+                  Processing security handshake...
+                </span>
+              ) : activeTab === "signin" ? (
+                <>
+                  <LogIn className="w-4.5 h-4.5" /> Unlock Secure Locker <ArrowRight className="w-4 h-4" />
+                </>
+              ) : (
+                <>
+                  <UserPlus className="w-4.5 h-4.5" /> Register & Launch Private Locker
+                </>
               )}
+            </button>
 
-              {/* Submit Buttons */}
-              <div className="flex gap-2.5 pt-3">
-                <button
-                  type="button"
-                  onClick={handleResetEmail}
-                  className="px-4 py-3 bg-slate-950/40 hover:bg-slate-950/80 border border-slate-850 hover:border-slate-800 text-slate-300 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
-                >
-                  <ChevronLeft className="w-4 h-4" /> Back
-                </button>
-                
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className={`flex-1 bg-bhagwa-600 hover:bg-bhagwa-700 text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow-md shadow-bhagwa-600/10 hover:shadow-bhagwa-600/20 active:scale-[0.99] cursor-pointer ${isLoading ? "opacity-75 cursor-not-allowed" : ""}`}
-                >
-                  {isLoading ? (
-                    <span className="flex items-center gap-2">
-                      <span className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></span>
-                      Synchronizing...
-                    </span>
-                  ) : isRegistered ? (
-                    <>
-                      <LogIn className="w-4.5 h-4.5" /> Unlock Account File <ArrowRight className="w-4 h-4" />
-                    </>
-                  ) : (
-                    <>
-                      <UserPlus className="w-4.5 h-4.5" /> Register & Launch Locker
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
-          )}
+            {/* Alternative hooks inside/below form */}
+            <div className="text-center pt-2">
+              <button
+                type="button"
+                onClick={() => handleTabChange(activeTab === "signin" ? "signup" : "signin")}
+                className="text-[11px] text-slate-400 hover:text-white underline transition-colors cursor-pointer"
+              >
+                {activeTab === "signin" 
+                  ? "New user? Create a secure credentials locker" 
+                  : "Already registered? Unlock ledger card via sign in"
+                }
+              </button>
+            </div>
+
+            <div className="flex items-center py-2">
+              <hr className="flex-1 border-slate-800" />
+              <span className="px-3 text-[9px] text-slate-550 uppercase tracking-widest font-black">OR</span>
+              <hr className="flex-1 border-slate-800" />
+            </div>
+
+            <button
+              type="button"
+              onClick={handleContinueAsGuest}
+              className="w-full bg-slate-800/65 hover:bg-slate-750 border border-slate-800 hover:border-slate-700 text-slate-300 font-extrabold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all active:scale-[0.99] cursor-pointer"
+            >
+              Continue Offline (Guest Locker)
+            </button>
+          </form>
 
           {/* Quick-seed demo credentials option for reviewer */}
-          {!emailChecked && (
-            <div className="border-t border-slate-800/80 pt-5">
-              <div className="bg-slate-950/40 border border-slate-800/60 p-3.5 rounded-xl text-center space-y-1.5">
+          {activeTab === "signin" && (
+            <div className="border-t border-slate-800/80 pt-4">
+              <div className="bg-slate-950/40 border border-slate-800/60 p-3 rounded-xl text-center space-y-1">
                 <span className="text-[10px] text-slate-400 block font-semibold uppercase tracking-wider">
                   Quick Trial Account (Direct Preloaded Data)
                 </span>
                 <p className="text-[11px] text-slate-500">
-                  Pre-compiled profile folder: <code className="text-emerald-400 font-mono font-bold">advisor@paisa.in</code> password: <code className="text-emerald-400 font-mono font-bold">paisa</code>
+                  Pre-compiled profile folder: <code className="text-emerald-400 font-mono font-bold font-xs">advisor@paisa.in</code> password: <code className="text-emerald-400 font-mono font-bold">paisa</code>
                 </p>
                 <button
                   type="button"
