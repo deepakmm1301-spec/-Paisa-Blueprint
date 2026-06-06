@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Lock, Mail, User, ShieldCheck, Sparkles, LogIn, UserPlus, ArrowRight, Eye, EyeOff, ChevronLeft, RefreshCw } from "lucide-react";
+import { Lock, Mail, User, ShieldCheck, Sparkles, LogIn, UserPlus, ArrowRight, Eye, EyeOff, ChevronLeft, RefreshCw, Phone } from "lucide-react";
 // @ts-ignore
 import paisaLogo from "../assets/images/deep_paisa_logo_1780484307855.png";
 
@@ -10,7 +10,9 @@ interface AuthScreenProps {
 
 export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScreenProps) {
   // Common inputs & state
+  const [authMethod, setAuthMethod] = useState<"email" | "phone">("email");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [emailChecked, setEmailChecked] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
   
@@ -23,25 +25,34 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
   const [successMsg, setSuccessMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Dynamic step detection: checks standard network registry for matching email
+  // Dynamic step detection: checks standard network registry for matching email/phone
   const handleCheckEmail = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setError("");
     setSuccessMsg("");
     
-    const emailStr = email.trim();
-    if (!emailStr) {
-      setError("Please key in your email address.");
+    const valueStr = authMethod === "email" ? email.trim() : phone.trim();
+    if (!valueStr) {
+      setError(authMethod === "email" ? "Please key in your email address." : "Please key in your phone number.");
       return;
     }
-    if (!emailStr.includes("@") || emailStr.length < 5) {
-      setError("Please present a valid standard Email format.");
-      return;
+
+    if (authMethod === "email") {
+      if (!valueStr.includes("@") || valueStr.length < 5) {
+        setError("Please present a valid standard Email format.");
+        return;
+      }
+    } else {
+      const digitsOnly = valueStr.replace(/\D/g, "");
+      if (digitsOnly.length < 10 || digitsOnly.length > 13) {
+        setError("Please enter a valid 10-digit mobile number.");
+        return;
+      }
     }
 
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/auth/check-email?email=${encodeURIComponent(emailStr)}`);
+      const res = await fetch(`/api/auth/check-email?email=${encodeURIComponent(valueStr)}`);
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.error || "Paisa center ledger query failed.");
@@ -66,12 +77,14 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
       return;
     }
 
+    const valueStr = authMethod === "email" ? email.trim() : phone.trim();
+
     setIsLoading(true);
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), password })
+        body: JSON.stringify({ email: valueStr, password })
       });
       const data = await res.json();
       if (!res.ok) {
@@ -116,13 +129,16 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
       return;
     }
 
+    const valueStr = authMethod === "email" ? email.trim() : phone.trim();
+
     setIsLoading(true);
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: email.trim(),
+          email: authMethod === "email" ? valueStr : "",
+          phone: authMethod === "phone" ? valueStr : "",
           name: name.trim(),
           password,
           defaultProfile
@@ -151,6 +167,7 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
   const loadPromoCreds = () => {
     setError("");
     setSuccessMsg("");
+    setAuthMethod("email");
     setEmail("advisor@paisa.in");
     setPassword("paisa");
     setIsRegistered(true);
@@ -237,10 +254,10 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
             </h2>
             <p className="text-slate-400 text-xs mt-1">
               {!emailChecked 
-                ? "Input your email. We will instantly locate your ledger or set up a brand new one."
+                ? "Input your credentials. We will instantly locate your ledger or set up a brand new one."
                 : isRegistered 
                 ? "Account found in central database! Enter your locker password to access." 
-                : "New Email identified! Enter your name and password to seal your new ledger."
+                : "New ID identified! Enter your name and password to seal your new ledger."
               }
             </p>
           </div>
@@ -260,25 +277,76 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
             </div>
           )}
 
-          {/* STEP 1: Email Form */}
+          {/* STEP 1: Email/Phone Form */}
           {!emailChecked ? (
             <form onSubmit={handleCheckEmail} className="space-y-4">
-              <div className="space-y-1">
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                  <input
-                    type="email"
-                    required
-                    placeholder="e.g. deepak@paisa.in"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm"
-                  />
-                </div>
+              {/* Toggle Tab */}
+              <div className="bg-slate-950/60 p-1 rounded-xl border border-slate-800/85 flex">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthMethod("email");
+                    setError("");
+                  }}
+                  className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                    authMethod === "email"
+                      ? "bg-bhagwa-600 text-white shadow"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  <Mail className="w-3.5 h-3.5" /> Email Address
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthMethod("phone");
+                    setError("");
+                  }}
+                  className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                    authMethod === "phone"
+                      ? "bg-bhagwa-600 text-white shadow"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  <Phone className="w-3.5 h-3.5" /> Phone Number
+                </button>
               </div>
+
+              {authMethod === "email" ? (
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <input
+                      type="email"
+                      required
+                      placeholder="e.g. deepak@paisa.in"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm animate-fade-in"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                    Mobile Number
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                    <input
+                      type="tel"
+                      required
+                      placeholder="e.g. 9876543210"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="w-full bg-slate-950/60 border border-slate-800 rounded-xl py-2.5 pl-10 pr-4 text-xs font-medium text-white focus:outline-none focus:border-bhagwa-500 focus:ring-1 focus:ring-bhagwa-500 placeholder-slate-600 transition-all text-sm animate-fade-in"
+                    />
+                  </div>
+                </div>
+              )}
 
               <button
                 type="submit"
@@ -323,14 +391,14 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
               }`}>
                 <div className={`w-2 h-2 rounded-full ${isRegistered ? "bg-emerald-500" : "bg-bhagwa-500"}`}></div>
                 <div className="flex-1 truncate">
-                  Registered account for <span className="font-bold">{email}</span> {isRegistered ? "exists." : "will be created."}
+                  Registered account for <span className="font-bold">{authMethod === "email" ? email : phone}</span> {isRegistered ? "exists." : "will be created."}
                 </div>
                 <button 
                   type="button" 
                   onClick={handleResetEmail} 
                   className="text-[10px] text-slate-400 hover:text-white underline cursor-pointer"
                 >
-                  Change Email
+                  Change {authMethod === "email" ? "Email" : "Phone"}
                 </button>
               </div>
 

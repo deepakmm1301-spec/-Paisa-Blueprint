@@ -17,6 +17,7 @@ const ACCOUNTS_FILE = path.join(process.cwd(), "accounts-db.json");
 
 interface ServerUserAccount {
   email: string;
+  phone?: string;
   name: string;
   passwordHash: string;
   profilesList: any[];
@@ -133,7 +134,9 @@ app.get("/api/auth/check-email", (req, res) => {
       return;
     }
     const emailNorm = (email as string).trim().toLowerCase();
-    const found = accountsMemory.some(acc => acc.email.toLowerCase() === emailNorm);
+    const found = accountsMemory.some(
+      acc => acc.email.toLowerCase() === emailNorm || (acc.phone && acc.phone.toLowerCase() === emailNorm)
+    );
     res.json({ registered: found });
   } catch (err: any) {
     console.error("Check email error:", err);
@@ -144,18 +147,24 @@ app.get("/api/auth/check-email", (req, res) => {
 // Authentication API: Register
 app.post("/api/auth/register", (req, res) => {
   try {
-    const { email, name, password, defaultProfile } = req.body;
-    if (!email || !name || !password) {
-      res.status(400).json({ error: "Missing required fields: email, name, or password" });
+    const { email, name, password, defaultProfile, phone } = req.body;
+    if ((!email && !phone) || !name || !password) {
+      res.status(400).json({ error: "Missing required fields: email/phone, name, or password" });
       return;
     }
 
-    const emailNorm = email.trim().toLowerCase();
+    const emailNorm = (email || "").trim().toLowerCase();
+    const phoneNorm = (phone || "").trim().toLowerCase();
+    const identifier = emailNorm || phoneNorm;
     
     // Check duplication centrally across ALL devices connected
-    const existing = accountsMemory.find(acc => acc.email.toLowerCase() === emailNorm);
+    const existing = accountsMemory.find(
+      acc => acc.email.toLowerCase() === identifier || 
+             (acc.phone && acc.phone.toLowerCase() === identifier) || 
+             (phoneNorm && (acc.email.toLowerCase() === phoneNorm || (acc.phone && acc.phone.toLowerCase() === phoneNorm)))
+    );
     if (existing) {
-      res.status(409).json({ error: "This email address is already registered on another device in the Paisa Network. Please use a unique Email." });
+      res.status(409).json({ error: "This email address or phone number is already registered in the Paisa Network. Please use a unique login." });
       return;
     }
 
@@ -188,7 +197,8 @@ app.post("/api/auth/register", (req, res) => {
     };
 
     const newAccount: ServerUserAccount = {
-      email: emailNorm,
+      email: emailNorm || phoneNorm,
+      phone: phoneNorm || undefined,
       name: name.trim(),
       passwordHash: password,
       profilesList: [initialProfile],
@@ -205,6 +215,7 @@ app.post("/api/auth/register", (req, res) => {
       user: {
         name: newAccount.name,
         email: newAccount.email,
+        phone: newAccount.phone,
         profilesList: newAccount.profilesList,
         activeProfileId: newAccount.activeProfileId
       }
@@ -225,10 +236,12 @@ app.post("/api/auth/login", (req, res) => {
     }
 
     const emailNorm = email.trim().toLowerCase();
-    const found = accountsMemory.find(acc => acc.email.toLowerCase() === emailNorm);
+    const found = accountsMemory.find(
+      acc => acc.email.toLowerCase() === emailNorm || (acc.phone && acc.phone.toLowerCase() === emailNorm)
+    );
 
     if (!found || found.passwordHash !== password) {
-      res.status(401).json({ error: "Invalid Email address or Password. Try checking credentials or register a new account if you are new." });
+      res.status(401).json({ error: "Invalid Email address / Phone number or Password. Try checking credentials or register a new account if you are new." });
       return;
     }
 
