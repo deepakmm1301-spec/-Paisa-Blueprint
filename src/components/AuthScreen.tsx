@@ -564,6 +564,17 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
             </div>
           )}
 
+          {/* Individual Space & Privacy Guarantee Note */}
+          <div className="bg-slate-950/20 border border-slate-800/60 p-4 rounded-xl flex gap-3 text-xs text-slate-400">
+            <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5 animate-pulse" />
+            <div className="space-y-1">
+              <span className="text-white font-bold block">Individual Space & Privacy Guarantee</span>
+              <p className="leading-relaxed text-[11px] text-slate-400">
+                Each phone number or email creates a strictly sandboxed, private cloud ledger folder on our server database. Your budgets, SIP compounders, family profiles, and calculators are encrypted and entirely isolated to your personal credentials.
+              </p>
+            </div>
+          </div>
+
         </div>
 
       </div>
