@@ -232,15 +232,15 @@ export default function ProfileManager({
   };
 
   return (
-    <div id="profile-manager-ledger" className="bg-white rounded-2xl border border-slate-100 p-6 md:p-8 shadow-xs space-y-8">
+    <div id="profile-manager-ledger" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 md:p-8 shadow-xs space-y-8">
       
       {/* Intro Banner */}
-      <div className="border-b border-slate-100 pb-5">
-        <span className="text-xs font-semibold uppercase tracking-wider text-bhagwa-600 bg-bhagwa-50 px-2.5 py-1 rounded-full">
+      <div className="border-b border-slate-100 dark:border-slate-800 pb-5">
+        <span className="text-xs font-semibold uppercase tracking-wider text-bhagwa-600 dark:text-bhagwa-400 bg-bhagwa-50 dark:bg-bhagwa-950/30 px-2.5 py-1 rounded-full">
           Family Office Ledger
         </span>
-        <h2 className="text-2xl font-bold text-slate-800 mt-2 font-display">Profiles & Accounts Manager</h2>
-        <p className="text-slate-500 text-sm mt-1">
+        <h2 className="text-2xl font-bold text-slate-800 dark:text-white mt-2 font-display">Profiles & Accounts Manager</h2>
+        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
           Create separate profiles for your spouse, parents, or side portfolios. Lock profiles with PIN passcodes, and model multiple future scenarios.
         </p>
       </div>
@@ -415,16 +415,16 @@ export default function ProfileManager({
 
       {/* Register New Profile Form Card */}
       {showAddForm && (
-        <form onSubmit={handleSubmit} className="p-6 bg-slate-50 border border-slate-100 rounded-2xl space-y-6 text-sm">
-          <div className="border-b border-slate-200/80 pb-3">
-            <h3 className="font-bold text-slate-800 text-md flex items-center gap-1.5 font-display">
-              <UserPlus className="w-4.5 h-4.5 text-bhagwa-600" /> New Portfolio Registration
+        <form onSubmit={handleSubmit} className="p-6 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl space-y-6 text-sm">
+          <div className="border-b border-slate-200/80 dark:border-slate-800 pb-3">
+            <h3 className="font-bold text-slate-800 dark:text-white text-md flex items-center gap-1.5 font-display">
+              <UserPlus className="w-4.5 h-4.5 text-bhagwa-600 dark:text-bhagwa-400" /> New Portfolio Registration
             </h3>
-            <p className="text-[11px] text-slate-400">Initialize a custom base parameters file</p>
+            <p className="text-[11px] text-slate-400 dark:text-slate-500">Initialize a custom base parameters file</p>
           </div>
 
           {formError && (
-            <div className="p-3.5 bg-rose-50 border border-rose-100 rounded-xl text-rose-700 text-xs font-semibold flex items-center gap-1.5">
+            <div className="p-3.5 bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900 absolute/none rounded-xl text-rose-700 dark:text-rose-400 text-xs font-semibold flex items-center gap-1.5">
               <ShieldAlert className="w-4 h-4" /> {formError}
             </div>
           )}
@@ -432,195 +432,195 @@ export default function ProfileManager({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             {/* Core General info */}
-            <div className="space-y-4 bg-white p-4.5 rounded-xl border border-slate-200/50">
-              <h4 className="font-semibold text-slate-700 text-xs border-b pb-1.5 flex items-center gap-1.5">
-                <Briefcase className="w-4 h-4 text-bhagwa-500" /> Primary Attributes
+            <div className="space-y-4 bg-white dark:bg-slate-900 p-4.5 rounded-xl border border-slate-200/50 dark:border-slate-800">
+              <h4 className="font-semibold text-slate-700 dark:text-slate-200 text-xs border-b border-slate-100 dark:border-slate-800 pb-1.5 flex items-center gap-1.5">
+                <Briefcase className="w-4 h-4 text-bhagwa-500 dark:text-bhagwa-400" /> Primary Attributes
               </h4>
               
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Full Name</label>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Full Name</label>
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="e.g. Priyanjali Sharma"
-                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-1 focus:ring-bhagwa-500 focus:outline-none"
+                    className="w-full border border-slate-200 dark:border-slate-850 bg-white dark:bg-slate-950 rounded-lg px-3 py-2 text-xs text-slate-800 dark:text-slate-100 focus:ring-1 focus:ring-bhagwa-500 focus:outline-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-500 mb-1">Current Age</label>
+                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Current Age</label>
                     <input
                       type="number"
                       min={18}
                       max={85}
                       value={age}
                       onChange={(e) => setAge(Number(e.target.value))}
-                      className="w-full border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:ring-1"
+                      className="w-full border border-slate-200 dark:border-slate-805 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 rounded-lg px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-bhagwa-500 focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-500 mb-1">Retirement Target</label>
+                    <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Retirement Target</label>
                     <input
                       type="number"
                       min={40}
                       max={90}
                       value={retirementAge}
                       onChange={(e) => setRetirementAge(Number(e.target.value))}
-                      className="w-full border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs focus:ring-1"
+                      className="w-full border border-slate-200 dark:border-slate-805 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 rounded-lg px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-bhagwa-500 focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Monthly Gross Package (₹)</label>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Monthly Gross Package (₹)</label>
                   <input
                     type="number"
                     min={0}
                     step={5000}
                     value={salary}
                     onChange={(e) => setSalary(Number(e.target.value))}
-                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono focus:ring-1"
+                    className="w-full border border-slate-200 dark:border-slate-805 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 rounded-lg px-3 py-2 text-xs font-mono focus:ring-1 focus:ring-bhagwa-500 focus:outline-none"
                   />
                 </div>
               </div>
             </div>
 
             {/* Demographic Parameters */}
-            <div className="space-y-4 bg-white p-4.5 rounded-xl border border-slate-200/50">
-              <h4 className="font-semibold text-slate-700 text-xs border-b pb-1.5 flex items-center gap-1.5">
+            <div className="space-y-4 bg-white dark:bg-slate-900 p-4.5 rounded-xl border border-slate-200/50 dark:border-slate-800">
+              <h4 className="font-semibold text-slate-700 dark:text-slate-200 text-xs border-b border-slate-105 dark:border-slate-800 pb-1.5 flex items-center gap-1.5">
                 <MapPin className="w-4 h-4 text-emerald-500" /> Geography & Family
               </h4>
 
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Location Class</label>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Location Class</label>
                   <select
                     value={city}
                     onChange={(e) => setCity(e.target.value as any)}
-                    className="w-full border border-slate-200 rounded-lg px-2.5 py-2 text-xs bg-white focus:outline-none"
+                    className="w-full border border-slate-200 dark:border-slate-805 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 rounded-lg px-2.5 py-2 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-bhagwa-500"
                   >
-                    <option value="tier1">Tier-1 Metro (Delhi, Mumbai, Bengaluru)</option>
-                    <option value="tier2">Tier-2 Town (Patna, Jaipur, Lucknow)</option>
-                    <option value="tier3">Tier-3 Rural / Semi-Urban</option>
+                    <option value="tier1" className="bg-white dark:bg-slate-900">Tier-1 Metro (Delhi, Mumbai, Bengaluru)</option>
+                    <option value="tier2" className="bg-white dark:bg-slate-900">Tier-2 Town (Patna, Jaipur, Lucknow)</option>
+                    <option value="tier3" className="bg-white dark:bg-slate-900">Tier-3 Rural / Semi-Urban</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Marital Status</label>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Marital Status</label>
                   <select
                     value={maritalStatus}
                     onChange={(e) => setMaritalStatus(e.target.value as any)}
-                    className="w-full border border-slate-200 rounded-lg px-2.5 py-2 text-xs bg-white focus:outline-none"
+                    className="w-full border border-slate-200 dark:border-slate-805 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 rounded-lg px-2.5 py-2 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-bhagwa-500"
                   >
-                    <option value="single">Single (No dependents)</option>
-                    <option value="married">Married (Dual income option)</option>
-                    <option value="dependents">Married with Family Dependents</option>
+                    <option value="single" className="bg-white dark:bg-slate-900">Single (No dependents)</option>
+                    <option value="married" className="bg-white dark:bg-slate-900">Married (Dual income option)</option>
+                    <option value="dependents" className="bg-white dark:bg-slate-900">Married with Family Dependents</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1">Dependents Count</label>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Dependents Count</label>
                   <input
                     type="number"
                     min={0}
                     max={10}
                     value={dependentsCount}
                     onChange={(e) => setDependentsCount(Number(e.target.value))}
-                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-1"
+                    className="w-full border border-slate-200 dark:border-slate-805 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 rounded-lg px-3 py-2 text-xs focus:ring-1 focus:ring-bhagwa-500 focus:outline-none"
                   />
                 </div>
               </div>
             </div>
 
             {/* Asset Seed Capital */}
-            <div className="space-y-4 bg-white p-4.5 rounded-xl border border-slate-200/50">
-              <h4 className="font-semibold text-slate-700 text-xs border-b pb-1.5 flex items-center gap-1.5">
+            <div className="space-y-4 bg-white dark:bg-slate-900 p-4.5 rounded-xl border border-slate-200/50 dark:border-slate-800">
+              <h4 className="font-semibold text-slate-700 dark:text-slate-200 text-xs border-b border-slate-105 dark:border-slate-800 pb-1.5 flex items-center gap-1.5">
                 <TrendingUp className="w-4 h-4 text-sky-500" /> Starting Seed Assets
               </h4>
 
               <div className="space-y-3">
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-[10px] font-semibold text-slate-500 mb-0.5">Emergency Savings (₹)</label>
+                    <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-0.5">Emergency Savings (₹)</label>
                     <input
                       type="number"
                       step={10000}
                       value={currentSavings}
                       onChange={(e) => setCurrentSavings(Number(e.target.value))}
-                      className="w-full border border-slate-200 rounded-lg px-2 py-1 text-xs font-mono focus:ring-1"
+                      className="w-full border border-slate-200 dark:border-slate-805 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 rounded-lg px-2 py-1 text-xs font-mono focus:ring-1 focus:ring-bhagwa-500 focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-semibold text-slate-500 mb-0.5">Mutual Funds (₹)</label>
+                    <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-0.5">Mutual Funds (₹)</label>
                     <input
                       type="number"
                       step={10000}
                       value={mutualFunds}
                       onChange={(e) => setMutualFunds(Number(e.target.value))}
-                      className="w-full border border-slate-200 rounded-lg px-2 py-1 text-xs font-mono focus:ring-1"
+                      className="w-full border border-slate-200 dark:border-slate-805 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 rounded-lg px-2 py-1 text-xs font-mono focus:ring-1 focus:ring-bhagwa-500 focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-[10px] font-semibold text-slate-500 mb-0.5">Direct Stocks (₹)</label>
+                    <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-0.5">Direct Stocks (₹)</label>
                     <input
                       type="number"
                       step={10000}
                       value={stocks}
                       onChange={(e) => setStocks(Number(e.target.value))}
-                      className="w-full border border-slate-200 rounded-lg px-2 py-1 text-xs font-mono focus:ring-1"
+                      className="w-full border border-slate-200 dark:border-slate-805 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 rounded-lg px-2 py-1 text-xs font-mono focus:ring-1 focus:ring-bhagwa-500 focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-semibold text-slate-500 mb-0.5">PPF / Gold (₹)</label>
+                    <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-0.5">PPF / Gold (₹)</label>
                     <input
                       type="number"
                       step={5000}
                       value={gold}
                       onChange={(e) => setGold(Number(e.target.value))}
-                      className="w-full border border-slate-200 rounded-lg px-2 py-1 text-xs font-mono focus:ring-1"
+                      className="w-full border border-slate-200 dark:border-slate-805 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 rounded-lg px-2 py-1 text-xs font-mono focus:ring-1 focus:ring-bhagwa-500 focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-semibold text-slate-500 mb-0.5">EPF Provident Fund (₹)</label>
+                  <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-0.5">EPF Provident Fund (₹)</label>
                   <input
                     type="number"
                     step={10000}
                     value={epf}
                     onChange={(e) => setEpf(Number(e.target.value))}
-                    className="w-full border border-slate-200 rounded-lg px-3 py-1 text-xs font-mono focus:ring-1"
+                    className="w-full border border-slate-200 dark:border-slate-805 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 rounded-lg px-3 py-1 text-xs font-mono focus:ring-1 focus:ring-bhagwa-500 focus:outline-none"
                   />
                 </div>
 
-                <div className="border-t border-slate-100 pt-2.5 mt-2">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 block mb-2">Coverage Policies</span>
+                <div className="border-t border-slate-100 dark:border-slate-800 pt-2.5 mt-2">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-550 block mb-2">Coverage Policies</span>
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="block text-[9px] font-semibold text-slate-500 mb-0.5">Health Cover (₹)</label>
+                      <label className="block text-[9px] font-semibold text-slate-500 dark:text-slate-400 mb-0.5">Health Cover (₹)</label>
                       <input
                         type="number"
                         step={50000}
                         value={healthInsuranceCover}
                         onChange={(e) => setHealthInsuranceCover(Number(e.target.value))}
-                        className="w-full border border-slate-200 rounded-lg px-2 py-1 text-xs font-mono focus:ring-1"
+                        className="w-full border border-slate-200 dark:border-slate-805 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 rounded-lg px-2 py-1 text-xs font-mono focus:ring-1 focus:ring-bhagwa-500 focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-[9px] font-semibold text-slate-500 mb-0.5">Term Life Cover (₹)</label>
+                      <label className="block text-[9px] font-semibold text-slate-500 dark:text-slate-400 mb-0.5">Term Life Cover (₹)</label>
                       <input
                         type="number"
                         step={500000}
                         value={termInsuranceCover}
                         onChange={(e) => setTermInsuranceCover(Number(e.target.value))}
-                        className="w-full border border-slate-200 rounded-lg px-2 py-1 text-xs font-mono focus:ring-1"
+                        className="w-full border border-slate-200 dark:border-slate-805 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-100 rounded-lg px-2 py-1 text-xs font-mono focus:ring-1 focus:ring-bhagwa-500 focus:outline-none"
                       />
                     </div>
                   </div>
@@ -631,11 +631,11 @@ export default function ProfileManager({
           </div>
 
           {/* Security PIN code toggle */}
-          <div className="bg-white border border-slate-200/60 p-4.5 rounded-xl space-y-3.5">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800 p-4.5 rounded-xl space-y-3.5">
             <div className="flex items-center justify-between">
               <div>
-                <span className="font-bold text-slate-800 text-xs block">Account Security Code (Passcode lock)</span>
-                <span className="text-[11px] text-slate-400 block">Require a 4-digit PIN before anyone can unlock and read this family member's ledger.</span>
+                <span className="font-bold text-slate-800 dark:text-white text-xs block">Account Security Code (Passcode lock)</span>
+                <span className="text-[11px] text-slate-400 dark:text-slate-500 block font-normal">Require a 4-digit PIN before anyone can unlock and read this family member's ledger.</span>
               </div>
               <input
                 type="checkbox"
@@ -649,8 +649,8 @@ export default function ProfileManager({
             </div>
 
             {usePin && (
-              <div className="max-w-xs flex items-center gap-3 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-                <Key className="w-4 h-4 text-bhagwa-500" />
+              <div className="max-w-xs flex items-center gap-3 bg-slate-50 dark:bg-slate-950 p-2.5 rounded-lg border border-slate-200 dark:border-slate-850">
+                <Key className="w-4 h-4 text-bhagwa-500 dark:text-bhagwa-400" />
                 <div className="flex-1 relative">
                   <input
                     type={showPin ? "text" : "password"}
@@ -658,13 +658,13 @@ export default function ProfileManager({
                     placeholder="Enter 4-digit numeric code"
                     value={pinValue}
                     onChange={(e) => setPinValue(e.target.value.replace(/\D/g, ""))}
-                    className="w-full bg-transparent border-none text-xs font-mono tracking-widest focus:outline-none"
+                    className="w-full bg-transparent border-none text-xs font-mono tracking-widest focus:outline-none text-slate-800 dark:text-white"
                   />
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowPin(!showPin)}
-                  className="p-1 hover:text-slate-700 text-slate-400"
+                  className="p-1 hover:text-slate-700 dark:hover:text-slate-300 text-slate-400"
                 >
                   {showPin ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                 </button>
@@ -673,11 +673,11 @@ export default function ProfileManager({
           </div>
 
           {/* Form Actions */}
-          <div className="flex justify-end gap-3 pt-3 border-t border-slate-200">
+          <div className="flex justify-end gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
             <button
               type="button"
               onClick={() => setShowAddForm(false)}
-              className="px-4 py-2 border border-slate-200 hover:bg-slate-100 text-slate-500 font-semibold rounded-lg text-xs cursor-pointer"
+              className="px-4 py-2 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-500 dark:text-slate-400 font-semibold rounded-lg text-xs cursor-pointer"
             >
               Cancel
             </button>
@@ -693,8 +693,8 @@ export default function ProfileManager({
 
       {/* Grid of Existing Family Portfolios */}
       <div className="space-y-4">
-        <h3 className="font-bold text-slate-800 text-md font-display flex items-center gap-2">
-          <Users className="w-5 h-5 text-bhagwa-600" /> Active Directories ({profiles.length})
+        <h3 className="font-bold text-slate-800 dark:text-white text-md font-display flex items-center gap-2">
+          <Users className="w-5 h-5 text-bhagwa-600 dark:text-bhagwa-400" /> Active Directories ({profiles.length})
         </h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -728,8 +728,8 @@ export default function ProfileManager({
                 onClick={() => handleProfileClick(p)}
                 className={`border rounded-2xl p-5 relative transition-all group flex flex-col justify-between h-48 cursor-pointer ${
                   isSelected 
-                    ? "border-bhagwa-500 bg-bhagwa-50/50 shadow-xs ring-1 ring-bhagwa-500" 
-                    : "border-slate-150 hover:border-slate-300 hover:shadow-xs bg-white"
+                    ? "border-bhagwa-500 bg-bhagwa-50/50 dark:bg-bhagwa-950/20 shadow-xs ring-1 ring-bhagwa-500" 
+                    : "border-slate-150 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xs bg-white dark:bg-slate-950"
                 }`}
               >
                 {/* Header card state */}
@@ -737,16 +737,16 @@ export default function ProfileManager({
                   <div className="flex justify-between items-start">
                     <div className="space-y-1">
                       <div className="flex items-center gap-1.5">
-                        <span className="font-bold text-slate-800 text-sm tracking-tight group-hover:text-bhagwa-700 transition-colors">
+                        <span className="font-bold text-slate-800 dark:text-slate-100 text-sm tracking-tight group-hover:text-bhagwa-700 dark:group-hover:text-bhagwa-400 transition-colors">
                           {p.name}
                         </span>
                         {p.pin && (
-                          <span className="p-0.5 bg-slate-100 border border-slate-200 rounded text-slate-400">
+                          <span className="p-0.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-slate-400">
                             <Lock className="w-3 h-3 text-slate-500" />
                           </span>
                         )}
                       </div>
-                      <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                      <span className="text-[10px] uppercase font-bold text-slate-450 dark:text-slate-500 tracking-wider">
                         {p.city === "tier1" ? "Metro (Tier-1)" : p.city === "tier2" ? "Town (Tier-2)" : "Rural (Tier-3)"} • Age {p.age}
                       </span>
                     </div>
@@ -757,7 +757,7 @@ export default function ProfileManager({
                         <Check className="w-2.5 h-2.5" /> ACTIVE
                       </span>
                     ) : (
-                      <span className="text-[9px] uppercase font-semibold text-slate-400 border border-slate-200 px-2 py-0.5 rounded-full bg-slate-50">
+                      <span className="text-[9px] uppercase font-semibold text-slate-400 dark:text-slate-400 border border-slate-200 dark:border-slate-800 px-2 py-0.5 rounded-full bg-slate-50 dark:bg-slate-900">
                         OFFLINE
                       </span>
                     )}
@@ -766,21 +766,21 @@ export default function ProfileManager({
                   {/* Wealth Stats inside the card */}
                   <div className="mt-4 grid grid-cols-2 gap-2 text-[11px]">
                     <div>
-                      <span className="text-[10px] text-slate-400 block">Gross Monthly</span>
-                      <strong className="text-slate-700 font-mono">₹{p.salary.toLocaleString("en-IN")}</strong>
+                      <span className="text-[10px] text-slate-455 dark:text-slate-500 block">Gross Monthly</span>
+                      <strong className="text-slate-700 dark:text-slate-300 font-mono">₹{p.salary.toLocaleString("en-IN")}</strong>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 block">Invested Pool</span>
-                      <strong className="text-slate-700 font-mono">₹{singleAssetsTotal.toLocaleString("en-IN")}</strong>
+                      <span className="text-[10px] text-slate-455 dark:text-slate-500 block">Invested Pool</span>
+                      <strong className="text-slate-700 dark:text-slate-300 font-mono">₹{singleAssetsTotal.toLocaleString("en-IN")}</strong>
                     </div>
                   </div>
                 </div>
 
                 {/* Footer buttons / actions inside the card */}
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 mt-2">
+                <div className="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2 mt-2">
                   <div>
-                    <span className="text-[10px] text-slate-400 block leading-tight">Calculated Net Worth</span>
-                    <strong className="text-xs font-bold font-mono text-emerald-600 block">₹{singleNetWorth.toLocaleString("en-IN")}</strong>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 block leading-tight">Calculated Net Worth</span>
+                    <strong className="text-xs font-bold font-mono text-emerald-600 dark:text-emerald-400 block">₹{singleNetWorth.toLocaleString("en-IN")}</strong>
                   </div>
 
                   <div className="flex gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
@@ -788,7 +788,7 @@ export default function ProfileManager({
                       type="button"
                       title="Edit Name & Key Metrics"
                       onClick={(e) => handleStartEdit(e, p)}
-                      className="p-1 px-1.5 border border-slate-200 hover:border-bhagwa-205 hover:bg-slate-50 rounded text-slate-600 hover:text-bhagwa-600 transition-colors pointer-events-auto cursor-pointer"
+                      className="p-1 px-1.5 border border-slate-200 dark:border-slate-800 hover:border-bhagwa-200 dark:hover:border-bhagwa-750 hover:bg-slate-50 dark:hover:bg-slate-900 rounded text-slate-600 dark:text-slate-450 hover:text-bhagwa-600 dark:hover:text-bhagwa-400 transition-colors pointer-events-auto cursor-pointer"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
@@ -799,7 +799,7 @@ export default function ProfileManager({
                         e.stopPropagation();
                         onDuplicateProfile(p.id!);
                       }}
-                      className="p-1 px-1.5 border border-slate-200 hover:border-bhagwa-200 hover:bg-slate-50 rounded text-slate-500 hover:text-bhagwa-600 transition-colors pointer-events-auto cursor-pointer"
+                      className="p-1 px-1.5 border border-slate-200 dark:border-slate-800 hover:border-bhagwa-200 dark:hover:border-bhagwa-750 hover:bg-slate-50 dark:hover:bg-slate-900 rounded text-slate-500 dark:text-slate-450 hover:text-bhagwa-600 dark:hover:text-bhagwa-400 transition-colors pointer-events-auto cursor-pointer"
                     >
                       <Copy className="w-3.5 h-3.5" />
                     </button>
@@ -813,7 +813,7 @@ export default function ProfileManager({
                             onDeleteProfile(p.id!);
                           }
                         }}
-                        className="p-1 px-1.5 border border-slate-200 hover:border-rose-300 hover:bg-rose-50 rounded text-slate-400 hover:text-rose-600 transition-colors pointer-events-auto cursor-pointer"
+                        className="p-1 px-1.5 border border-slate-200 dark:border-slate-800 hover:border-rose-300 dark:hover:border-rose-900 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded text-slate-400 dark:text-slate-450 hover:text-rose-600 dark:hover:text-rose-400 transition-colors pointer-events-auto cursor-pointer"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
