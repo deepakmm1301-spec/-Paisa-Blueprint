@@ -973,15 +973,34 @@ export default function App() {
             </h2>
           </div>
 
-          <div className="relative z-10 shrink-0 self-start md:self-auto">
+          <div className="relative z-10 shrink-0 self-start md:self-auto flex flex-col gap-2">
             <button
               type="button"
               id="hero-calculate-salary-btn"
-              onClick={() => setActiveWidget("salary")}
-              className="w-full sm:w-auto px-5 py-3.5 bg-gradient-to-r from-bhagwa-500 to-amber-500 hover:from-bhagwa-600 hover:to-amber-600 focus:ring-2 focus:ring-bhagwa-500/50 active:scale-[0.98] text-white font-extrabold uppercase tracking-wider rounded-xl text-xs sm:text-sm transition-all shadow-md hover:shadow-lg hover:shadow-bhagwa-600/10 cursor-pointer flex items-center justify-center gap-2 border-0"
+              onClick={() => {
+                setActiveWidget("salary");
+                if (contentRef.current) {
+                  contentRef.current.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
+              className="w-full sm:w-auto px-5 py-3 bg-gradient-to-r from-bhagwa-500 to-amber-500 hover:from-bhagwa-600 hover:to-amber-600 focus:ring-2 focus:ring-bhagwa-500/50 active:scale-[0.98] text-white font-extrabold uppercase tracking-wider rounded-xl text-xs sm:text-sm transition-all shadow-md hover:shadow-lg hover:shadow-bhagwa-600/10 cursor-pointer flex items-center justify-center gap-2 border-0"
             >
               <span>Calculate Your Salary</span>
               <ChevronRight className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              id="hero-plan-sip-btn"
+              onClick={() => {
+                setActiveWidget("sip");
+                if (contentRef.current) {
+                  contentRef.current.scrollIntoView({ behavior: "smooth" });
+                }
+              }}
+              className="w-full sm:w-auto px-4 py-2 bg-slate-900 hover:bg-slate-850 dark:bg-slate-800 dark:hover:bg-slate-750 text-white dark:text-slate-100 font-bold uppercase tracking-wider rounded-lg text-xs transition-all shadow-sm cursor-pointer flex items-center justify-center gap-1.5 border border-slate-800 dark:border-slate-700"
+            >
+              <span>Plan SIP</span>
+              <ChevronRight className="w-3 h-3 text-emerald-400" />
             </button>
           </div>
         </div>
