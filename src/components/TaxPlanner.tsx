@@ -153,7 +153,7 @@ export default function TaxPlanner({ profile }: Props) {
           <div>
             <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1">
               <span>Annual Gross CTC Salary</span>
-              <span className="text-bhagwa-600 font-bold">₹{annualGross.toLocaleString("en-IN")}</span>
+              <span className="text-amber-600 font-bold">₹{annualGross.toLocaleString("en-IN")}</span>
             </div>
             <input
               type="range"
@@ -162,7 +162,7 @@ export default function TaxPlanner({ profile }: Props) {
               step="50000"
               value={annualGross}
               onChange={(e) => setAnnualGross(Number(e.target.value))}
-              className="w-full accent-bhagwa-600"
+              className="w-full accent-amber-600"
             />
             <div className="flex justify-between text-[10px] text-slate-400 mt-0.5 font-mono">
               <span>3 Lakhs</span>
@@ -268,17 +268,17 @@ export default function TaxPlanner({ profile }: Props) {
             </div>
 
             {/* New tax card */}
-            <div className="p-5 border border-bhagwa-100 rounded-2xl bg-bhagwa-50/10 hover:bg-bhagwa-50/20 transition-colors flex flex-col justify-between space-y-4">
+            <div className="p-5 border border-amber-200 rounded-2xl bg-amber-50/10 hover:bg-amber-50/20 transition-colors flex flex-col justify-between space-y-4">
               <div>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-bhagwa-800 uppercase tracking-wide">New Tax Regime</span>
-                  <span className="text-[10px] bg-bhagwa-100 text-bhagwa-700 px-2 py-0.5 rounded-full font-extrabold">Recommended</span>
+                  <span className="text-xs font-bold text-amber-800 uppercase tracking-wide">New Tax Regime</span>
+                  <span className="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-extrabold">Recommended</span>
                 </div>
 
                 <div className="mt-4 space-y-3 text-xs">
                   <div className="flex justify-between text-slate-600">
                     <span>Taxable Income:</span>
-                    <span className="font-semibold text-bhagwa-950">₹{taxableIncomeNew.toLocaleString("en-IN")}</span>
+                    <span className="font-semibold text-amber-950">₹{taxableIncomeNew.toLocaleString("en-IN")}</span>
                   </div>
                   <div className="flex justify-between text-slate-600">
                     <span>Allowed Deductions:</span>
@@ -286,24 +286,24 @@ export default function TaxPlanner({ profile }: Props) {
                   </div>
                   <div className="flex justify-between text-slate-600">
                     <span>Base Income Tax:</span>
-                    <span className="font-semibold text-bhagwa-950">₹{taxNew.toLocaleString("en-IN")}</span>
+                    <span className="font-semibold text-amber-950">₹{taxNew.toLocaleString("en-IN")}</span>
                   </div>
                   <div className="flex justify-between text-slate-600">
                     <span>Health & Edu Cess (4%):</span>
-                    <span className="font-semibold text-bhagwa-950">₹{cessNew.toLocaleString("en-IN")}</span>
+                    <span className="font-semibold text-amber-950">₹{cessNew.toLocaleString("en-IN")}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-bhagwa-100">
-                <span className="text-[10px] uppercase font-semibold text-bhagwa-500 block">Total Est. Annual Tax</span>
-                <span className="text-2xl font-extrabold text-bhagwa-700 font-mono">₹{totalTaxNew.toLocaleString("en-IN")}</span>
+              <div className="pt-3 border-t border-amber-100">
+                <span className="text-[10px] uppercase font-semibold text-amber-600 block">Total Est. Annual Tax</span>
+                <span className="text-2xl font-extrabold text-amber-700 font-mono">₹{totalTaxNew.toLocaleString("en-IN")}</span>
               </div>
             </div>
           </div>
 
           {/* Comparison summary card */}
-          <div className="p-5 bg-gradient-to-r from-emerald-50 to-bhagwa-50/30 border border-emerald-100/60 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="p-5 bg-gradient-to-r from-emerald-50 to-amber-50/30 border border-emerald-100/60 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-1.5 text-emerald-800 font-bold">
                 <Scale className="w-5 h-5 text-emerald-600" /> Optimize Complete

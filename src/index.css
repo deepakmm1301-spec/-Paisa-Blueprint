@@ -6,15 +6,15 @@
   --font-display: "Outfit", sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-  --color-bhagwa-50: #fff5eb;
-  --color-bhagwa-100: #ffedd5;
-  --color-bhagwa-200: #fed7aa;
-  --color-bhagwa-500: #ff7a00;
-  --color-bhagwa-600: #f55a00;
-  --color-bhagwa-700: #e04a00;
-  --color-bhagwa-800: #b83600;
-  --color-bhagwa-900: #7c2400;
-  --color-bhagwa-950: #451000;
+  --color-bhagwa-50: #ecfdf5;
+  --color-bhagwa-100: #d1fae5;
+  --color-bhagwa-200: #a7f3d0;
+  --color-bhagwa-500: #10b981;
+  --color-bhagwa-600: #059669;
+  --color-bhagwa-700: #047857;
+  --color-bhagwa-800: #065f46;
+  --color-bhagwa-900: #064e3b;
+  --color-bhagwa-950: #022c22;
 }
 
 /* Custom styled scrollbars */
@@ -42,6 +42,47 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
+  color: #0a1e3d; /* Premium deep navy for all headings */
+}
+
+/* Page level Navy Header and Navigation Styling */
+header,
+header.bg-white\/90 {
+  background-color: #0a1e3d !important; /* Elegant Navy theme background */
+  border-color: #172a45 !important;
+}
+
+header h1,
+header p,
+header span,
+header div,
+header button,
+header svg,
+header text {
+  color: #cbd5e1 !important;
+}
+
+header h1,
+header strong,
+header span.text-white,
+header button.text-white,
+header .font-bold {
+  color: #ffffff !important;
+}
+
+header svg.text-bhagwa-500 {
+  color: #10b981 !important;
+}
+
+header span.bg-bhagwa-100 {
+  background-color: #064e3b !important;
+  color: #34d399 !important;
+}
+
+header .bg-slate-50,
+header .border-slate-100\/80 {
+  background-color: #0d274c !important;
+  border-color: #1a355c !important;
 }
 
 /* ==========================================================================
@@ -60,8 +101,17 @@ h1, h2, h3, h4, h5, h6 {
 /* Header & Glassmorphism Navigation */
 .dark header,
 .dark header.bg-white\/90 {
-  background-color: #0b0f19/95 !important;
-  border-color: #1e293b !important;
+  background-color: #050f1d !important; /* Cozy midnight dark navy */
+  border-color: #122138 !important;
+}
+
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+  color: #f8fafc !important;
 }
 
 /* Card & Content Panel Backings */
@@ -142,24 +192,24 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Indian Premium Bhagwa & Orange Theme accents */
 .dark .bg-bhagwa-50 {
-  background-color: #241103 !important;
-  border-color: #4a1900 !important;
-  color: #ffaa55 !important;
+  background-color: #022c22 !important;
+  border-color: #065f46 !important;
+  color: #6ee7b7 !important;
 }
 
 .dark .text-bhagwa-600,
 .dark .text-orange-600 {
-  color: #ff8533 !important;
+  color: #34d399 !important;
 }
 
 .dark .bg-orange-50 {
-  background-color: #241103 !important;
-  border-color: #4a1900 !important;
+  background-color: #022c22 !important;
+  border-color: #065f46 !important;
 }
 
 .dark .bg-bhagwa-100 {
-  background-color: #381500 !important;
-  color: #ffc499 !important;
+  background-color: #064e3b !important;
+  color: #cbd5e1 !important;
 }
 
 /* Safe Green Highlights and Scoreboards */
@@ -231,7 +281,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Active sidebar item font protection */
 .dark .bg-bhagwa-600.text-white {
-  background-color: #f55a00 !important;
+  background-color: #059669 !important;
   color: #ffffff !important;
 }
 

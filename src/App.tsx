@@ -806,7 +806,7 @@ export default function App() {
               {isDefaultUser ? (
                 <button
                   onClick={() => setSessionUser(null)}
-                  className="flex items-center gap-1.5 bg-gradient-to-r from-bhagwa-500 to-amber-500 hover:from-bhagwa-600 hover:to-amber-600 active:scale-[0.98] text-white font-extrabold px-4 py-2 rounded-full text-xs shadow-xs hover:shadow-md transition-all cursor-pointer select-none focus:outline-none border-0"
+                  className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-extrabold px-4 py-2 rounded-full text-xs shadow-xs hover:shadow-md transition-all cursor-pointer select-none focus:outline-none border-0"
                   title="Sign In or Register your custom cloud locker"
                 >
                   <div className="h-5 w-5 rounded-full bg-white/20 flex items-center justify-center shrink-0">
@@ -955,21 +955,35 @@ export default function App() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full flex flex-col gap-8">
 
         {/* Dynamic Brand Tagline & Action Banner */}
-        <div id="brand-tagline-hero" className="relative overflow-hidden bg-gradient-to-br from-bhagwa-50 via-white to-emerald-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 border border-bhagwa-100/80 dark:border-slate-800 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 shadow-md dark:shadow-xl transition-all duration-300">
-          {/* Decorative glows & patterns */}
-          <div className="absolute top-0 right-0 w-72 h-72 bg-emerald-500/10 dark:bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-12 w-48 h-48 bg-bhagwa-500/10 dark:bg-bhagwa-500/5 rounded-full blur-2xl pointer-events-none" />
+        <div id="brand-tagline-hero" className="relative overflow-hidden bg-gradient-to-br from-violet-100 via-white to-emerald-100/85 dark:from-[#24173d] dark:via-slate-900 dark:to-[#052b1e] border-2 border-violet-200/70 dark:border-emerald-500/30 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 shadow-md dark:shadow-xl dark:shadow-violet-950/20 transition-all duration-300">
+          {/* Decorative glows & patterns using light purple and light green */}
+          <div className="absolute top-0 right-0 w-72 h-72 bg-violet-400/30 dark:bg-violet-500/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-12 w-48 h-48 bg-emerald-400/30 dark:bg-emerald-500/20 rounded-full blur-2xl pointer-events-none" />
           
           <div className="space-y-4 relative z-10 max-w-2xl">
-            <div className="inline-flex items-center gap-2 bg-emerald-500/10 dark:bg-emerald-500/10 border border-emerald-500/20 dark:border-emerald-500/20 px-3 py-1 rounded-full">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse" />
-              <span className="text-[10px] sm:text-xs font-bold tracking-widest text-emerald-700 dark:text-emerald-400 uppercase font-mono">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-violet-600/15 to-emerald-600/15 dark:from-violet-400/10 dark:to-emerald-400/10 border border-violet-300/40 dark:border-violet-500/30 px-3 py-1 rounded-full">
+              <span className="w-2 h-2 rounded-full bg-violet-600 dark:bg-violet-400 animate-pulse" />
+              <span className="text-[10px] sm:text-xs font-bold tracking-widest text-violet-700 dark:text-violet-300 uppercase font-mono">
                 India's Financial Operating System For SALARIED EMPLOYEES
               </span>
             </div>
             
-            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-snug font-display">
-              Plan Salary <span className="text-bhagwa-600 dark:text-bhagwa-500 font-bold">.</span> Calculate Salary <span className="text-emerald-600 dark:text-emerald-400 font-bold">.</span> Do SIP <span className="text-cyan-600 dark:text-cyan-400 font-bold">.</span> Build Wealth
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-slate-105 tracking-tight leading-relaxed font-display flex flex-wrap items-center gap-x-2 gap-y-1.5 relative z-10">
+              <span className="bg-purple-500/5 dark:bg-purple-500/20 px-2.5 py-0.5 rounded-lg border border-purple-200/50 dark:border-purple-500/30 !text-purple-700 dark:!text-purple-300 font-black">
+                Plan Salary
+              </span>
+              <span className="!text-purple-500 dark:!text-purple-400 font-extrabold text-base">•</span>
+              <span className="bg-purple-500/5 dark:bg-purple-500/20 px-2.5 py-0.5 rounded-lg border border-purple-200/50 dark:border-purple-500/30 !text-purple-700 dark:!text-purple-300 font-black">
+                Calculate Salary
+              </span>
+              <span className="!text-purple-500 dark:!text-purple-400 font-extrabold text-base">•</span>
+              <span className="bg-purple-500/5 dark:bg-purple-500/20 px-2.5 py-0.5 rounded-lg border border-purple-200/50 dark:border-purple-500/30 !text-purple-700 dark:!text-purple-300 font-black">
+                Do SIP
+              </span>
+              <span className="!text-purple-500 dark:!text-purple-400 font-extrabold text-base">•</span>
+              <span className="bg-emerald-500/5 dark:bg-emerald-500/20 px-3 py-1 rounded-lg border border-emerald-200/60 dark:border-emerald-500/30 !text-emerald-700 dark:!text-emerald-300 font-black shadow-sm">
+                Build Wealth
+              </span>
             </h2>
           </div>
 
@@ -983,7 +997,7 @@ export default function App() {
                   contentRef.current.scrollIntoView({ behavior: "smooth" });
                 }
               }}
-              className="w-full sm:w-auto px-5 py-3 bg-gradient-to-r from-bhagwa-500 to-amber-500 hover:from-bhagwa-600 hover:to-amber-600 focus:ring-2 focus:ring-bhagwa-500/50 active:scale-[0.98] text-white font-extrabold uppercase tracking-wider rounded-xl text-xs sm:text-sm transition-all shadow-md hover:shadow-lg hover:shadow-bhagwa-600/10 cursor-pointer flex items-center justify-center gap-2 border-0"
+              className="w-full sm:w-auto px-5 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 focus:ring-2 focus:ring-emerald-500/50 active:scale-[0.98] text-white font-extrabold uppercase tracking-wider rounded-xl text-xs sm:text-sm transition-all shadow-md hover:shadow-lg hover:shadow-emerald-600/10 cursor-pointer flex items-center justify-center gap-2 border-0"
             >
               <span>Calculate Your Salary</span>
               <ChevronRight className="w-4 h-4" />
