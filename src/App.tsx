@@ -557,7 +557,7 @@ export default function App() {
     },
     {
       id: "salary" as ActiveWidget,
-      label: "Govt / Pay Planner",
+      label: "Salary Calculator",
       desc: "DA, HRA & scale estimator",
       icon: <Landmark className="w-5 h-5" />,
       color: "text-sky-600 bg-sky-50 border-sky-100",
