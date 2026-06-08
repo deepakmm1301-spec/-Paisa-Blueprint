@@ -177,30 +177,46 @@ export default function SIPCalculator() {
           </h3>
 
           <div>
-            <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">
+            <div className="flex justify-between items-center text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">
               <span>Initial Monthly Investment</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-extrabold font-mono">₹{monthlySip.toLocaleString("en-IN")}</span>
+              <div className="flex items-center gap-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-1.5 py-0.5 shadow-2xs">
+                <span className="text-slate-400">₹</span>
+                <input
+                  type="number"
+                  value={monthlySip || ""}
+                  onChange={(e) => setMonthlySip(Number(e.target.value))}
+                  className="w-20 bg-transparent text-right font-bold text-emerald-600 dark:text-emerald-400 focus:outline-none focus:ring-0 border-0 p-0 text-xs"
+                />
+              </div>
             </div>
             <input
               type="range"
               min="1000"
               max="200000"
-              step="500"
+              step="1"
               value={monthlySip}
               onChange={(e) => setMonthlySip(Number(e.target.value))}
               className="w-full accent-emerald-500 cursor-pointer"
             />
             <div className="flex justify-between text-[10px] text-slate-400 dark:text-slate-505 mt-0.5">
-              <span>₹1,050</span>
+              <span>₹1,000</span>
               <span>₹1,00,000</span>
               <span>₹2,00,000</span>
             </div>
           </div>
 
           <div>
-            <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">
+            <div className="flex justify-between items-center text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">
               <span>Annual SIP Step-Up % (Increase each year)</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-bold">{annualStepUp}%</span>
+              <div className="flex items-center gap-0.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-1.5 py-0.5 shadow-2xs">
+                <input
+                  type="number"
+                  value={annualStepUp || ""}
+                  onChange={(e) => setAnnualStepUp(Number(e.target.value))}
+                  className="w-10 bg-transparent text-right font-bold text-emerald-600 dark:text-emerald-400 focus:outline-none focus:ring-0 border-0 p-0 text-xs"
+                />
+                <span className="text-slate-400">%</span>
+              </div>
             </div>
             <input
               type="range"
@@ -219,15 +235,24 @@ export default function SIPCalculator() {
           </div>
 
           <div>
-            <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">
+            <div className="flex justify-between items-center text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">
               <span>Expected Annual Return (CAGR %)</span>
-              <span className="text-emerald-600 dark:text-emerald-400 font-extrabold">{expectedReturn}%</span>
+              <div className="flex items-center gap-0.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded px-1.5 py-0.5 shadow-2xs">
+                <input
+                  type="number"
+                  step="0.1"
+                  value={expectedReturn || ""}
+                  onChange={(e) => setExpectedReturn(Number(e.target.value))}
+                  className="w-10 bg-transparent text-right font-bold text-emerald-600 dark:text-emerald-400 focus:outline-none focus:ring-0 border-0 p-0 text-xs"
+                />
+                <span className="text-slate-400">%</span>
+              </div>
             </div>
             <input
               type="range"
               min="5"
               max="25"
-              step="0.5"
+              step="0.1"
               value={expectedReturn}
               onChange={(e) => setExpectedReturn(Number(e.target.value))}
               className="w-full accent-emerald-500 cursor-pointer"

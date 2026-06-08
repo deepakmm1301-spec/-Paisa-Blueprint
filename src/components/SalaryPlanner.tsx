@@ -134,15 +134,23 @@ export default function SalaryPlanner({ profile }: Props) {
           </div>
 
           <div>
-            <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1">
+            <div className="flex justify-between items-center text-xs font-semibold text-slate-600 mb-1.5">
               <span>Basic Pay Scale (₹/Month)</span>
-              <span className="text-bhagwa-600">₹{basicPay.toLocaleString("en-IN")}</span>
+              <div className="flex items-center gap-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-1.5 py-0.5 shadow-2xs">
+                <span className="text-slate-400">₹</span>
+                <input
+                  type="number"
+                  value={basicPay || ""}
+                  onChange={(e) => setBasicPay(Number(e.target.value))}
+                  className="w-20 bg-transparent text-right font-bold text-bhagwa-600 focus:outline-none focus:ring-0 border-0 p-0 text-xs"
+                />
+              </div>
             </div>
             <input
               type="range"
               min="10000"
               max="150000"
-              step="500"
+              step="1"
               value={basicPay}
               onChange={(e) => setBasicPay(Number(e.target.value))}
               className="w-full accent-bhagwa-600"
@@ -154,14 +162,23 @@ export default function SalaryPlanner({ profile }: Props) {
           </div>
 
           <div>
-            <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1">
+            <div className="flex justify-between items-center text-xs font-semibold text-slate-600 mb-1.5">
               <span>Dearness Allowance (DA % of Basic)</span>
-              <span className="text-bhagwa-600">{daRate}%</span>
+              <div className="flex items-center gap-0.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-1.5 py-0.5 shadow-2xs">
+                <input
+                  type="number"
+                  value={daRate || ""}
+                  onChange={(e) => setDaRate(Number(e.target.value))}
+                  className="w-12 bg-transparent text-right font-bold text-bhagwa-600 focus:outline-none focus:ring-0 border-0 p-0 text-xs"
+                />
+                <span className="text-slate-400">%</span>
+              </div>
             </div>
             <input
               type="range"
               min="0"
               max="100"
+              step="1"
               value={daRate}
               onChange={(e) => setDaRate(Number(e.target.value))}
               className="w-full accent-bhagwa-600"
@@ -174,14 +191,23 @@ export default function SalaryPlanner({ profile }: Props) {
           </div>
 
           <div>
-            <div className="flex justify-between text-xs font-semibold text-slate-600 mb-1">
+            <div className="flex justify-between items-center text-xs font-semibold text-slate-600 mb-1.5">
               <span>House Rent Allowance (HRA % of Basic)</span>
-              <span className="text-bhagwa-600 font-bold">{hraRate}%</span>
+              <div className="flex items-center gap-0.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded px-1.5 py-0.5 shadow-2xs">
+                <input
+                  type="number"
+                  value={hraRate || ""}
+                  onChange={(e) => setHraRate(Number(e.target.value))}
+                  className="w-12 bg-transparent text-right font-bold text-bhagwa-600 focus:outline-none focus:ring-0 border-0 p-0 text-xs"
+                />
+                <span className="text-slate-400">%</span>
+              </div>
             </div>
             <input
               type="range"
               min="0"
               max="100"
+              step="1"
               value={hraRate}
               onChange={(e) => setHraRate(Number(e.target.value))}
               className="w-full accent-bhagwa-600 cursor-pointer"
