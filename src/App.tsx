@@ -13,6 +13,7 @@ import ProfileManager from "./components/ProfileManager";
 import AuthScreen from "./components/AuthScreen";
 import CibilCheck from "./components/CibilCheck";
 import ArticlesColumn from "./components/ArticlesColumn";
+import PensionCalculator from "./components/PensionCalculator";
 import { FooterSections } from "./components/FooterSections";
 // @ts-ignore
 import paisaLogo from "./assets/images/deep_paisa_logo_1780484307855.png";
@@ -95,7 +96,8 @@ type ActiveWidget =
   | "tax" 
   | "networth" 
   | "coach"
-  | "cibil";
+  | "cibil"
+  | "pension";
 
 export default function App() {
   const [showWelcomePopup, setShowWelcomePopup] = useState(true);
@@ -549,18 +551,25 @@ export default function App() {
       color: "text-orange-600 bg-orange-50 border-orange-100",
     },
     {
-      id: "health" as ActiveWidget,
-      label: "Health Scorecard",
-      desc: "Overall wellness assessment",
-      icon: <HeartPulse className="w-5 h-5" />,
-      color: "text-bhagwa-600 bg-bhagwa-50 border-bhagwa-100",
-    },
-    {
       id: "salary" as ActiveWidget,
       label: "Salary Calculator",
       desc: "DA, HRA & scale estimator",
       icon: <Landmark className="w-5 h-5" />,
       color: "text-sky-600 bg-sky-50 border-sky-100",
+    },
+    {
+      id: "pension" as ActiveWidget,
+      label: "Pension Calculator",
+      desc: "NPS and pension projection",
+      icon: <Coins className="w-5 h-5 font-bold" />,
+      color: "text-purple-600 bg-purple-50 border-purple-100",
+    },
+    {
+      id: "health" as ActiveWidget,
+      label: "Health Scorecard",
+      desc: "Overall wellness assessment",
+      icon: <HeartPulse className="w-5 h-5" />,
+      color: "text-bhagwa-600 bg-bhagwa-50 border-bhagwa-100",
     },
     {
       id: "sip" as ActiveWidget,
@@ -1096,12 +1105,16 @@ export default function App() {
               />
             )}
 
-            {activeWidget === "health" && (
-              <FinancialHealthCheck profile={profile} onUpdateProfile={handleUpdateProfile} />
-            )}
-
             {activeWidget === "salary" && (
               <SalaryPlanner profile={profile} />
+            )}
+
+            {activeWidget === "pension" && (
+              <PensionCalculator />
+            )}
+
+            {activeWidget === "health" && (
+              <FinancialHealthCheck profile={profile} onUpdateProfile={handleUpdateProfile} />
             )}
 
             {activeWidget === "sip" && (
