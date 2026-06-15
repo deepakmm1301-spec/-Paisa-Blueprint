@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { UserProfile, LoanDetails, InvestmentDetails } from "./types";
+import { UserProfile, LoanDetails, InvestmentDetails, getShareableLink } from "./types";
 import FinancialHealthCheck from "./components/FinancialHealthCheck";
 import SalaryPlanner from "./components/SalaryPlanner";
 import SIPCalculator from "./components/SIPCalculator";
@@ -786,7 +786,7 @@ export default function App() {
             {/* WhatsApp Share Button */}
             <button
               onClick={() => {
-                const message = "Check out Paisa Blueprint - The Indian salaried personal finance adviser! Formulate your portfolio, optimize tax, simulate SIP and retirement targets. Try it live at: " + window.location.href;
+                const message = "Check out Paisa Blueprint - The Indian salaried personal finance adviser! Formulate your portfolio, optimize tax, simulate SIP and retirement targets. Try it live at: " + getShareableLink();
                 window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, "_blank");
               }}
               className="px-3.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-extrabold rounded-full text-xs flex items-center gap-1.5 transition-all cursor-pointer focus:outline-none border-0 shadow-3xs"

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { BookOpen, Sparkles, Flame, Search, ArrowRight, X, Clock, HelpCircle, HeartPulse, Percent, Coins, Milestone, Languages, Share2 } from "lucide-react";
+import { getShareableLink } from "../types";
 
 interface Article {
   id: string;
@@ -906,7 +907,7 @@ export default function ArticlesColumn({ onNavigateToWidget, userMonthlySalary }
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        const message = `*${currentData.title}*\n\n${currentData.summary}\n\nRead more on Paisa Blueprint: ${window.location.href}`;
+                        const message = `*${currentData.title}*\n\n${currentData.summary}\n\nRead more on Paisa Blueprint: ${getShareableLink()}`;
                         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, "_blank");
                       }}
                       className="text-[9px] text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 font-extrabold px-1.5 py-0.5 rounded flex items-center gap-1 transition-all cursor-pointer"
@@ -1040,7 +1041,7 @@ export default function ArticlesColumn({ onNavigateToWidget, userMonthlySalary }
                   <button
                     type="button"
                     onClick={() => {
-                      const message = `*${currentData.title}*\n\n${currentData.summary}\n\nRead more on Paisa Blueprint: ${window.location.href}`;
+                      const message = `*${currentData.title}*\n\n${currentData.summary}\n\nRead more on Paisa Blueprint: ${getShareableLink()}`;
                       window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, "_blank");
                     }}
                     className="w-full sm:w-auto px-3.5 py-2 bg-emerald-650 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-xs transition-all shadow-xs active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"

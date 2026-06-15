@@ -69,3 +69,27 @@ export interface Goal {
   inflationRate: number;
   category: "education" | "marriage" | "house" | "car" | "vacation" | "other";
 }
+
+export function getShareableLink(): string {
+  try {
+    let href = window.location.href;
+    if (href && href.startsWith("http")) {
+      // If we are on the development environment, rewrite to the public pre-view environments
+      if (href.includes("ais-dev-")) {
+        href = href.replace("ais-dev-", "ais-pre-");
+      }
+      if (
+        !href.includes("localhost") &&
+        !href.includes("127.0.0.1") &&
+        !href.includes("about:srcdoc") &&
+        !href.includes("about:blank")
+      ) {
+        return href;
+      }
+    }
+  } catch (e) {
+    // suppress
+  }
+  return "https://ais-pre-smf772g7msspcpbw4nc3rs-109224888067.asia-east1.run.app";
+}
+

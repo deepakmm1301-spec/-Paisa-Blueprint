@@ -14,6 +14,7 @@ import {
   Award,
   Users
 } from "lucide-react";
+import { getShareableLink } from "../types";
 
 type FooterTab = "about" | "contact" | "privacy" | "disclaimer" | "terms" | null;
 
@@ -231,7 +232,7 @@ export function FooterSections() {
               <li>
                 <button 
                   onClick={() => {
-                    const message = "Check out Paisa Blueprint - The Indian salaried personal finance adviser! Formulate your portfolio, optimize tax, simulate SIP and retirement targets. Try it live at: " + window.location.href;
+                    const message = "Check out Paisa Blueprint - The Indian salaried personal finance adviser! Formulate your portfolio, optimize tax, simulate SIP and retirement targets. Try it live at: " + getShareableLink();
                     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, "_blank");
                   }}
                   className="hover:text-emerald-400 text-slate-400 text-left transition-all cursor-pointer inline-flex items-center gap-1 hover:translate-x-0.5"
