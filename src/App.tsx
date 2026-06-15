@@ -576,7 +576,7 @@ export default function App() {
     },
     {
       id: "sip" as ActiveWidget,
-      label: "Step-Up SIP Plan",
+      label: "Plan SIP",
       desc: "Compounding wealth growth",
       icon: <TrendingUp className="w-5 h-5" />,
       color: "text-emerald-600 bg-emerald-50 border-emerald-100",
