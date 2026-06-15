@@ -778,7 +778,32 @@ export default function App() {
                 className="flex items-center gap-1.5 hover:text-bhagwa-600 transition-colors text-left cursor-pointer font-bold text-slate-700 focus:outline-none"
               >
                 <Users className="w-3.5 h-3.5 text-bhagwa-500" />
-                <span>{profile.name || "Default user"}</span>
+                <span
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={(e) => {
+                    const newName = e.currentTarget.textContent?.trim();
+                    if (newName && newName !== profile.name) {
+                      handleUpdateProfile({
+                        ...profile,
+                        name: newName
+                      });
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      e.currentTarget.blur();
+                    }
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                  title="Click to edit profile name directly inline"
+                  className="px-1 py-0.5 rounded hover:bg-slate-200/60 dark:hover:bg-slate-800 focus:bg-white dark:focus:bg-slate-905 focus:outline-none focus:ring-1 focus:ring-bhagwa-500 min-w-[50px] inline-block transition-all cursor-text border-b border-dashed border-slate-300"
+                >
+                  {profile.name || "Default user"}
+                </span>
                 <span className="text-[9px] uppercase tracking-wider bg-bhagwa-100 text-bhagwa-700 font-extrabold px-1 rounded-sm ml-0.5 animate-pulse">Switch</span>
               </button>
               <div className="h-4 w-px bg-slate-200"></div>
