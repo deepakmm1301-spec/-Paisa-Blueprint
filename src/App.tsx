@@ -14,6 +14,7 @@ import AuthScreen from "./components/AuthScreen";
 import CibilCheck from "./components/CibilCheck";
 import ArticlesColumn from "./components/ArticlesColumn";
 import PensionCalculator from "./components/PensionCalculator";
+import DebtPlanner from "./components/DebtPlanner";
 import { FooterSections } from "./components/FooterSections";
 // @ts-ignore
 import paisaLogo from "./assets/images/deep_paisa_logo_1780484307855.png";
@@ -49,7 +50,8 @@ import {
   Activity,
   Plus,
   Trash2,
-  Share2
+  Share2,
+  TrendingDown
 } from "lucide-react";
 
 // Default profile setup
@@ -97,7 +99,8 @@ type ActiveWidget =
   | "networth" 
   | "coach"
   | "cibil"
-  | "pension";
+  | "pension"
+  | "debt";
 
 export default function App() {
   const [showWelcomePopup, setShowWelcomePopup] = useState(true);
@@ -612,6 +615,13 @@ export default function App() {
       desc: "Check & simulate Credit Health",
       icon: <CreditCard className="w-5 h-5" />,
       color: "text-emerald-650 bg-emerald-50 border-emerald-110",
+    },
+    {
+      id: "debt" as ActiveWidget,
+      label: "Debt Freedom Planner",
+      desc: "Accelerate debt payoffs with pre-payments",
+      icon: <TrendingDown className="w-5 h-5" />,
+      color: "text-rose-600 bg-rose-50 border-rose-100",
     },
     {
       id: "coach" as ActiveWidget,
@@ -1139,6 +1149,10 @@ export default function App() {
 
             {activeWidget === "cibil" && (
               <CibilCheck profile={profile} />
+            )}
+
+            {activeWidget === "debt" && (
+              <DebtPlanner profile={profile} />
             )}
 
             {activeWidget === "coach" && (
