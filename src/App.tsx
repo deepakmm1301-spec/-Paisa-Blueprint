@@ -673,7 +673,7 @@ export default function App() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md"
           >
             <motion.div
               id="welcome-card"
@@ -681,56 +681,69 @@ export default function App() {
               animate={{ scale: 1, y: 0, opacity: 1 }}
               exit={{ scale: 0.95, y: -10, opacity: 0 }}
               transition={{ type: "spring", damping: 25, stiffness: 350 }}
-              className="relative max-w-sm w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl text-center overflow-hidden"
+              className="relative max-w-sm w-full bg-slate-900 border border-purple-500/20 rounded-3xl p-7 shadow-2xl text-center overflow-hidden"
             >
-              {/* Premium Background Glow FX */}
-              <div className="absolute -top-16 -left-16 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
-              <div className="absolute -bottom-16 -right-16 w-36 h-36 bg-orange-500/10 rounded-full blur-2xl pointer-events-none" />
+              {/* Premium Purple Glow FX */}
+              <div className="absolute -top-16 -left-16 w-40 h-40 bg-purple-600/25 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -bottom-16 -right-16 w-40 h-40 bg-fuchsia-600/20 rounded-full blur-3xl pointer-events-none" />
 
-              <div className="relative flex flex-col items-center gap-4">
-                {/* Brand Logo & Decorative Accent */}
-                <div className="h-14 w-14 rounded-2xl bg-gradient-to-tr from-slate-950 to-slate-800 flex items-center justify-center shadow-lg border border-slate-700/50">
-                  <img
-                    src={paisaLogo}
-                    alt="Paisa Blueprint"
-                    className="w-10 h-10 object-cover shrink-0"
-                    referrerPolicy="no-referrer"
-                  />
+              <div className="relative flex flex-col items-center gap-5">
+                {/* Brand Logo & Animated Purple Ambient Halo */}
+                <div className="relative">
+                  <div className="absolute inset-0 bg-purple-500/20 rounded-2xl blur-md animate-pulse" />
+                  <div className="relative h-16 w-16 rounded-2xl bg-gradient-to-tr from-slate-950 to-slate-900 flex items-center justify-center shadow-xl border border-purple-500/40">
+                    <img
+                      src={paisaLogo}
+                      alt="Paisa Blueprint"
+                      className="w-11 h-11 object-cover shrink-0"
+                      referrerPolicy="no-referrer"
+                    />
+                  </div>
                 </div>
 
-                <div className="space-y-1">
-                  <h3 className="text-xl font-extrabold text-white tracking-tight uppercase font-display">
-                    Paisa Blueprint
+                <div className="space-y-1.5 w-full">
+                  <h3 className="text-2xl font-black text-white tracking-tight uppercase font-display flex items-center justify-center gap-1.5">
+                    <Sparkles className="w-5 h-5 text-purple-400 animate-pulse" />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-fuchsia-400 to-indigo-300">
+                      Paisa Blueprint
+                    </span>
+                    <Sparkles className="w-5 h-5 text-purple-400 animate-pulse" />
                   </h3>
-                  <div className="flex items-center justify-center gap-1.5">
-                    <span className="text-[9px] font-extrabold uppercase bg-emerald-500 text-white px-1.5 py-0.5 rounded-sm">
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-[9px] font-black uppercase bg-purple-650 text-white px-2 py-0.5 rounded-full border border-purple-500/30 tracking-wider">
                       Salaried 🇮🇳
                     </span>
-                    <span className="text-[10px] font-medium text-slate-400">
-                      Smart Personal Finance
+                    <span className="text-[10px] font-bold text-purple-300">
+                      Smart Personal Finance Engine
                     </span>
                   </div>
                 </div>
 
                 {/* Core Welcome Announcement */}
-                <div className="mt-2 space-y-1">
-                  <p className="text-base font-bold text-slate-100">
-                    Thank You For Visiting Us!
+                <div className="mt-1 space-y-2">
+                  <p className="text-base font-extrabold text-slate-100 flex items-center justify-center gap-1.5">
+                    Welcome to Your Wealth cockpit!
                   </p>
                   <p className="text-xs text-slate-400 max-w-xs leading-relaxed">
-                    Loading your personalized salaried financial workspace. Get ready to compound savings, optimize taxes, and map out your dynamic wealth targets.
+                    Instantiating your high-octane financial diagnostic tools. Prepare to optimize taxes, simulate direct index SIPs, and blueprint your freedom targets.
                   </p>
                 </div>
 
                 {/* 2-Second Linear Animation Progress Indicator bar */}
-                <div className="w-full h-1.5 bg-slate-800/80 rounded-full overflow-hidden mt-3">
-                  <motion.div
-                    id="welcome-progress"
-                    initial={{ width: "0%" }}
-                    animate={{ width: "100%" }}
-                    transition={{ duration: 2, ease: "linear" }}
-                    className="h-full bg-gradient-to-r from-emerald-500 via-orange-500 to-emerald-500"
-                  />
+                <div className="w-full space-y-1.5 mt-2">
+                  <div className="flex justify-between items-center text-[9px] uppercase font-bold tracking-wider text-purple-400/80">
+                    <span>Configuring modules</span>
+                    <span className="font-mono">Processing...</span>
+                  </div>
+                  <div className="w-full h-2 bg-slate-950 rounded-full overflow-hidden border border-purple-950 shadow-inner">
+                    <motion.div
+                      id="welcome-progress"
+                      initial={{ width: "0%" }}
+                      animate={{ width: "100%" }}
+                      transition={{ duration: 2, ease: "linear" }}
+                      className="h-full bg-gradient-to-r from-purple-600 via-fuchsia-500 to-indigo-500"
+                    />
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -1127,63 +1140,73 @@ export default function App() {
         {/* Middle Content Sheet */}
         <section ref={contentRef} className="lg:col-span-6 scroll-mt-24">
           <div className="space-y-6">
-            
-            {activeWidget === "profiles" && (
-              <ProfileManager 
-                currentProfile={profile}
-                profiles={profiles}
-                onSelectProfile={setActiveProfileId}
-                onCreateProfile={handleCreateProfile}
-                onDeleteProfile={handleDeleteProfile}
-                onDuplicateProfile={handleDuplicateProfile}
-                onUpdateProfile={handleUpdateProfile}
-              />
-            )}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeWidget}
+                layoutId="active-dashboard-panel"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
+                className="w-full"
+              >
+                {activeWidget === "profiles" && (
+                  <ProfileManager 
+                    currentProfile={profile}
+                    profiles={profiles}
+                    onSelectProfile={setActiveProfileId}
+                    onCreateProfile={handleCreateProfile}
+                    onDeleteProfile={handleDeleteProfile}
+                    onDuplicateProfile={handleDuplicateProfile}
+                    onUpdateProfile={handleUpdateProfile}
+                  />
+                )}
 
-            {activeWidget === "salary" && (
-              <SalaryPlanner profile={profile} />
-            )}
+                {activeWidget === "salary" && (
+                  <SalaryPlanner profile={profile} />
+                )}
 
-            {activeWidget === "pension" && (
-              <PensionCalculator />
-            )}
+                {activeWidget === "pension" && (
+                  <PensionCalculator />
+                )}
 
-            {activeWidget === "health" && (
-              <FinancialHealthCheck profile={profile} onUpdateProfile={handleUpdateProfile} />
-            )}
+                {activeWidget === "health" && (
+                  <FinancialHealthCheck profile={profile} onUpdateProfile={handleUpdateProfile} />
+                )}
 
-            {activeWidget === "sip" && (
-              <SIPCalculator />
-            )}
+                {activeWidget === "sip" && (
+                  <SIPCalculator />
+                )}
 
-            {activeWidget === "retirement" && (
-              <RetirementPlanner />
-            )}
+                {activeWidget === "retirement" && (
+                  <RetirementPlanner />
+                )}
 
-            {activeWidget === "goals" && (
-              <GoalPlanner />
-            )}
+                {activeWidget === "goals" && (
+                  <GoalPlanner />
+                )}
 
-            {activeWidget === "tax" && (
-              <TaxPlanner profile={profile} />
-            )}
+                {activeWidget === "tax" && (
+                  <TaxPlanner profile={profile} />
+                )}
 
-            {activeWidget === "networth" && (
-              <NetWorthTracker profile={profile} />
-            )}
+                {activeWidget === "networth" && (
+                  <NetWorthTracker profile={profile} />
+                )}
 
-            {activeWidget === "cibil" && (
-              <CibilCheck profile={profile} />
-            )}
+                {activeWidget === "cibil" && (
+                  <CibilCheck profile={profile} />
+                )}
 
-            {activeWidget === "debt" && (
-              <DebtPlanner profile={profile} />
-            )}
+                {activeWidget === "debt" && (
+                  <DebtPlanner profile={profile} />
+                )}
 
-            {activeWidget === "coach" && (
-              <AICoach profile={profile} />
-            )}
-
+                {activeWidget === "coach" && (
+                  <AICoach profile={profile} />
+                )}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </section>
 

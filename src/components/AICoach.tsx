@@ -322,9 +322,17 @@ Here are some helpful presets you can ask me, or type your own question below:`,
                   let displayLine: React.ReactNode = line;
                   if (line.includes("**")) {
                     const parts = line.split("**");
-                    displayLine = parts.map((part, pIdx) => 
-                      pIdx % 2 === 1 ? <strong key={pIdx} className={msg.role === "user" ? "text-white underline" : "text-bhagwa-950 font-bold"}>{part}</strong> : part
-                    );
+                    displayLine = parts.map((part, pIdx) => {
+                      if (pIdx % 2 === 1) {
+                        const isPaisa = part.toLowerCase().includes("paisa blueprint");
+                        return (
+                          <strong key={pIdx} className={msg.role === "user" ? "text-white underline" : `${isPaisa ? "text-purple-600 dark:text-purple-400 font-extrabold" : "text-bhagwa-950"} font-bold`}>
+                            {part}
+                          </strong>
+                        );
+                      }
+                      return part;
+                    });
                   }
                   return (
                     <span key={lIdx} className="block mt-1">
