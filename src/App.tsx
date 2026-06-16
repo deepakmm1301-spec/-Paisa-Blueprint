@@ -355,6 +355,9 @@ export default function App() {
   });
 
   const [activeWidget, setActiveWidget] = useState<ActiveWidget>("profiles");
+  const [language, setLanguage] = useState<"en" | "hi">(() => {
+    return (localStorage.getItem("paisa_language") as "en" | "hi") || "en";
+  });
   const contentRef = React.useRef<HTMLElement>(null);
   const isFirstMount = React.useRef(true);
 
@@ -548,85 +551,85 @@ export default function App() {
   const menuItems = [
     {
       id: "profiles" as ActiveWidget,
-      label: "Profiles & Accounts",
-      desc: "Manage multiple family files",
+      label: language === "hi" ? "प्रोफ़ाइल और खाते" : "Profiles & Accounts",
+      desc: language === "hi" ? "एकाधिक पारिवारिक फाइलें संभालें" : "Manage multiple family files",
       icon: <Users className="w-5 h-5" />,
       color: "text-orange-600 bg-orange-50 border-orange-100",
     },
     {
       id: "salary" as ActiveWidget,
-      label: "Salary Calculator",
-      desc: "DA, HRA & scale estimator",
+      label: language === "hi" ? "वेतन कैलकुलेटर" : "Salary Calculator",
+      desc: language === "hi" ? "महंगाई भत्ता (DA) व वेतनमान सटीक अनुमान" : "DA, HRA & scale estimator",
       icon: <Landmark className="w-5 h-5" />,
       color: "text-sky-600 bg-sky-50 border-sky-100",
     },
     {
       id: "pension" as ActiveWidget,
-      label: "Pension Calculator",
-      desc: "NPS and pension projection",
+      label: language === "hi" ? "पेंशन कैलकुलेटर" : "Pension Calculator",
+      desc: language === "hi" ? "NPS और पेंशन योजना अनुमान" : "NPS and pension projection",
       icon: <Coins className="w-5 h-5 font-bold" />,
       color: "text-purple-600 bg-purple-50 border-purple-100",
     },
     {
       id: "health" as ActiveWidget,
-      label: "Health Scorecard",
-      desc: "Overall wellness assessment",
+      label: language === "hi" ? "स्वास्थ्य स्कोरकार्ड" : "Health Scorecard",
+      desc: language === "hi" ? "समग्र वित्तीय स्वास्थ्य मूल्यांकन" : "Overall wellness assessment",
       icon: <HeartPulse className="w-5 h-5" />,
       color: "text-bhagwa-600 bg-bhagwa-50 border-bhagwa-100",
     },
     {
       id: "sip" as ActiveWidget,
-      label: "Plan SIP",
-      desc: "Compounding wealth growth",
+      label: language === "hi" ? "एसआईपी योजनाकार" : "Plan SIP",
+      desc: language === "hi" ? "चक्रवृद्धि के साथ धन वृद्धि" : "Compounding wealth growth",
       icon: <TrendingUp className="w-5 h-5" />,
       color: "text-emerald-600 bg-emerald-50 border-emerald-100",
     },
     {
       id: "retirement" as ActiveWidget,
-      label: "Retirement Roadmap",
-      desc: "Inflation vs longevity cover",
+      label: language === "hi" ? "रिटायरमेंट रोडमैप" : "Retirement Roadmap",
+      desc: language === "hi" ? "महंगाई दर और दीर्घायु वित्तीय कवर" : "Inflation vs longevity cover",
       icon: <Compass className="w-5 h-5" />,
       color: "text-violet-600 bg-violet-50 border-violet-100",
     },
     {
       id: "goals" as ActiveWidget,
-      label: "My Goal Planner",
-      desc: "Plan weddings, homes, cars",
+      label: language === "hi" ? "मेरा लक्ष्य योजनाकार" : "My Goal Planner",
+      desc: language === "hi" ? "शादी, घर, वाहन आदि लक्ष्य" : "Plan weddings, homes, cars",
       icon: <Sparkles className="w-5 h-5" />,
       color: "text-rose-600 bg-rose-50 border-rose-100",
     },
     {
       id: "tax" as ActiveWidget,
-      label: "Tax Regime Optimizer",
-      desc: "Compare Old vs. New Schemes",
+      label: language === "hi" ? "टैक्स व्यवस्था अनुकूलक" : "Tax Regime Optimizer",
+      desc: language === "hi" ? "पुरानी और नई टैक्स व्यवस्था की तुलना" : "Compare Old vs. New Schemes",
       icon: <Scale className="w-5 h-5" />,
       color: "text-amber-600 bg-amber-50 border-amber-100",
     },
     {
       id: "networth" as ActiveWidget,
-      label: "My Wealth Tracker",
-      desc: "Map assets against active loans",
+      label: language === "hi" ? "मेरा धन ट्रैकर" : "My Wealth Tracker",
+      desc: language === "hi" ? "सक्रिय ऋणों के मुकाबले संपत्तियां" : "Map assets against active loans",
       icon: <Wallet className="w-5 h-5" />,
       color: "text-blue-600 bg-blue-50 border-blue-100",
     },
     {
       id: "cibil" as ActiveWidget,
-      label: "CIBIL Credit Score",
-      desc: "Check & simulate Credit Health",
+      label: language === "hi" ? "सिबिल (CIBIL) क्रेड स्कोर" : "CIBIL Credit Score",
+      desc: language === "hi" ? "सिम्युलेशन और सिबिल स्वास्थ्य जांच" : "Check & simulate Credit Health",
       icon: <CreditCard className="w-5 h-5" />,
       color: "text-emerald-650 bg-emerald-50 border-emerald-110",
     },
     {
       id: "debt" as ActiveWidget,
-      label: "Debt Freedom Planner",
-      desc: "Accelerate debt payoffs with pre-payments",
+      label: language === "hi" ? "ऋण मुक्ति योजनाकार" : "Debt Freedom Planner",
+      desc: language === "hi" ? "प्री-पेमेंट से कर्जों को शीघ्र मिटाएं" : "Accelerate debt payoffs with pre-payments",
       icon: <TrendingDown className="w-5 h-5" />,
       color: "text-rose-600 bg-rose-50 border-rose-100",
     },
     {
       id: "coach" as ActiveWidget,
-      label: "Paisa AI Coach",
-      desc: "Real-time chat & feedback",
+      label: language === "hi" ? "पैसा एआई कोच" : "Paisa AI Coach",
+      desc: language === "hi" ? "वित्तीय प्रश्नों के तुरंत जवाब" : "Real-time chat & feedback",
       icon: <Bot className="w-5 h-5" />,
       color: "text-bhagwa-600 bg-bhagwa-50 border-bhagwa-100",
     },
@@ -817,18 +820,52 @@ export default function App() {
                 >
                   {profile.name || "Default user"}
                 </span>
-                <span className="text-[9px] uppercase tracking-wider bg-bhagwa-100 text-bhagwa-700 font-extrabold px-1 rounded-sm ml-0.5 animate-pulse">Switch</span>
+                <span className="text-[9px] uppercase tracking-wider bg-bhagwa-100 text-bhagwa-700 font-extrabold px-1 rounded-sm ml-0.5 animate-pulse">
+                  {language === "hi" ? "बदलें" : "Switch"}
+                </span>
               </button>
               <div className="h-4 w-px bg-slate-200"></div>
               <div>
-                <span className="text-slate-400">Monthly Gross:</span>
+                <span className="text-slate-400">{language === "hi" ? "मासिक ग्रॉस:" : "Monthly Gross:"}</span>
                 <span className="font-bold text-bhagwa-600 ml-1">₹{profile.salary.toLocaleString("en-IN")}</span>
               </div>
               <div className="h-4 w-px bg-slate-200"></div>
               <div>
-                <span className="text-slate-400">Age:</span>
-                <span className="font-bold text-slate-700 ml-1">{profile.age} yrs</span>
+                <span className="text-slate-400">{language === "hi" ? "उम्र:" : "Age:"}</span>
+                <span className="font-bold text-slate-700 ml-1">{profile.age} {language === "hi" ? "वर्ष" : "yrs"}</span>
               </div>
+            </div>
+
+            {/* Global Language Toggle Selector */}
+            <div className="flex items-center gap-1 bg-slate-50 dark:bg-slate-800 p-1 rounded-xl shadow-3xs border border-slate-150 dark:border-slate-700 shrink-0">
+              <button
+                onClick={() => {
+                  setLanguage("en");
+                  localStorage.setItem("paisa_language", "en");
+                }}
+                className={`px-3 py-1.5 rounded-lg text-xs font-black tracking-wide transition-all cursor-pointer ${
+                  language === "en"
+                    ? "bg-purple-600 text-white shadow-3xs font-black"
+                    : "text-slate-500 hover:text-slate-850 dark:text-slate-400 dark:hover:text-slate-200"
+                }`}
+                title="Switch entire dashboard to standard Indian English"
+              >
+                EN
+              </button>
+              <button
+                onClick={() => {
+                  setLanguage("hi");
+                  localStorage.setItem("paisa_language", "hi");
+                }}
+                className={`px-3 py-1.5 rounded-lg text-xs font-black tracking-wide transition-all cursor-pointer ${
+                  language === "hi"
+                    ? "bg-purple-600 text-white shadow-3xs font-black"
+                    : "text-slate-500 hover:text-slate-850 dark:text-slate-400 dark:hover:text-slate-200"
+                }`}
+                title="संपूर्ण डैशबोर्ड को हिन्दी राजभाषा प्रारूप में बदलें"
+              >
+                हिन्दी
+              </button>
             </div>
 
             {/* WhatsApp Share Button */}
@@ -1084,7 +1121,7 @@ export default function App() {
 
           <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-3xs space-y-2">
             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider px-3 block mb-1">
-              FINANCE SUITE
+              {language === "hi" ? "फाइनेंस सूट उपकरण" : "FINANCE SUITE"}
             </span>
             <nav className="space-y-1">
               {menuItems.map((item) => {
@@ -1121,17 +1158,17 @@ export default function App() {
           {/* Quick Discipline Notice Box */}
           <div className="bg-bhagwa-50 border border-bhagwa-100 rounded-2xl p-5 space-y-3.5">
             <h4 className="font-bold text-bhagwa-950 dark:text-bhagwa-200 flex items-center gap-1.5 font-display text-sm">
-              <ShieldCheck className="w-5 h-5 text-bhagwa-600 dark:text-bhagwa-500" /> Prudent Indian Financial Mandates
+              <ShieldCheck className="w-5 h-5 text-bhagwa-600 dark:text-bhagwa-500" /> {language === "hi" ? "विवेकपूर्ण भारतीय वित्तीय नियम" : "Prudent Indian Financial Mandates"}
             </h4>
             <div className="text-[11px] text-slate-750 dark:text-slate-200 leading-relaxed space-y-2.5">
               <p>
-                🛡️ <strong className="font-extrabold text-slate-900 dark:text-white">Term over Life policies:</strong> Buy plain direct Term Insurance for 20x annual income instead of expensive moneyback ULIP schemes.
+                🛡️ <strong className="font-extrabold text-slate-900 dark:text-white">{language === "hi" ? "जीवन बीमा पर टर्म प्लान:" : "Term over Life policies:"}</strong> {language === "hi" ? "पारंपरिक बंदोबस्ती या महंगे मनीबैक यूलिप प्लान के बजाय सामान्य टर्म इंश्योरेंस लें जो वार्षिक आय का 20 गुना हो।" : "Buy plain direct Term Insurance for 20x annual income instead of expensive moneyback ULIP schemes."}
               </p>
               <p>
-                📈 <strong className="font-extrabold text-slate-900 dark:text-white">Harness direct mutual funds:</strong> Start an automated index SIP with annual step-up. Flat SIPs lose the power of regular wage appraisals.
+                📈 <strong className="font-extrabold text-slate-900 dark:text-white">{language === "hi" ? "म्यूचुअल फंड की ताकत:" : "Harness direct mutual funds:"}</strong> {language === "hi" ? "सालाना स्टेप-अप (Step-Up) के साथ एक इंडेक्स एसआईपी शुरू करें, जो फ्लैट एसआईपी की तुलना में बहुत अधिक धन सृजित करती है।" : "Start an automated index SIP with annual step-up. Flat SIPs lose the power of regular wage appraisals."}
               </p>
               <p>
-                🏦 <strong className="font-extrabold text-slate-900 dark:text-white">NPS Multipliers:</strong> Utilize the exclusive extra Section 80CCD(1B) up to ₹50,000 for efficient 30% slab deductions.
+                🏦 <strong className="font-extrabold text-slate-900 dark:text-white">{language === "hi" ? "NPS आयकर लाभ:" : "NPS Multipliers:"}</strong> {language === "hi" ? "30% टैक्स स्लैब वाले वेतनभोगियों के लिए धारा 80CCD(1B) के तहत ₹50,000 की विशेष छूट का पूरा लाभ उठाएं।" : "Utilize the exclusive extra Section 80CCD(1B) up to ₹50,000 for efficient 30% slab deductions."}
               </p>
             </div>
           </div>
@@ -1220,6 +1257,11 @@ export default function App() {
               }
             }}
             userMonthlySalary={profile.salary}
+            language={language}
+            onLanguageChange={(lang) => {
+              setLanguage(lang);
+              localStorage.setItem("paisa_language", lang);
+            }}
           />
         </section>
 

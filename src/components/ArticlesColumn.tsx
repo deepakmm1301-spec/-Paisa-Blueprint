@@ -26,13 +26,27 @@ interface Article {
 interface ArticlesColumnProps {
   onNavigateToWidget: (widgetId: any) => void;
   userMonthlySalary: number;
+  language?: "en" | "hi";
+  onLanguageChange?: (lang: "en" | "hi") => void;
 }
 
-export default function ArticlesColumn({ onNavigateToWidget, userMonthlySalary }: ArticlesColumnProps) {
+export default function ArticlesColumn({ onNavigateToWidget, userMonthlySalary, language: propLanguage, onLanguageChange }: ArticlesColumnProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
-  const [language, setLanguage] = useState<"en" | "hi">("en");
+  const [internalLanguage, setInternalLanguage] = useState<"en" | "hi">(() => {
+    return (localStorage.getItem("paisa_language") as "en" | "hi") || "en";
+  });
+
+  const language = propLanguage || internalLanguage;
+  const setLanguage = (lang: "en" | "hi") => {
+    localStorage.setItem("paisa_language", lang);
+    if (onLanguageChange) {
+      onLanguageChange(lang);
+    } else {
+      setInternalLanguage(lang);
+    }
+  };
 
   const articles: Article[] = [
     {
