@@ -480,8 +480,8 @@ export default function PaiseToRupee({ userGrossMonthly = 75000 }: PaiseToRupeeP
               </span>
               <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Paisa Masterclass</span>
             </div>
-            <h2 className="text-2xl font-black font-display tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-emerald-800 dark:from-white dark:via-slate-200 dark:to-emerald-300">
-              पैसा को रुपैया बनाना सीखो
+            <h2 className="text-2xl font-black font-display tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-slate-900 to-emerald-800 dark:from-white dark:via-slate-200 dark:to-emerald-300" style={{ wordSpacing: "0.25em" }}>
+              पैसे से पैसा बनाना सीखो
             </h2>
           </div>
         </div>

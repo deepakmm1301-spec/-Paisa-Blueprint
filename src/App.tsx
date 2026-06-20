@@ -647,7 +647,7 @@ export default function App() {
     },
     {
       id: "learning" as ActiveWidget,
-      label: language === "hi" ? "पैसा को रुपैया बनाना सीखो" : "Paise to Rupee Wisdom",
+      label: language === "hi" ? "पैसे से पैसा बनाना सीखो" : "Paise to Rupee Wisdom",
       desc: language === "hi" ? "₹5,050 SIP, तुलनात्मक FD, ₹1 करोड़ रोडमैप, बजट और FIRE नियम" : "₹5k SIP, FD v/s SIP battles, ₹1Cr targets, 50-30-20 rule, retirement calculations",
       icon: <Sparkles className="w-5 h-5" />,
       color: "text-emerald-650 bg-emerald-50 border-emerald-100",
@@ -1109,7 +1109,7 @@ export default function App() {
                 className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-95 text-white text-xs sm:text-sm font-black px-3.5 py-1.5 rounded-xl shadow-md border-0 cursor-pointer transition-all flex items-center gap-1.5"
               >
                 <Sparkles className="w-3.5 h-3.5 text-emerald-100" />
-                <span>पैसा को रुपैया बनाना सीखो</span>
+                <span className="font-bold tracking-wide" style={{ wordSpacing: "0.25em" }}>पैसे से पैसा बनाना सीखो</span>
               </button>
             </h2>
           </div>
