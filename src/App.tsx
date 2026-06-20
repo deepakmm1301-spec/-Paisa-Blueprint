@@ -705,6 +705,34 @@ export default function App() {
 
   const menuItems = [
     {
+      id: "bpsc_salary" as ActiveWidget,
+      label: language === "hi" ? "BPSC शिक्षक वेतन" : "BPSC Teacher Salary",
+      desc: language === "hi" ? "बिहार शिक्षक भर्ती वेतन आकलन 2026" : "Bihar BPSC teacher scales",
+      icon: <Award className="w-5 h-5" />,
+      color: "text-teal-650 bg-teal-50 border-teal-100",
+    },
+    {
+      id: "nps_govt" as ActiveWidget,
+      label: language === "hi" ? "BPSC शिक्षक NPS और पेंशन कैलकुलेटर" : "BPSC Teacher NPS And Pension Calculator",
+      desc: language === "hi" ? "नियमित शिक्षक पेंशन एवं राष्ट्रीय पेंशन प्रणाली लेखाचित्र" : "National pension scheme & teacher retirement pension ledger",
+      icon: <Landmark className="w-5 h-5" />,
+      color: "text-violet-650 bg-violet-50 border-violet-100",
+    },
+    {
+      id: "govt_sip" as ActiveWidget,
+      label: language === "hi" ? "BPSC शिक्षक SIP" : "BPSC Teacher SIP",
+      desc: language === "hi" ? "वेतन वृद्धि + SIP का चक्रवृद्धि प्रभाव" : "Salary increment + compounding planner",
+      icon: <TrendingUp className="w-5 h-5" />,
+      color: "text-indigo-650 bg-indigo-50 border-indigo-110",
+    },
+    {
+      id: "bihar_da" as ActiveWidget,
+      label: language === "hi" ? "BPSC शिक्षक DA कैलकुलेटर" : "BPSC Teacher DA Calculator",
+      desc: language === "hi" ? "राज्य कर्मियों का महंगाई भत्ता गणना 2026" : "Bihar state employee dearness allowance",
+      icon: <Percent className="w-5 h-5" />,
+      color: "text-emerald-600 bg-emerald-50 border-emerald-100",
+    },
+    {
       id: "profiles" as ActiveWidget,
       label: language === "hi" ? "प्रोफ़ाइल और खाते" : "Profiles & Accounts",
       desc: language === "hi" ? "एकाधिक पारिवारिक फाइलें संभालें" : "Manage multiple family files",
@@ -726,13 +754,6 @@ export default function App() {
       color: "text-purple-600 bg-purple-50 border-purple-100",
     },
     {
-      id: "health" as ActiveWidget,
-      label: language === "hi" ? "स्वास्थ्य स्कोरकार्ड" : "Health Scorecard",
-      desc: language === "hi" ? "समग्र वित्तीय स्वास्थ्य मूल्यांकन" : "Overall wellness assessment",
-      icon: <HeartPulse className="w-5 h-5" />,
-      color: "text-bhagwa-600 bg-bhagwa-50 border-bhagwa-100",
-    },
-    {
       id: "sip" as ActiveWidget,
       label: language === "hi" ? "एसआईपी योजनाकार" : "Plan SIP",
       desc: language === "hi" ? "चक्रवृद्धि के साथ धन वृद्धि" : "Compounding wealth growth",
@@ -740,11 +761,25 @@ export default function App() {
       color: "text-emerald-600 bg-emerald-50 border-emerald-100",
     },
     {
+      id: "learning" as ActiveWidget,
+      label: language === "hi" ? "पैसे से पैसा बनाना सीखो" : "Paise to Rupee Wisdom",
+      desc: language === "hi" ? "₹5,050 SIP, तुलनात्मक FD, ₹1 करोड़ रोडमैप, बजट और FIRE नियम" : "₹5k SIP, FD v/s SIP battles, ₹1Cr targets, 50-30-20 rule, retirement calculations",
+      icon: <Sparkles className="w-5 h-5" />,
+      color: "text-emerald-650 bg-emerald-50 border-emerald-100",
+    },
+    {
+      id: "health" as ActiveWidget,
+      label: language === "hi" ? "स्वास्थ्य स्कोरकार्ड" : "Health Scorecard",
+      desc: language === "hi" ? "समग्र वित्तीय स्वास्थ्य मूल्यांकन" : "Overall wellness assessment",
+      icon: <HeartPulse className="w-5 h-5" />,
+      color: "text-bhagwa-600 bg-bhagwa-50 border-bhagwa-100",
+    },
+    {
       id: "retirement" as ActiveWidget,
       label: language === "hi" ? "रिटायरमेंट रोडमैप" : "Retirement Roadmap",
       desc: language === "hi" ? "महंगाई दर और दीर्घायु वित्तीय कवर" : "Inflation vs longevity cover",
       icon: <Compass className="w-5 h-5" />,
-      color: "text-violet-600 bg-violet-50 border-violet-100",
+      color: "text-violet-650 bg-violet-50 border-violet-100",
     },
     {
       id: "goals" as ActiveWidget,
@@ -768,6 +803,13 @@ export default function App() {
       color: "text-blue-600 bg-blue-50 border-blue-100",
     },
     {
+      id: "seohub" as ActiveWidget,
+      label: language === "hi" ? "संसाधन व गाइड कैबिनेट" : "Cabinets & Resources",
+      desc: language === "hi" ? "10+ कैलकुलेटर, शब्दावली और वित्तीय गाइड" : "10+ Calculators, Glossary & Guides",
+      icon: <BookOpen className="w-5 h-5" />,
+      color: "text-purple-655 bg-purple-50 border-purple-110",
+    },
+    {
       id: "cibil" as ActiveWidget,
       label: language === "hi" ? "सिबिल (CIBIL) क्रेड स्कोर" : "CIBIL Credit Score",
       desc: language === "hi" ? "सिम्युलेशन और सिबिल स्वास्थ्य जांच" : "Check & simulate Credit Health",
@@ -787,48 +829,6 @@ export default function App() {
       desc: language === "hi" ? "वित्तीय प्रश्नों के तुरंत जवाब" : "Real-time chat & feedback",
       icon: <Bot className="w-5 h-5" />,
       color: "text-bhagwa-600 bg-bhagwa-50 border-bhagwa-100",
-    },
-    {
-      id: "seohub" as ActiveWidget,
-      label: language === "hi" ? "संसाधन व गाइड कैबिनेट" : "Cabinets & Resources",
-      desc: language === "hi" ? "10+ कैलकुलेटर, शब्दावली और वित्तीय गाइड" : "10+ Calculators, Glossary & Guides",
-      icon: <BookOpen className="w-5 h-5" />,
-      color: "text-purple-655 bg-purple-50 border-purple-110",
-    },
-    {
-      id: "learning" as ActiveWidget,
-      label: language === "hi" ? "पैसे से पैसा बनाना सीखो" : "Paise to Rupee Wisdom",
-      desc: language === "hi" ? "₹5,050 SIP, तुलनात्मक FD, ₹1 करोड़ रोडमैप, बजट और FIRE नियम" : "₹5k SIP, FD v/s SIP battles, ₹1Cr targets, 50-30-20 rule, retirement calculations",
-      icon: <Sparkles className="w-5 h-5" />,
-      color: "text-emerald-650 bg-emerald-50 border-emerald-100",
-    },
-    {
-      id: "bpsc_salary" as ActiveWidget,
-      label: language === "hi" ? "BPSC शिक्षक वेतन" : "BPSC Teacher Salary",
-      desc: language === "hi" ? "बिहार शिक्षक भर्ती वेतन आकलन 2026" : "Bihar BPSC teacher scales",
-      icon: <Award className="w-5 h-5" />,
-      color: "text-teal-650 bg-teal-50 border-teal-100",
-    },
-    {
-      id: "bihar_da" as ActiveWidget,
-      label: language === "hi" ? "BPSC शिक्षक DA कैलकुलेटर" : "BPSC Teacher DA Calculator",
-      desc: language === "hi" ? "राज्य कर्मियों का महंगाई भत्ता गणना 2026" : "Bihar state employee dearness allowance",
-      icon: <Percent className="w-5 h-5" />,
-      color: "text-emerald-600 bg-emerald-50 border-emerald-100",
-    },
-    {
-      id: "govt_sip" as ActiveWidget,
-      label: language === "hi" ? "BPSC शिक्षक SIP" : "BPSC Teacher SIP",
-      desc: language === "hi" ? "वेतन वृद्धि + SIP का चक्रवृद्धि प्रभाव" : "Salary increment + compounding planner",
-      icon: <TrendingUp className="w-5 h-5" />,
-      color: "text-indigo-650 bg-indigo-50 border-indigo-110",
-    },
-    {
-      id: "nps_govt" as ActiveWidget,
-      label: language === "hi" ? "BPSC शिक्षक NPS और पेंशन कैलकुलेटर" : "BPSC Teacher NPS And Pension Calculator",
-      desc: language === "hi" ? "नियमित शिक्षक पेंशन एवं राष्ट्रीय पेंशन प्रणाली लेखाचित्र" : "National pension scheme & teacher retirement pension ledger",
-      icon: <Landmark className="w-5 h-5" />,
-      color: "text-violet-650 bg-violet-50 border-violet-100",
     },
   ];
 
