@@ -327,6 +327,46 @@ export default function PaiseToRupee({ userGrossMonthly = 75000 }: PaiseToRupeeP
     };
   }, [currentAge, retireAge, monthlyExpense, inflationRate, preRetireReturn]);
 
+  const shareText = useMemo(() => {
+    let text = "";
+    if (activeQuestion === "returns") {
+      text = language === "hi" 
+        ? `🔥 पैसे से पैसा बनाना सीखो! ₹${sip5kAmount.toLocaleString("en-IN")} मासिक एसआईपी से ${sip5kYears} वर्षों में ${formatCurrencyCompact(sip5kComp.maturity)} बन सकता है! (निवेश: ${formatCurrencyCompact(sip5kComp.invested)})\nअपना वेल्थ कैलकुलेट करें:`
+        : `🔥 Learn to Grow Money! A monthly SIP of ₹${sip5kAmount.toLocaleString("en-IN")} over ${sip5kYears} years can mature to ${formatCurrencyCompact(sip5kComp.maturity)}! (Invested: ${formatCurrencyCompact(sip5kComp.invested)})\nCalculate your wealth here:`;
+    } else if (activeQuestion === "sip-vs-fd") {
+      text = language === "hi"
+        ? `📈 SIP बनाम FD संग्राम: मासिक ₹${compareAmount.toLocaleString("en-IN")} से ${compareYears} वर्षों में SIP मैच्योरिटी ${formatCurrencyCompact(sipVsFdComp.sipMaturity)} और FD मैच्योरिटी ${formatCurrencyCompact(sipVsFdComp.fdMaturity)} होगी। SIP ने ${formatCurrencyCompact(sipVsFdComp.wealthGap)} अधिक बनाया!\nयहाँ कंपेयर करें:`
+        : `📈 SIP vs FD Battle: Monthly ₹${compareAmount.toLocaleString("en-IN")} for ${compareYears} years gives SIP maturity ${formatCurrencyCompact(sipVsFdComp.sipMaturity)} vs FD maturity ${formatCurrencyCompact(sipVsFdComp.fdMaturity)}. SIP generated ${formatCurrencyCompact(sipVsFdComp.wealthGap)} extra!\nCompare now:`;
+    } else if (activeQuestion === "crore-sip") {
+      text = language === "hi"
+        ? `🎯 ₹${(targetCorpus / 10000000).toFixed(1)} करोड़ के लक्ष्य के लिए ${targetYears} वर्ष में सामान्यतः ${formatCurrency(sipFor1CrComp.sipNeededNormal)}/माह या ${targetStepUp}% वार्षिक स्टेप-अप के साथ ${formatCurrency(sipFor1CrComp.sipNeededWithStepUp)}/माह की शुरुआत चाहिए!\nअपनी करोड़पति योजना बनाएं:`
+        : `🎯 To achieve ₹${(targetCorpus / 10000000).toFixed(1)} Crore in ${targetYears} years, you need a starting SIP of ${formatCurrency(sipFor1CrComp.sipNeededNormal)}/mo normally, or ${formatCurrency(sipFor1CrComp.sipNeededWithStepUp)}/mo with a ${targetStepUp}% annual step-up!\nPlan your Crore goal:`;
+    } else if (activeQuestion === "ppf-vs-nps") {
+      text = language === "hi"
+        ? `⚖️ PPF बनाम NPS तुलना: सालाना ₹${ppfNpsAmount.toLocaleString("en-IN")} निवेश से ${ppfNpsYears} वर्षों में PPF से ${formatCurrencyCompact(ppfVsNpsComp.ppfMaturity)} और NPS से ${formatCurrencyCompact(ppfVsNpsComp.npsMaturity)} मिल सकता है!\nदोनों को यहाँ कंपेयर करें:`
+        : `⚖️ PPF vs NPS: Saving ₹${ppfNpsAmount.toLocaleString("en-IN")}/yr over ${ppfNpsYears} years can yield PPF maturity of ${formatCurrencyCompact(ppfVsNpsComp.ppfMaturity)} vs NPS maturity of ${formatCurrencyCompact(ppfVsNpsComp.npsMaturity)}!\nCompare PPF & NPS:`;
+    } else if (activeQuestion === "tax-opt") {
+      text = language === "hi"
+        ? `💰 आयकर निवारण गाइड: मैंने 80C, 80D और NPS योजनाकारों का उपयोग करके कुल ${formatCurrency(taxOptimizerComp.totalDeductions)} की टैक्स छूट की गणना की, जिससे ${formatCurrency(taxOptimizerComp.realTaxSaved)} कर की सीधी बचत होगी!\nअपना टैक्स सेविंग्स प्लानर देखें:`
+        : `💰 Direct Tax Savings Planner: I computed a total tax exemption of ${formatCurrency(taxOptimizerComp.totalDeductions)} saving me ${formatCurrency(taxOptimizerComp.realTaxSaved)} in income tax!\nExempt your income tax:`;
+    } else if (activeQuestion === "budget") {
+      text = language === "hi"
+        ? `📊 50-30-20 बजट नियम विश्लेषण: मासिक आय ${formatCurrency(budgetIncome)} में से मेरा बजट Target - Needs: ${budgetComp.needsPercent}%, Wants: ${budgetComp.wantsPercent}%, Savings: ${budgetComp.savingsPercent}% है।\nअपने बजट का संतुलन जाँचें:`
+        : `📊 50-30-20 Budget Optimizer: On a monthly income of ${formatCurrency(budgetIncome)}, my allocation is Needs: ${budgetComp.needsPercent}%, Wants: ${budgetComp.wantsPercent}%, Savings: ${budgetComp.savingsPercent}%.\nCheck your budget allocation:`;
+    } else if (activeQuestion === "fire-retire") {
+      text = language === "hi"
+        ? `🌴 भारत में समय से पहले रिटायरमेंट (Early FIRE): मात्र ${retireAge} वर्ष की आयु में रिटायर होने के लिए ${formatCurrencyCompact(fireComp.fireCorpusNeeded)} संपदा की जरूरत है। आज ही ${formatCurrency(fireComp.requiredSipStarting)}/माह की SIP शुरू करें!\nअपना FIRE कॉर्पस यहाँ ढूंढें:`
+        : `🌴 Early Retirement in India (FIRE): To retire early at age ${retireAge}, I need a corpus of ${formatCurrencyCompact(fireComp.fireCorpusNeeded)}. Starting SIP required: ${formatCurrency(fireComp.requiredSipStarting)}/mo today!\nCalculate your FIRE index:`;
+    }
+    const currentUrl = typeof window !== "undefined" ? window.location.href : "https://ais-pre-smf772g7msspcpbw4nc3rs-109224888067.asia-east1.run.app";
+    return encodeURIComponent(`${text}\n${currentUrl}`);
+  }, [
+    activeQuestion, language, sip5kAmount, sip5kYears, sip5kComp,
+    compareAmount, compareYears, sipVsFdComp, targetCorpus, targetYears,
+    sipFor1CrComp, ppfNpsAmount, ppfNpsYears, ppfVsNpsComp, taxOptimizerComp,
+    budgetIncome, budgetComp, retireAge, fireComp
+  ]);
+
   const questionsList = [
     {
       id: "returns",
@@ -1521,6 +1561,29 @@ export default function PaiseToRupee({ userGrossMonthly = 75000 }: PaiseToRupeeP
               </div>
             </div>
           )}
+
+          {/* Dynamic WhatsApp Share Action for Active Question */}
+          <div className="mt-6 border-t border-slate-200 dark:border-slate-800 pt-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5 text-xs text-slate-500 dark:text-slate-400">
+              <div className="h-2 w-2 rounded-full bg-[#25D366] animate-pulse shrink-0" />
+              <span className="leading-snug">
+                {language === "hi" 
+                  ? "क्या यह जानकारी मददगार लगी? इसे अपने परिवार और मित्रों के साथ साझा करें!" 
+                  : "Found this helpful? Share this calculation and guide with family & friends!"}
+              </span>
+            </div>
+            <a
+              href={`https://api.whatsapp.com/send?text=${shareText}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto bg-gradient-to-r from-[#25D366] to-[#128C7E] hover:from-[#20ba5a] hover:to-[#0e6f63] active:scale-95 text-white text-xs sm:text-sm font-black px-5 py-2.5 rounded-2xl shadow-md cursor-pointer transition-all flex items-center justify-center gap-2 hover:shadow-lg no-underline shrink-0"
+            >
+              <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.417 9.863-9.848.002-2.63-1.023-5.101-2.884-6.963C16.58 1.952 14.108.928 11.48.928c-5.44 0-9.866 4.416-9.87 9.848-.002 1.79.479 3.541 1.39 5.1l-.479 1.754 1.83-.48.116.069zM17.151 14.28c-.282-.142-1.67-.824-1.928-.918-.258-.095-.447-.142-.635.142-.188.283-.729.918-.893 1.107-.164.188-.328.213-.61.071-.282-.142-1.192-.44-2.271-1.402-.839-.75-1.407-1.675-1.571-1.958-.164-.283-.018-.435.123-.576.127-.127.282-.329.423-.495.141-.165.188-.283.282-.472.094-.188.047-.354-.024-.495-.07-.142-.635-1.529-.87-2.094-.229-.553-.46-.477-.635-.486-.164-.008-.353-.01-.541-.01s-.494.07-.753.354c-.259.283-.988.966-.988 2.358 0 1.392 1.012 2.735 1.153 2.924.141.189 1.992 3.041 4.825 4.258.674.29 1.201.463 1.61.593.677.215 1.293.185 1.78.113.543-.081 1.67-.682 1.905-1.34s.235-1.226.165-1.34c-.07-.114-.282-.208-.564-.35z"/>
+              </svg>
+              <span>{language === "hi" ? "व्हाट्सएप पर साझा करें" : "Share on WhatsApp"}</span>
+            </a>
+          </div>
 
         </div>
 

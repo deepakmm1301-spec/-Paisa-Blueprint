@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { UserProfile, LoanDetails, InvestmentDetails, getShareableLink } from "./types";
 import FinancialHealthCheck from "./components/FinancialHealthCheck";
@@ -363,6 +363,71 @@ export default function App() {
   const [language, setLanguage] = useState<"en" | "hi">(() => {
     return (localStorage.getItem("paisa_language") as "en" | "hi") || "en";
   });
+
+  const widgetShareText = useMemo(() => {
+    const currentUrl = typeof window !== "undefined" ? window.location.href : "https://ais-pre-smf772g7msspcpbw4nc3rs-109224888067.asia-east1.run.app";
+    let title = "";
+    if (activeWidget === "profiles") {
+      title = language === "hi" 
+        ? `🎯 मैंने Paisa Master पर अपना वित्तीय प्रोफाइल बनाया! अपनी आय, निवेश और ऋणों का विवरण देखें:` 
+        : `🎯 I completed my financial catalog and portfolio on Paisa Master! Manage your income, assets & loans:`;
+    } else if (activeWidget === "salary") {
+      title = language === "hi"
+        ? `💰 मैंने अपने टेक-होम वेतन, भत्तों और आयकर स्लैब की सटीक गणना की!`
+        : `💰 Just calculated my exact take-home salary and post-deductions breakdown on Paisa Planner!`;
+    } else if (activeWidget === "pension") {
+      title = language === "hi"
+        ? `👴 मैंने रिटायरमेंट के बाद अपनी अंतिम पेंशन और ग्रेच्युटी संचय का सटीक अनुमान लगाया!`
+        : `👴 Mapped my exact post-retirement pension income and gratuity projections here:`;
+    } else if (activeWidget === "health") {
+      title = language === "hi"
+        ? `🏥 मैंने अपना व्यक्तिगत वित्तीय स्वास्थ्य स्कोर और रेटिंग मापी! मेरा स्कोर सुधारने के टिप्स देखें:`
+        : `🏥 Just audited my financial health performance standard index, with expert suggestions:`;
+    } else if (activeWidget === "sip") {
+      title = language === "hi"
+        ? `📈 मैंने अपने म्यूचुअल फंड निवेश (SIP) पर मिलने वाले चक्रवृद्धि लाभ (Compounding) की गणना की!`
+        : `📈 Calibrated my mutual fund SIP returns and compounding multiplier on the wealth dashboard:`;
+    } else if (activeWidget === "retirement") {
+      title = language === "hi"
+        ? `🌴 मैंने अपनी सेवानिवृत्ति (Retirement) आवश्यकता और मासिक एसआईपी सहेजा लक्ष्य पाया!`
+        : `🌴 Computed my optimal retirement nest-egg goals and startup monthly SIP on this panel:`;
+    } else if (activeWidget === "goals") {
+      title = language === "hi"
+        ? `🎯 मैंने अपने घर, कार, शादी और उच्च शिक्षा जैसे लक्ष्यों के लिए भविष्य बचत की योजना बनाई!`
+        : `🎯 Designed custom monthly target buckets for all my future core wealth dreams:`;
+    } else if (activeWidget === "tax") {
+      title = language === "hi"
+        ? `⚖️ मैंने पुरानी बनाम नई कर व्यवस्था (Old vs New Tax Regime) की तुलना करके कर बचत पहचानी!`
+        : `⚖️ Compared New vs Old Tax Regime on my income class to check my best tax-saving path:`;
+    } else if (activeWidget === "networth") {
+      title = language === "hi"
+        ? `🏛️ मैंने अपने सभी एसेट्स और ऋणों का शुद्ध संतुलन (Net Worth) मापा!`
+        : `🏛️ Verified my absolute Net Worth and asset-liability ratio balance chart here:`;
+    } else if (activeWidget === "cibil") {
+      title = language === "hi"
+        ? `💳 मैंने अपनी ऋण योग्यता और सिबिल (CIBIL Score) रेटिंग तथा सिबिल सुधारने के मार्ग खोजे!`
+        : `💳 Understood my credit score tiering, factors and tips to safely level up my CIBIL score:`;
+    } else if (activeWidget === "debt") {
+      title = language === "hi"
+        ? `🛑 मैंने अपने लोन को तेजी से चुकाने (Debt Payoff) और ईएमआई (EMI) घटाने की योजना बनाई!`
+        : `🛑 Structured my loan repayment timeline and custom debt paydown strategies here:`;
+    } else if (activeWidget === "coach") {
+      title = language === "hi"
+        ? `🤖 मैंने अपने पर्सनल एआई वित्तीय कोच (Gemini Financial AI) से बातचीत की और विशेषज्ञ सलाह पायी!`
+        : `🤖 Queried custom wealth and asset protection guidelines from this advanced Gemini AI Financial Coach!`;
+    } else if (activeWidget === "seohub") {
+      title = language === "hi"
+        ? `📚 मैंने वित्तीय टूलों, लोन नियमों, पीपीएफ नियमों और बचत योजनाओं का अध्ययन किया!`
+        : `📚 Gained direct insights into Indian tax rules, debt guidelines and banking standards:`;
+    } else if (activeWidget === "learning") {
+      title = language === "hi"
+        ? `🔥 पैसे से पैसा बनाना सीखो! ₹5,000 SIP, तुलनात्मक FD, ₹1 करोड़ रोडमैप, बजट और FIRE नियम...`
+        : `🔥 Learn to grow money! ₹5,000 SIP returns, FD vs SIP battles, ₹1 Crore goals, 50-30-20 budget rules...`;
+    }
+
+    return encodeURIComponent(`${title}\n${currentUrl}`);
+  }, [activeWidget, language]);
+
   const contentRef = React.useRef<HTMLElement>(null);
   const isFirstMount = React.useRef(true);
 
@@ -1214,10 +1279,10 @@ export default function App() {
               <motion.div
                 key={activeWidget}
                 layoutId="active-dashboard-panel"
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.25, ease: "easeInOut" }}
+                initial={{ opacity: 0, x: 24 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -24 }}
+                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                 className="w-full"
               >
                 {activeWidget === "profiles" && (
@@ -1285,6 +1350,38 @@ export default function App() {
                 )}
               </motion.div>
             </AnimatePresence>
+
+            {/* Global Widget WhatsApp Share Action */}
+            <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-4.5 rounded-3xl shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-2xl bg-emerald-100/50 dark:bg-emerald-500/10 text-[#25D366] flex items-center justify-center">
+                  <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.417 9.863-9.848.002-2.63-1.023-5.101-2.884-6.963C16.58 1.952 14.108.928 11.48.928c-5.44 0-9.866 4.416-9.87 9.848-.002 1.79.479 3.541 1.39 5.1l-.479 1.754 1.83-.48.116.069zM17.151 14.28c-.282-.142-1.67-.824-1.928-.918-.258-.095-.447-.142-.635.142-.188.283-.729.918-.893 1.107-.164.188-.328.213-.61.071-.282-.142-1.192-.44-2.271-1.402-.839-.75-1.407-1.675-1.571-1.958-.164-.283-.018-.435.123-.576.127-.127.282-.329.423-.495.141-.165.188-.283.282-.472.094-.188.047-.354-.024-.495-.07-.142-.635-1.529-.87-2.094-.229-.553-.46-.477-.635-.486-.164-.008-.353-.01-.541-.01s-.494.07-.753.354c-.259.283-.988.966-.988 2.358 0 1.392 1.012 2.735 1.153 2.924.141.189 1.992 3.041 4.825 4.258.674.29 1.201.463 1.61.593.677.215 1.293.185 1.78.113.543-.081 1.67-.682 1.905-1.34s.235-1.226.165-1.34c-.07-.114-.282-.208-.564-.35z"/>
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <h4 className="text-sm font-black text-slate-800 dark:text-white leading-tight">
+                    {language === "hi" ? "इस टूल का परिणाम साझा करें" : "Share results of this planner"}
+                  </h4>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
+                    {language === "hi" 
+                      ? "व्हाट्सएप पर मित्रों के साथ अपनी वित्तीय गणना और रिपोर्ट साझा करें!" 
+                      : "Send your current active sheet calculations and insights to WhatsApp!"}
+                  </p>
+                </div>
+              </div>
+              <a
+                href={`https://api.whatsapp.com/send?text=${widgetShareText}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto bg-gradient-to-r from-[#25D366] to-[#128C7E] hover:from-[#20ba5a] hover:to-[#0e6f63] active:scale-95 text-white text-xs sm:text-sm font-black px-5 py-2.5 rounded-2xl shadow-md cursor-pointer transition-all flex items-center justify-center gap-2 hover:shadow-lg no-underline shrink-0"
+              >
+                <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.417 9.863-9.848.002-2.63-1.023-5.101-2.884-6.963C16.58 1.952 14.108.928 11.48.928c-5.44 0-9.866 4.416-9.87 9.848-.002 1.79.479 3.541 1.39 5.1l-.479 1.754 1.83-.48.116.069zM17.151 14.28c-.282-.142-1.67-.824-1.928-.918-.258-.095-.447-.142-.635.142-.188.283-.729.918-.893 1.107-.164.188-.328.213-.61.071-.282-.142-1.192-.44-2.271-1.402-.839-.75-1.407-1.675-1.571-1.958-.164-.283-.018-.435.123-.576.127-.127.282-.329.423-.495.141-.165.188-.283.282-.472.094-.188.047-.354-.024-.495-.07-.142-.635-1.529-.87-2.094-.229-.553-.46-.477-.635-.486-.164-.008-.353-.01-.541-.01s-.494.07-.753.354c-.259.283-.988.966-.988 2.358 0 1.392 1.012 2.735 1.153 2.924.141.189 1.992 3.041 4.825 4.258.674.29 1.201.463 1.61.593.677.215 1.293.185 1.78.113.543-.081 1.67-.682 1.905-1.34s.235-1.226.165-1.34c-.07-.114-.282-.208-.564-.35z"/>
+                </svg>
+                <span>{language === "hi" ? "व्हाट्सएप पर साझा करें" : "Share on WhatsApp"}</span>
+              </a>
+            </div>
           </div>
         </section>
 
