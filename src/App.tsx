@@ -16,6 +16,8 @@ import ArticlesColumn from "./components/ArticlesColumn";
 import PensionCalculator from "./components/PensionCalculator";
 import DebtPlanner from "./components/DebtPlanner";
 import { FooterSections } from "./components/FooterSections";
+import SeoHub from "./components/SeoHub";
+import PaiseToRupee from "./components/PaiseToRupee";
 // @ts-ignore
 import paisaLogo from "./assets/images/deep_paisa_logo_1780484307855.png";
 
@@ -33,6 +35,7 @@ import {
   ShieldCheck, 
   Sparkles,
   Award,
+  BookOpen,
   Users,
   LogOut,
   UserCheck,
@@ -100,6 +103,8 @@ type ActiveWidget =
   | "coach"
   | "cibil"
   | "pension"
+  | "seohub"
+  | "learning"
   | "debt";
 
 export default function App() {
@@ -633,6 +638,20 @@ export default function App() {
       icon: <Bot className="w-5 h-5" />,
       color: "text-bhagwa-600 bg-bhagwa-50 border-bhagwa-100",
     },
+    {
+      id: "seohub" as ActiveWidget,
+      label: language === "hi" ? "संसाधन व गाइड कैबिनेट" : "Cabinets & Resources",
+      desc: language === "hi" ? "10+ कैलकुलेटर, शब्दावली और वित्तीय गाइड" : "10+ Calculators, Glossary & Guides",
+      icon: <BookOpen className="w-5 h-5" />,
+      color: "text-purple-655 bg-purple-50 border-purple-110",
+    },
+    {
+      id: "learning" as ActiveWidget,
+      label: language === "hi" ? "पैसा को रुपैया बनाना सीखो" : "Paise to Rupee Wisdom",
+      desc: language === "hi" ? "₹5,050 SIP, तुलनात्मक FD, ₹1 करोड़ रोडमैप, बजट और FIRE नियम" : "₹5k SIP, FD v/s SIP battles, ₹1Cr targets, 50-30-20 rule, retirement calculations",
+      icon: <Sparkles className="w-5 h-5" />,
+      color: "text-emerald-650 bg-emerald-50 border-emerald-100",
+    },
   ];
 
   if (!sessionUser) {
@@ -1078,6 +1097,20 @@ export default function App() {
               <span className="bg-emerald-500/5 dark:bg-emerald-500/20 px-3 py-1 rounded-lg border border-emerald-200/60 dark:border-emerald-500/30 !text-emerald-700 dark:!text-emerald-300 font-black shadow-sm">
                 Build Wealth
               </span>
+              <span className="!text-emerald-500 dark:!text-emerald-400 font-extrabold text-base">•</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveWidget("learning");
+                  if (contentRef.current) {
+                    contentRef.current.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-95 text-white text-xs sm:text-sm font-black px-3.5 py-1.5 rounded-xl shadow-md border-0 cursor-pointer transition-all flex items-center gap-1.5"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-emerald-100" />
+                <span>पैसा को रुपैया बनाना सीखो</span>
+              </button>
             </h2>
           </div>
 
@@ -1241,6 +1274,14 @@ export default function App() {
 
                 {activeWidget === "coach" && (
                   <AICoach profile={profile} />
+                )}
+
+                {activeWidget === "seohub" && (
+                  <SeoHub userGrossMonthly={profile.salary} />
+                )}
+
+                {activeWidget === "learning" && (
+                  <PaiseToRupee userGrossMonthly={profile.salary} />
                 )}
               </motion.div>
             </AnimatePresence>
