@@ -18,6 +18,10 @@ import DebtPlanner from "./components/DebtPlanner";
 import { FooterSections } from "./components/FooterSections";
 import SeoHub from "./components/SeoHub";
 import PaiseToRupee from "./components/PaiseToRupee";
+import BpscTeacherSalary from "./components/BpscTeacherSalary";
+import BiharDaCalculator from "./components/BiharDaCalculator";
+import GovtEmployeeSipCalculator from "./components/GovtEmployeeSipCalculator";
+import NpsGovtCalculator from "./components/NpsGovtCalculator";
 // @ts-ignore
 import paisaLogo from "./assets/images/deep_paisa_logo_1780484307855.png";
 
@@ -28,6 +32,7 @@ import {
   Compass, 
   Scale, 
   Wallet, 
+  Percent, 
   Bot, 
   Coins, 
   Sliders, 
@@ -105,7 +110,11 @@ type ActiveWidget =
   | "pension"
   | "seohub"
   | "learning"
-  | "debt";
+  | "debt"
+  | "bpsc_salary"
+  | "bihar_da"
+  | "govt_sip"
+  | "nps_govt";
 
 export default function App() {
   const [showWelcomePopup, setShowWelcomePopup] = useState(true);
@@ -359,10 +368,86 @@ export default function App() {
     return savedId || "profile-main";
   });
 
-  const [activeWidget, setActiveWidget] = useState<ActiveWidget>("profiles");
+  const [activeWidget, setActiveWidget] = useState<ActiveWidget>(() => {
+    if (typeof window !== "undefined") {
+      const path = window.location.pathname;
+      const cleanPath = path.replace(/\/$/, "").toLowerCase();
+      if (cleanPath === "/bpsc-teacher-salary-calculator" || cleanPath === "/bihar-teacher-salary-calculator") {
+        return "bpsc_salary";
+      }
+      if (cleanPath === "/bihar-da-calculator") {
+        return "bihar_da";
+      }
+      if (cleanPath === "/government-employee-sip-calculator") {
+        return "govt_sip";
+      }
+      if (cleanPath === "/nps-calculator-for-government-employees") {
+        return "nps_govt";
+      }
+    }
+    return "profiles";
+  });
+
   const [language, setLanguage] = useState<"en" | "hi">(() => {
     return (localStorage.getItem("paisa_language") as "en" | "hi") || "en";
   });
+
+  // Keep path and page title in sync with activeWidget
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    let targetTitle = "Paisa Blueprint | India's #1 Personal Financial Wealth Dashboard";
+    let targetPath = "/";
+
+    if (activeWidget === "bpsc_salary") {
+      targetTitle = "BPSC Teacher Salary Calculator 2026 | Paisa Blueprint";
+      targetPath = "/bpsc-teacher-salary-calculator";
+    } else if (activeWidget === "bihar_da") {
+      targetTitle = "Bihar Dearness Allowance (DA) Calculator 2026 | Paisa Blueprint";
+      targetPath = "/bihar-da-calculator";
+    } else if (activeWidget === "govt_sip") {
+      targetTitle = "Government Employee SIP Calculator & Retirement Planner | Paisa Blueprint";
+      targetPath = "/government-employee-sip-calculator";
+    } else if (activeWidget === "nps_govt") {
+      targetTitle = "BPSC Teacher NPS & Pension Calculator 2026 | Paisa Blueprint";
+      targetPath = "/nps-calculator-for-government-employees";
+    } else if (activeWidget !== "profiles") {
+      const capitalized = activeWidget.charAt(0).toUpperCase() + activeWidget.slice(1);
+      targetTitle = `${capitalized} Tool | Paisa Blueprint`;
+    }
+
+    document.title = targetTitle;
+
+    if (window.location.pathname !== targetPath) {
+      window.history.pushState({ widget: activeWidget }, "", targetPath);
+    }
+  }, [activeWidget]);
+
+  // Handle browser back & forward buttons
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      if (typeof window === "undefined") return;
+
+      const path = window.location.pathname;
+      const cleanPath = path.replace(/\/$/, "").toLowerCase();
+      if (cleanPath === "/bpsc-teacher-salary-calculator" || cleanPath === "/bihar-teacher-salary-calculator") {
+        setActiveWidget("bpsc_salary");
+      } else if (cleanPath === "/bihar-da-calculator") {
+        setActiveWidget("bihar_da");
+      } else if (cleanPath === "/government-employee-sip-calculator") {
+        setActiveWidget("govt_sip");
+      } else if (cleanPath === "/nps-calculator-for-government-employees") {
+        setActiveWidget("nps_govt");
+      } else {
+        setActiveWidget("profiles");
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
 
   const widgetShareText = useMemo(() => {
     const currentUrl = typeof window !== "undefined" ? window.location.href : "https://ais-pre-smf772g7msspcpbw4nc3rs-109224888067.asia-east1.run.app";
@@ -716,6 +801,34 @@ export default function App() {
       desc: language === "hi" ? "₹5,050 SIP, तुलनात्मक FD, ₹1 करोड़ रोडमैप, बजट और FIRE नियम" : "₹5k SIP, FD v/s SIP battles, ₹1Cr targets, 50-30-20 rule, retirement calculations",
       icon: <Sparkles className="w-5 h-5" />,
       color: "text-emerald-650 bg-emerald-50 border-emerald-100",
+    },
+    {
+      id: "bpsc_salary" as ActiveWidget,
+      label: language === "hi" ? "BPSC शिक्षक वेतन" : "BPSC Teacher Salary",
+      desc: language === "hi" ? "बिहार शिक्षक भर्ती वेतन आकलन 2026" : "Bihar BPSC teacher scales",
+      icon: <Award className="w-5 h-5" />,
+      color: "text-teal-650 bg-teal-50 border-teal-100",
+    },
+    {
+      id: "bihar_da" as ActiveWidget,
+      label: language === "hi" ? "BPSC शिक्षक DA कैलकुलेटर" : "BPSC Teacher DA Calculator",
+      desc: language === "hi" ? "राज्य कर्मियों का महंगाई भत्ता गणना 2026" : "Bihar state employee dearness allowance",
+      icon: <Percent className="w-5 h-5" />,
+      color: "text-emerald-600 bg-emerald-50 border-emerald-100",
+    },
+    {
+      id: "govt_sip" as ActiveWidget,
+      label: language === "hi" ? "BPSC शिक्षक SIP" : "BPSC Teacher SIP",
+      desc: language === "hi" ? "वेतन वृद्धि + SIP का चक्रवृद्धि प्रभाव" : "Salary increment + compounding planner",
+      icon: <TrendingUp className="w-5 h-5" />,
+      color: "text-indigo-650 bg-indigo-50 border-indigo-110",
+    },
+    {
+      id: "nps_govt" as ActiveWidget,
+      label: language === "hi" ? "BPSC शिक्षक NPS और पेंशन कैलकुलेटर" : "BPSC Teacher NPS And Pension Calculator",
+      desc: language === "hi" ? "नियमित शिक्षक पेंशन एवं राष्ट्रीय पेंशन प्रणाली लेखाचित्र" : "National pension scheme & teacher retirement pension ledger",
+      icon: <Landmark className="w-5 h-5" />,
+      color: "text-violet-650 bg-violet-50 border-violet-100",
     },
   ];
 
@@ -1347,6 +1460,22 @@ export default function App() {
 
                 {activeWidget === "learning" && (
                   <PaiseToRupee userGrossMonthly={profile.salary} />
+                )}
+
+                {activeWidget === "bpsc_salary" && (
+                  <BpscTeacherSalary />
+                )}
+
+                {activeWidget === "bihar_da" && (
+                  <BiharDaCalculator />
+                )}
+
+                {activeWidget === "govt_sip" && (
+                  <GovtEmployeeSipCalculator />
+                )}
+
+                {activeWidget === "nps_govt" && (
+                  <NpsGovtCalculator />
                 )}
               </motion.div>
             </AnimatePresence>
