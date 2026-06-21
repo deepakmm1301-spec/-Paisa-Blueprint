@@ -446,7 +446,7 @@ export default function App() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    let targetTitle = "Paisa Blueprint | India's #1 Personal Financial Wealth Dashboard";
+    let targetTitle = "Paisa Blueprint - Free Financial Calculators for India";
     let targetPath = getPathFromWidget(activeWidget);
 
     if (activeWidget === "bpsc_salary") {
