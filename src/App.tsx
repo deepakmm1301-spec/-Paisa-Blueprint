@@ -1630,7 +1630,7 @@ export default function App() {
       </main>
 
       {/* Footer Design Credits Line */}
-      <FooterSections />
+      <FooterSections language={language} />
     </div>
   );
 }

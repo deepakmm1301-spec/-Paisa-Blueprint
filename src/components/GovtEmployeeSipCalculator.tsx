@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Sparkles, Share2, HelpCircle, Info, Calculator, Percent, ShieldCheck, ArrowUpRight, TrendingUp } from "lucide-react";
+import { getShareableLink } from "../types";
 
 interface GovtEmployeeSipCalculatorProps {
   language?: "en" | "hi";
@@ -111,9 +112,7 @@ export default function GovtEmployeeSipCalculator({ language = "en" }: GovtEmplo
   }, [currentSalary, annualIncrement, daGrowth, monthlySip, investmentYears, sipReturnRate, stepUpPercent]);
 
   const shareToWhatsApp = () => {
-    const currentUrl = typeof window !== "undefined"
-      ? `${window.location.origin}/?widget=govt_sip`
-      : "https://paisablueprint.in/?widget=govt_sip";
+    const currentUrl = getShareableLink("govt_sip", "/government-employee-sip-calculator");
     const text = language === "hi"
       ? `🌴 *BPSC शिक्षक एसआईपी + सेवानिवृत्ति योजना अनुमान*\nप्रारंभिक सकल वेतन: ₹${currentSalary.toLocaleString("en-IN")}/माह\nमासिक एसआईपी: ₹${monthlySip.toLocaleString("en-IN")}/माह (${stepUpPercent}% सालाना वृद्धि के साथ)\nअवधि: ${investmentYears} वर्ष\n-----------------------------------\n*एसआईपी संचित धन: ₹${projectionData.finalSipBalance.toLocaleString("en-IN")}*\nएनपीएस (NPS) कोष: ₹${projectionData.finalNpsBalance.toLocaleString("en-IN")}\n*कुल मिलाकर नेट फंड संपदा: ₹${projectionData.combinedCorpus.toLocaleString("en-IN")}*\n*अपेक्षित मासिक पेंशन + SWP आय: ₹${projectionData.totalEstimatedMonthlyRetirementIncome.toLocaleString("en-IN")}/माह*\n\nअपनी शिक्षक एसआईपी व वेल्थ वेव की गणना यहाँ करें: ${currentUrl}`
       : `🌴 *BPSC Teacher SIP + Retirement Planner Projections*\nStarting Gross: ₹${currentSalary.toLocaleString("en-IN")}/mo\nMonthly SIP: ₹${monthlySip.toLocaleString("en-IN")}/mo (with ${stepUpPercent}% hike)\nTenure: ${investmentYears} Years\n-----------------------------------\n*Wealth Corpus: ₹${projectionData.finalSipBalance.toLocaleString("en-IN")}*\nNPS Balance: ₹${projectionData.finalNpsBalance.toLocaleString("en-IN")}\n*Combined Net Corpus: ₹${projectionData.combinedCorpus.toLocaleString("en-IN")}*\n*Est. Max Pension + SWP: ₹${projectionData.totalEstimatedMonthlyRetirementIncome.toLocaleString("en-IN")}/mo*\n\nChart your teacher compounding roadmap here: ${currentUrl}`;
@@ -279,23 +278,23 @@ export default function GovtEmployeeSipCalculator({ language = "en" }: GovtEmplo
 
         {/* Dynamic Display Outputs */}
         <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
-          <div className="bg-slate-900 border border-slate-850 dark:bg-neutral-900 dark:border-neutral-800 text-white rounded-3xl p-6 shadow-xl relative overflow-hidden">
+          <div className="bg-white border border-slate-200/80 dark:bg-slate-900 dark:border-slate-800/80 text-slate-900 dark:text-white rounded-3xl p-6 shadow-xl relative overflow-hidden">
             <div className="absolute right-0 top-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl animate-pulse" />
 
-            <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-5">
-              <span className="text-xs font-black text-indigo-400 uppercase tracking-wider">Compound Retirement Forecast</span>
-              <span className="text-[9px] bg-indigo-500/10 text-indigo-300 font-extrabold px-2 py-0.5 rounded-full">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-5">
+              <span className="text-xs font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">Compound Retirement Forecast</span>
+              <span className="text-[9px] bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 font-extrabold px-2 py-0.5 rounded-full">
                 {`After ${investmentYears} Years Run`}
               </span>
             </div>
 
             {/* Combined Corpus */}
-            <div className="bg-gradient-to-br from-indigo-950/40 to-slate-900 border border-indigo-500/15 rounded-2xl p-5 mb-5 text-center">
-              <span className="text-[11px] text-indigo-400 font-black uppercase tracking-wider block">Combined Projected Capital Corpus</span>
-              <p className="text-3xl sm:text-4xl font-extrabold text-white mt-1.5">
+            <div className="bg-indigo-500/5 dark:bg-indigo-950/20 border border-indigo-500/15 rounded-2xl p-5 mb-5 text-center">
+              <span className="text-[11px] text-indigo-600 dark:text-indigo-400 font-black uppercase tracking-wider block">Combined Projected Capital Corpus</span>
+              <p className="text-3xl sm:text-4xl font-extrabold text-slate-850 dark:text-white mt-1.5">
                 ₹{projectionData.combinedCorpus.toLocaleString("en-IN")}
               </p>
-              <p className="text-[10px] text-slate-400 mt-1 font-medium select-none">
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 font-medium select-none">
                 {`Consists of Mutual Fund SIP: ₹${projectionData.finalSipBalance.toLocaleString("en-IN")} + Accumulated NPS: ₹${projectionData.finalNpsBalance.toLocaleString("en-IN")}`}
               </p>
             </div>
@@ -303,18 +302,18 @@ export default function GovtEmployeeSipCalculator({ language = "en" }: GovtEmplo
             {/* Pension vs Withdrawal Breakdown Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-4">
-                <span className="text-[10px] text-indigo-300 font-extrabold uppercase tracking-wide block">NPS Monthly Annuity Pension</span>
-                <p className="text-xl font-black text-white mt-1">₹{projectionData.monthlyNpsPension.toLocaleString("en-IN")}</p>
-                <p className="text-[9px] text-slate-400 mt-1 font-medium leading-normal">
+              <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-150/60 dark:border-slate-800/50 rounded-2xl p-4">
+                <span className="text-[10px] text-indigo-600 dark:text-indigo-300 font-extrabold uppercase tracking-wide block">NPS Monthly Annuity Pension</span>
+                <p className="text-xl font-black text-slate-850 dark:text-white mt-1">₹{projectionData.monthlyNpsPension.toLocaleString("en-IN")}</p>
+                <p className="text-[9px] text-slate-500 dark:text-slate-400 mt-1 font-medium leading-normal">
                   Based on 40% NPS capital purchase with 6% safe annuity rate.
                 </p>
               </div>
 
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-4">
-                <span className="text-[10px] text-indigo-300 font-extrabold uppercase tracking-wide block">SWP Monthly Safe Payout</span>
-                <p className="text-xl font-black text-emerald-400 mt-1">₹{projectionData.monthlySipSafeWithdrawal.toLocaleString("en-IN")}</p>
-                <p className="text-[9px] text-slate-400 mt-1 font-medium leading-normal">
+              <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-150/60 dark:border-slate-800/50 rounded-2xl p-4">
+                <span className="text-[10px] text-indigo-600 dark:text-indigo-300 font-extrabold uppercase tracking-wide block">SWP Monthly Safe Payout</span>
+                <p className="text-xl font-black text-emerald-600 dark:text-emerald-400 mt-1">₹{projectionData.monthlySipSafeWithdrawal.toLocaleString("en-IN")}</p>
+                <p className="text-[9px] text-slate-500 dark:text-slate-400 mt-1 font-medium leading-normal">
                   Based on a sustainable 5% Safe Withdrawal Rate from your mutual fund nest-egg.
                 </p>
               </div>
@@ -322,34 +321,34 @@ export default function GovtEmployeeSipCalculator({ language = "en" }: GovtEmplo
             </div>
 
             {/* Total Combined Monthly Cash flow projection */}
-            <div className="bg-white/5 border border-white/5 rounded-2xl p-4.5 mt-4 flex items-center justify-between gap-4">
+            <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-150/60 dark:border-slate-800/50 rounded-2xl p-4.5 mt-4 flex items-center justify-between gap-4">
               <div>
-                <span className="text-[10px] text-indigo-300 font-black uppercase tracking-wider block">Total Estimated Monthly Retirement cashflow</span>
-                <p className="text-2xl font-black text-white mt-0.5">₹{projectionData.totalEstimatedMonthlyRetirementIncome.toLocaleString("en-IN")}</p>
+                <span className="text-[10px] text-indigo-600 dark:text-indigo-300 font-black uppercase tracking-wider block">Total Estimated Monthly Retirement cashflow</span>
+                <p className="text-2xl font-black text-slate-850 dark:text-white mt-0.5">₹{projectionData.totalEstimatedMonthlyRetirementIncome.toLocaleString("en-IN")}</p>
               </div>
               <div className="text-right shrink-0">
-                <div className="font-extrabold text-emerald-400 flex items-center gap-1 justify-end text-xs">
+                <div className="font-extrabold text-emerald-600 dark:text-emerald-450 flex items-center gap-1 justify-end text-xs">
                   <TrendingUp className="w-3.5 h-3.5" />
                   Combined Power
                 </div>
-                <span className="text-[9px] text-slate-400 font-medium mt-0.5 block">Estimated Gratuity bonus: ₹{projectionData.estimatedGratuity.toLocaleString("en-IN")}</span>
+                <span className="text-[9px] text-slate-500 dark:text-slate-400 font-medium mt-0.5 block">Estimated Gratuity bonus: ₹{projectionData.estimatedGratuity.toLocaleString("en-IN")}</span>
               </div>
             </div>
 
             {/* Breakdown lines */}
-            <h4 className="text-xs font-black text-slate-300 mt-6 mb-3 uppercase tracking-wider">Retirement Savings Architecture</h4>
+            <h4 className="text-xs font-black text-slate-700 dark:text-slate-300 mt-6 mb-3 uppercase tracking-wider">Retirement Savings Architecture</h4>
             <div className="space-y-2 text-xs">
-              <div className="flex justify-between py-1 border-b border-white/5 font-medium">
-                <span className="text-slate-400">Total Capital Invested (SIP+NPS)</span>
-                <span>₹{Math.round(projectionData.totalSipInvested + projectionData.totalNpsInvested).toLocaleString("en-IN")}</span>
+              <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800/50 font-medium">
+                <span className="text-slate-500 dark:text-slate-400">Total Capital Invested (SIP+NPS)</span>
+                <span className="text-slate-800 dark:text-slate-200 font-bold">₹{Math.round(projectionData.totalSipInvested + projectionData.totalNpsInvested).toLocaleString("en-IN")}</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-white/5 font-medium">
-                <span className="text-slate-400">Earned Compound Interest Wealth Gained</span>
-                <span className="text-emerald-400">+ ₹{Math.round(projectionData.combinedCorpus - (projectionData.totalSipInvested + projectionData.totalNpsInvested)).toLocaleString("en-IN")}</span>
+              <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800/50 font-medium">
+                <span className="text-slate-500 dark:text-slate-400">Earned Compound Interest Wealth Gained</span>
+                <span className="text-emerald-600 dark:text-emerald-450 font-bold">+ ₹{Math.round(projectionData.combinedCorpus - (projectionData.totalSipInvested + projectionData.totalNpsInvested)).toLocaleString("en-IN")}</span>
               </div>
-              <div className="flex justify-between py-1 font-medium text-indigo-300">
+              <div className="flex justify-between py-1 font-semibold text-indigo-600 dark:text-indigo-400">
                 <span>Monthly SIP at final retirement age</span>
-                <span>₹{projectionData.yearlyDataPoints[projectionData.yearlyDataPoints.length - 1]?.monthlySip.toLocaleString("en-IN")}/mo</span>
+                <span className="font-bold">₹{projectionData.yearlyDataPoints[projectionData.yearlyDataPoints.length - 1]?.monthlySip.toLocaleString("en-IN")}/mo</span>
               </div>
             </div>
 

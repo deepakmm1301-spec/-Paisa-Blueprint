@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Sparkles, Share2, Info, Percent, Calculator, ListCollapse, BookOpen, AlertCircle, Coins } from "lucide-react";
+import { getShareableLink } from "../types";
 
 interface BiharDaCalculatorProps {
   language?: "en" | "hi";
@@ -46,9 +47,7 @@ export default function BiharDaCalculator({ language = "en" }: BiharDaCalculator
   }, [basicPay, daPercent, hraPercent]);
 
   const shareToWhatsApp = () => {
-    const currentUrl = typeof window !== "undefined"
-      ? `${window.location.origin}/?widget=bihar_da`
-      : "https://paisablueprint.in/?widget=bihar_da";
+    const currentUrl = getShareableLink("bihar_da", "/bihar-da-calculator");
     const text = language === "hi"
       ? `📊 *BPSC बिहार शिक्षक महंगाई भत्ता (DA) कैलकुलेटर 2026*\nदर्ज मूल वेतन (Basic Pay): ₹${basicPay.toLocaleString("en-IN")}\nवर्तमान डीए (DA) दर: ${daPercent}%\n*परिणाम स्वरूप कुल डीए राशि: ₹${computedData.daAmount.toLocaleString("en-IN")}*\nसकल मासिक वेतन (Gross Pay): ₹${computedData.grossSalary.toLocaleString("en-IN")}\nशुद्ध इन-हैंड वेतन (Net In-Hand): ₹${computedData.inHandSalary.toLocaleString("en-IN")}\n\nतुरंत गणना करें: ${currentUrl}`
       : `📊 *BPSC Teacher Dearness Allowance (DA) Calculator 2026*\nBasic Pay entered: ₹${basicPay.toLocaleString("en-IN")}\nCurrent DA Rate: ${daPercent}%\n*Formulated DA Amount: ₹${computedData.daAmount.toLocaleString("en-IN")}*\nMonthly Gross Pay: ₹${computedData.grossSalary.toLocaleString("en-IN")}\nNet In-Hand (After Deductions): ₹${computedData.inHandSalary.toLocaleString("en-IN")}\n\nCalculate yours instantly: ${currentUrl}`;
@@ -182,62 +181,62 @@ export default function BiharDaCalculator({ language = "en" }: BiharDaCalculator
 
         {/* Output Dashboard column */}
         <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
-          <div className="bg-slate-900 border border-slate-850 dark:bg-neutral-900 dark:border-neutral-800 text-white rounded-3xl p-6 shadow-xl relative overflow-hidden">
+          <div className="bg-white border border-slate-200/80 dark:bg-slate-900 dark:border-slate-800/80 text-slate-900 dark:text-white rounded-3xl p-6 shadow-xl relative overflow-hidden">
             <div className="absolute right-0 top-0 w-24 h-24 bg-teal-500/10 rounded-full blur-2xl" />
 
-            <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
-              <span className="text-xs font-black text-teal-400 uppercase tracking-wider">Dearness Compensation Balance Sheet</span>
-              <div className="text-[10px] text-slate-400 font-extrabold">Active 7th Pay Formula</div>
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-4">
+              <span className="text-xs font-black text-teal-600 dark:text-teal-400 uppercase tracking-wider">Dearness Compensation Balance Sheet</span>
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 font-extrabold">Active 7th Pay Formula</div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Computed DA Amount */}
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-4.5">
-                <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wide">DA Component Net Pay</span>
-                <p className="text-3xl font-black text-teal-400 mt-1">₹{computedData.daAmount.toLocaleString("en-IN")}</p>
-                <p className="text-[9px] text-slate-400 mt-1.5 font-medium">Adds up directly to your baseline Basic Pay weight.</p>
+              <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-150/60 dark:border-slate-800/50 rounded-2xl p-4.5">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-extrabold uppercase tracking-wide">DA Component Net Pay</span>
+                <p className="text-3xl font-black text-teal-600 dark:text-teal-400 mt-1">₹{computedData.daAmount.toLocaleString("en-IN")}</p>
+                <p className="text-[9px] text-slate-500 dark:text-slate-400 mt-1.5 font-medium">Adds up directly to your baseline Basic Pay weight.</p>
               </div>
 
               {/* Combined Basic + DA */}
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-4.5">
-                <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wide">New Basic + DA Salary Weight</span>
-                <p className="text-2xl font-black text-white mt-1">₹{(basicPay + computedData.daAmount).toLocaleString("en-IN")}</p>
-                <p className="text-[9px] text-slate-400 mt-1.5 font-medium">The key base metric used to calculate NPS & Insurance.</p>
+              <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-150/60 dark:border-slate-800/50 rounded-2xl p-4.5">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-extrabold uppercase tracking-wide">New Basic + DA Salary Weight</span>
+                <p className="text-2xl font-black text-slate-850 dark:text-white mt-1">₹{(basicPay + computedData.daAmount).toLocaleString("en-IN")}</p>
+                <p className="text-[9px] text-slate-500 dark:text-slate-400 mt-1.5 font-medium">The key base metric used to calculate NPS & Insurance.</p>
               </div>
             </div>
 
             {/* In hand output summary */}
-            <div className="bg-teal-950/20 border border-teal-500/15 rounded-2xl p-4 mt-4 flex justify-between items-center">
+            <div className="bg-teal-500/5 dark:bg-teal-950/20 border border-teal-500/15 rounded-2xl p-4 mt-4 flex justify-between items-center">
               <div>
-                <span className="text-[10px] text-teal-400 font-bold uppercase tracking-wide block">Estimated Ultimate In-Hand Salary</span>
-                <p className="text-2xl font-black text-white mt-0.5">₹{computedData.inHandSalary.toLocaleString("en-IN")}/mo</p>
+                <span className="text-[10px] text-teal-600 dark:text-teal-400 font-bold uppercase tracking-wide block">Estimated Ultimate In-Hand Salary</span>
+                <p className="text-2xl font-black text-slate-850 dark:text-white mt-0.5">₹{computedData.inHandSalary.toLocaleString("en-IN")}/mo</p>
               </div>
-              <div className="text-[11px] text-slate-400 text-right">
-                <p className="font-extrabold">Gross: ₹{computedData.grossSalary.toLocaleString("en-IN")}</p>
-                <p className="text-rose-400 font-medium">Deductions: ₹{computedData.totalDeductions.toLocaleString("en-IN")}</p>
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 text-right">
+                <p className="font-extrabold text-slate-700 dark:text-slate-300">Gross: ₹{computedData.grossSalary.toLocaleString("en-IN")}</p>
+                <p className="text-rose-600 dark:text-rose-400 font-medium">Deductions: ₹{computedData.totalDeductions.toLocaleString("en-IN")}</p>
               </div>
             </div>
 
             {/* Step-by-Step State formulas */}
-            <h4 className="text-xs font-black text-slate-300 mt-6 mb-3.5 uppercase tracking-wider">Salary Adjustments Summary</h4>
+            <h4 className="text-xs font-black text-slate-700 dark:text-slate-300 mt-6 mb-3.5 uppercase tracking-wider">Salary Adjustments Summary</h4>
             <div className="space-y-2 text-xs">
-              <div className="flex justify-between py-1 border-b border-white/5">
-                <span className="text-slate-400">Baseline Basic Pay Entered</span>
-                <span>₹{basicPay.toLocaleString("en-IN")}</span>
+              <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800/50">
+                <span className="text-slate-500 dark:text-slate-400 font-medium">Baseline Basic Pay Entered</span>
+                <span className="text-slate-800 dark:text-slate-200 font-bold">₹{basicPay.toLocaleString("en-IN")}</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-white/5">
-                <span className="text-slate-400">{`House Rent Allowance (${computedData.hraRate}%)`}</span>
-                <span className="text-slate-200">+ ₹{computedData.hraAmount.toLocaleString("en-IN")}</span>
+              <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800/50">
+                <span className="text-slate-500 dark:text-slate-400 font-medium">{`House Rent Allowance (${computedData.hraRate}%)`}</span>
+                <span className="text-slate-800 dark:text-slate-200 font-bold">+ ₹{computedData.hraAmount.toLocaleString("en-IN")}</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-white/5">
-                <span className="text-slate-400">Medical Allowance (Fixed)</span>
-                <span className="text-slate-200">+ ₹{computedData.medicalAllowance.toLocaleString("en-IN")}</span>
+              <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800/50">
+                <span className="text-slate-500 dark:text-slate-400 font-medium">Medical Allowance (Fixed)</span>
+                <span className="text-slate-800 dark:text-slate-200 font-bold">+ ₹{computedData.medicalAllowance.toLocaleString("en-IN")}</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-white/5 font-medium text-rose-400">
+              <div className="flex justify-between py-1 border-b border-slate-100 dark:border-slate-800/50 text-rose-600 dark:text-rose-400 font-bold">
                 <span>NPS Account Employee Contribution (10%)</span>
                 <span>- ₹{computedData.npsDeduction.toLocaleString("en-IN")}</span>
               </div>
-              <div className="flex justify-between py-1 text-teal-400 font-black">
+              <div className="flex justify-between py-1 text-teal-600 dark:text-teal-400 font-black">
                 <span>Government of Bihar NPS contribution (14%)</span>
                 <span>+ ₹{computedData.govtNpsContribution.toLocaleString("en-IN")}</span>
               </div>

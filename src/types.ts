@@ -70,26 +70,49 @@ export interface Goal {
   category: "education" | "marriage" | "house" | "car" | "vacation" | "other";
 }
 
-export function getShareableLink(): string {
+export function getShareableLink(widget?: string, pathName?: string): string {
   try {
-    let href = window.location.href;
+    let href = typeof window !== "undefined" ? window.location.href : "";
+    let base = "https://paisablueprint.in"; // Fallback production custom domain
+    
     if (href && href.startsWith("http")) {
-      // If we are on the development environment, rewrite to the public pre-view environments
       if (href.includes("ais-dev-")) {
         href = href.replace("ais-dev-", "ais-pre-");
       }
-      if (
-        !href.includes("localhost") &&
-        !href.includes("127.0.0.1") &&
-        !href.includes("about:srcdoc") &&
-        !href.includes("about:blank")
-      ) {
-        return href;
+      
+      const isDevDomain = href.includes("localhost") || 
+                          href.includes("127.0.0.1") || 
+                          href.includes("about:") || 
+                          href.includes("googleusercontent.com");
+                          
+      if (!isDevDomain) {
+        base = window.location.origin;
+      } else {
+        // If we list preview run.app pages, extract that hostname from the URL context
+        try {
+          const urlObj = new URL(href);
+          if (urlObj.hostname.includes("run.app")) {
+            base = `${urlObj.protocol}//${urlObj.hostname}`;
+          }
+        } catch (_) {}
       }
     }
+
+    if (pathName) {
+      const cleanPath = pathName.startsWith("/") ? pathName : `/${pathName}`;
+      return `${base}${cleanPath}`;
+    } else if (widget) {
+      return `${base}/?widget=${widget}`;
+    }
+    
+    if (href && !href.includes("localhost") && !href.includes("127.0.0.1") && !href.includes("googleusercontent.com")) {
+      return href;
+    }
+    
+    return base;
   } catch (e) {
     // suppress
   }
-  return "https://ais-pre-smf772g7msspcpbw4nc3rs-109224888067.asia-east1.run.app";
+  return "https://paisablueprint.in";
 }
 

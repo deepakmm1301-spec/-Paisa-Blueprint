@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Sparkles, ArrowLeft, Info, HelpCircle, Share2, Calculator, CheckCircle, Percent, ShieldCheck } from "lucide-react";
+import { getShareableLink } from "../types";
 
 interface BpscTeacherSalaryProps {
   language?: "en" | "hi";
@@ -63,9 +64,7 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
 
   // Handle Share to WhatsApp
   const shareToWhatsApp = () => {
-    const currentUrl = typeof window !== "undefined"
-      ? `${window.location.origin}/?widget=bpsc_salary`
-      : "https://paisablueprint.in/?widget=bpsc_salary";
+    const currentUrl = getShareableLink("bpsc_salary", "/bpsc-teacher-salary-calculator");
     
     const translatedGrade = teacherGrade === "primary" ? "प्राथमिक (Primary 1-5)" 
       : teacherGrade === "middle" ? "मध्य (Middle 6-8)" 
@@ -278,14 +277,14 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
 
         {/* Output Dashboard Column */}
         <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
-          <div className="bg-slate-900 border border-slate-850 dark:bg-neutral-900 dark:border-neutral-800 text-white rounded-3xl p-6 shadow-xl relative overflow-hidden">
+          <div className="bg-white border border-slate-200/80 dark:bg-slate-900 dark:border-slate-800/80 text-slate-900 dark:text-white rounded-3xl p-6 shadow-xl relative overflow-hidden">
             {/* Visual background accents */}
             <div className="absolute right-0 top-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl" />
             <div className="absolute left-0 bottom-0 w-32 h-32 bg-emerald-600/5 rounded-full blur-3xl" />
 
-            <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-4 mb-5">
-              <span className="text-xs font-black text-emerald-400 uppercase tracking-wider">Salary Computation Output</span>
-              <div className="text-[10px] text-slate-400 font-extrabold flex items-center gap-1">
+            <div className="flex items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-4 mb-5">
+              <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Salary Computation Output</span>
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 font-extrabold flex items-center gap-1">
                 <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                 DDO Bihar state formula
               </div>
@@ -294,18 +293,18 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
             {/* Income Display cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-4">
-                <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wide">Basic Pay (मूल वेतन)</span>
-                <p className="text-2xl font-black text-white mt-1">₹{calculations.basicPay.toLocaleString("en-IN")}</p>
-                <div className="mt-2.5 pt-2 border-t border-white/5 text-[9px] text-slate-400 font-medium">
+              <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-150/60 dark:border-slate-800/50 rounded-2xl p-4">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-extrabold uppercase tracking-wide">Basic Pay (मूल वेतन)</span>
+                <p className="text-2xl font-black text-slate-800 dark:text-white mt-1">₹{calculations.basicPay.toLocaleString("en-IN")}</p>
+                <div className="mt-2.5 pt-2 border-t border-slate-200/60 dark:border-slate-800/50 text-[9px] text-slate-500 dark:text-slate-400 font-medium">
                   Grade scale based on TRE notification rules.
                 </div>
               </div>
 
-              <div className="bg-white/5 border border-white/5 rounded-2xl p-4">
-                <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wide">Gross Salary (सकल वेतन)</span>
-                <p className="text-2xl font-black text-emerald-400 mt-1">₹{calculations.grossSalary.toLocaleString("en-IN")}</p>
-                <div className="mt-2.5 pt-2 border-t border-white/5 text-[9px] text-slate-400 font-medium">
+              <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-150/60 dark:border-slate-800/50 rounded-2xl p-4">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-extrabold uppercase tracking-wide">Gross Salary (सकल वेतन)</span>
+                <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">₹{calculations.grossSalary.toLocaleString("en-IN")}</p>
+                <div className="mt-2.5 pt-2 border-t border-slate-200/60 dark:border-slate-800/50 text-[9px] text-slate-500 dark:text-slate-400 font-medium">
                   {`Basic + DA(₹${calculations.daAmount.toLocaleString("en-IN")}) + HRA(₹${calculations.hraAmount.toLocaleString("en-IN")}) + Allowances`}
                 </div>
               </div>
@@ -313,39 +312,39 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
             </div>
 
             {/* Large Nett In Hand pay Display */}
-            <div className="bg-gradient-to-r from-emerald-950/40 to-slate-900 border border-emerald-500/15 rounded-2xl p-5.5 mt-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="bg-emerald-500/5 dark:bg-emerald-950/20 border border-emerald-500/15 rounded-2xl p-5.5 mt-4 flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="text-center md:text-left">
-                <span className="text-[11px] text-emerald-400 font-black uppercase tracking-wider block">Estimated Net In-Hand Salary (हाथ में वेतन)</span>
-                <p className="text-3xl sm:text-4xl font-extrabold mt-1 text-white">₹{calculations.inHandSalary.toLocaleString("en-IN")}</p>
-                <span className="text-[10px] text-slate-400 mt-1 font-medium block">This is your direct monthly home take-away salary credit.</span>
+                <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-black uppercase tracking-wider block">Estimated Net In-Hand Salary (हाथ में वेतन)</span>
+                <p className="text-3xl sm:text-4xl font-extrabold mt-1 text-slate-800 dark:text-white">₹{calculations.inHandSalary.toLocaleString("en-IN")}</p>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 font-medium block">This is your direct monthly home take-away salary credit.</span>
               </div>
               <div className="shrink-0 flex items-center justify-center bg-emerald-500/10 p-2.5 rounded-full border border-emerald-500/20">
-                <ShieldCheck className="w-8 h-8 text-emerald-400" />
+                <ShieldCheck className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
               </div>
             </div>
 
             {/* Detailed Salary Bill Breakdown */}
-            <h4 className="text-xs font-black text-slate-300 mt-6 mb-3 uppercase tracking-wider">Salary Bill Breakdown</h4>
+            <h4 className="text-xs font-black text-slate-700 dark:text-slate-300 mt-6 mb-3 uppercase tracking-wider">Salary Bill Breakdown</h4>
             <div className="space-y-2 text-xs">
-              <div className="flex justify-between py-1.5 border-b border-white/5 font-medium">
-                <span className="text-slate-400">Dearness Allowance (DA - 50%)</span>
-                <span>+ ₹{calculations.daAmount.toLocaleString("en-IN")}</span>
+              <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/50 font-medium">
+                <span className="text-slate-500 dark:text-slate-400">Dearness Allowance (DA - {daPercent}%)</span>
+                <span className="text-slate-850 dark:text-slate-200 font-bold">+ ₹{calculations.daAmount.toLocaleString("en-IN")}</span>
               </div>
-              <div className="flex justify-between py-1.5 border-b border-white/5 font-medium">
-                <span className="text-slate-400">{`House Rent Allowance (HRA - ${hraPercent}%)`}</span>
-                <span>+ ₹{calculations.hraAmount.toLocaleString("en-IN")}</span>
+              <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/50 font-medium">
+                <span className="text-slate-500 dark:text-slate-400">{`House Rent Allowance (HRA - ${hraPercent}%)`}</span>
+                <span className="text-slate-850 dark:text-slate-200 font-bold">+ ₹{calculations.hraAmount.toLocaleString("en-IN")}</span>
               </div>
-              <div className="flex justify-between py-1.5 border-b border-white/5 font-medium">
-                <span className="text-slate-400">Total Deductions (Group State Tax + NPS)</span>
-                <span className="text-rose-400">- ₹{calculations.totalDeductions.toLocaleString("en-IN")}</span>
+              <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/50 font-medium">
+                <span className="text-slate-500 dark:text-slate-400">Total Deductions (Group State Tax + NPS)</span>
+                <span className="text-rose-600 dark:text-rose-400 font-black">- ₹{calculations.totalDeductions.toLocaleString("en-IN")}</span>
               </div>
-              <div className="flex justify-between py-1.5 border-b border-white/5 font-medium">
-                <span className="text-slate-400">Of which Govt NPS Employee Share (10%)</span>
-                <span className="text-slate-300">₹{calculations.npsDeduction.toLocaleString("en-IN")}</span>
+              <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800/50 font-medium">
+                <span className="text-slate-500 dark:text-slate-400">Of which Govt NPS Employee Share (10%)</span>
+                <span className="text-slate-700 dark:text-slate-300 font-bold">₹{calculations.npsDeduction.toLocaleString("en-IN")}</span>
               </div>
-              <div className="flex justify-between py-1.5 font-medium text-emerald-400">
+              <div className="flex justify-between py-1.5 font-semibold text-emerald-600 dark:text-emerald-400">
                 <span>Bihar Gov Additional Contribution (14% NPS)</span>
-                <span>+ ₹{calculations.govtNpsContribution.toLocaleString("en-IN")}</span>
+                <span className="font-extrabold">+ ₹{calculations.govtNpsContribution.toLocaleString("en-IN")}</span>
               </div>
             </div>
           </div>

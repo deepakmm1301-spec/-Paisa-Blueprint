@@ -13,6 +13,7 @@ import {
   Layers,
   ArrowRight
 } from "lucide-react";
+import { getShareableLink } from "../types";
 
 interface NpsGovtCalculatorProps {
   language?: "en" | "hi";
@@ -172,9 +173,7 @@ export default function NpsGovtCalculator({ language: propLanguage }: NpsGovtCal
   ]);
 
   const shareToWhatsApp = () => {
-    const currentUrl = typeof window !== "undefined"
-      ? `${window.location.origin}/?widget=nps_govt`
-      : "https://paisablueprint.in/?widget=nps_govt";
+    const currentUrl = getShareableLink("nps_govt", "/nps-calculator-for-government-employees");
     let text = "";
 
     if (activeTab === "bpsc") {
@@ -513,57 +512,57 @@ Calculate your exact lifetime pension blueprint: ${currentUrl}`;
         <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
           
           {/* Main output box */}
-          <div className="bg-slate-900 border border-slate-850 dark:bg-neutral-900 dark:border-neutral-800 text-white rounded-3xl p-6 shadow-xl relative overflow-hidden">
+          <div className="bg-white border border-slate-200/80 dark:bg-slate-900 dark:border-slate-800/80 text-slate-900 dark:text-white rounded-3xl p-6 shadow-xl relative overflow-hidden">
             <div className="absolute right-0 top-0 w-32 h-32 bg-violet-600/10 rounded-full blur-3xl text-violet-500" />
 
-            <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-5">
-              <span className="text-xs font-black text-violet-300 uppercase tracking-wider">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-5">
+              <span className="text-xs font-black text-violet-600 dark:text-violet-300 uppercase tracking-wider">
                 ⚡ LIVE CALCULATION RESULT
               </span>
-              <div className="text-[10px] text-slate-400 font-extrabold flex items-center gap-1">
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 font-extrabold flex items-center gap-1">
                 <Landmark className="w-3.5 h-3.5" />
                 PRAN Tier-I Account
               </div>
             </div>
 
             {/* expected monthly pension panel */}
-            <div className="bg-gradient-to-r from-violet-950/40 to-slate-900 border border-violet-500/20 rounded-2xl p-5.5 text-center mb-6">
-              <span className="text-[10px] text-emerald-400 dark:text-emerald-300 font-extrabold uppercase tracking-widest block">
+            <div className="bg-violet-500/5 dark:bg-violet-950/20 border border-violet-500/15 rounded-2xl p-5.5 text-center mb-6">
+              <span className="text-[10px] text-emerald-600 dark:text-emerald-300 font-extrabold uppercase tracking-widest block">
                 EXPECTED MONTHLY PENSION
               </span>
-              <p className="text-4xl sm:text-5xl font-black text-emerald-400 dark:text-emerald-300 mt-2 font-mono tracking-tight">
+              <p className="text-4xl sm:text-5xl font-black text-emerald-600 dark:text-emerald-300 mt-2 font-mono tracking-tight">
                 ₹{activeTab === "custom" 
                   ? customCalculations.monthlyPensionAmount.toLocaleString("en-IN")
                   : bpscCalculations.monthlyPensionAmount.toLocaleString("en-IN")}
               </p>
-              <span className="text-[10px] text-slate-400 mt-2 font-medium block">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-2 font-medium block">
                 Based on an expected annuity rate of{" "}
-                <strong className="text-slate-300">{activeTab === "custom" ? customExpectedAnnuityRate : expectedAnnuityRate}%</strong> on a{" "}
-                <strong className="text-slate-300">{activeTab === "custom" ? customAnnuityPurchasePercent : annuityPurchasePercent}%</strong> annuity purchase.
+                <strong className="text-slate-700 dark:text-slate-300">{activeTab === "custom" ? customExpectedAnnuityRate : expectedAnnuityRate}%</strong> on a{" "}
+                <strong className="text-slate-700 dark:text-slate-300">{activeTab === "custom" ? customAnnuityPurchasePercent : annuityPurchasePercent}%</strong> annuity purchase.
               </span>
             </div>
 
             {/* Total balance accumulated & stats matching PDF top info */}
-            <div className="grid grid-cols-3 gap-3 text-center mb-6 border-b border-white/10 pb-6">
-              <div className="bg-white/5 p-3 rounded-xl border border-white/5">
-                <span className="text-[8px] sm:text-[9px] text-slate-400 font-black uppercase tracking-wider block">TOTAL CORPUS</span>
-                <p className="text-sm sm:text-base font-extrabold text-white mt-1">
+            <div className="grid grid-cols-3 gap-3 text-center mb-6 border-b border-slate-100 dark:border-slate-800 pb-6">
+              <div className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-150/60 dark:border-slate-800/50">
+                <span className="text-[8px] sm:text-[9px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-wider block">TOTAL CORPUS</span>
+                <p className="text-sm sm:text-base font-extrabold text-slate-850 dark:text-white mt-1">
                   ₹{activeTab === "custom" 
                     ? customCalculations.totalAccumulatedCorpus.toLocaleString("en-IN")
                     : bpscCalculations.totalAccumulatedCorpus.toLocaleString("en-IN")}
                 </p>
               </div>
-              <div className="bg-white/5 p-3 rounded-xl border border-white/5">
-                <span className="text-[8px] sm:text-[9px] text-slate-400 font-black uppercase tracking-wider block">TOTAL INVESTED</span>
-                <p className="text-sm sm:text-base font-extrabold text-white mt-1">
+              <div className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-150/60 dark:border-slate-800/50">
+                <span className="text-[8px] sm:text-[9px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-wider block">TOTAL INVESTED</span>
+                <p className="text-sm sm:text-base font-extrabold text-slate-850 dark:text-white mt-1">
                   ₹{activeTab === "custom" 
                     ? customCalculations.totalAmountInvested.toLocaleString("en-IN")
                     : bpscCalculations.totalInvestedAmount.toLocaleString("en-IN")}
                 </p>
               </div>
-              <div className="bg-white/5 p-3 rounded-xl border border-white/5">
-                <span className="text-[8px] sm:text-[9px] text-slate-400 font-black uppercase tracking-wider block">GAINS EARNED</span>
-                <p className="text-sm sm:text-base font-extrabold text-emerald-400 mt-1">
+              <div className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-150/60 dark:border-slate-800/50">
+                <span className="text-[8px] sm:text-[9px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-wider block">GAINS EARNED</span>
+                <p className="text-sm sm:text-base font-extrabold text-emerald-600 dark:text-emerald-450 mt-1">
                   ₹{activeTab === "custom" 
                     ? customCalculations.gainsEarned.toLocaleString("en-IN")
                     : (bpscCalculations.totalAccumulatedCorpus - bpscCalculations.totalInvestedAmount).toLocaleString("en-IN")}
@@ -572,48 +571,48 @@ Calculate your exact lifetime pension blueprint: ${currentUrl}`;
             </div>
 
             {/* Visual Investment Ratio indicator */}
-            <div className="mb-6 bg-white/5 p-4 rounded-xl border border-white/5 space-y-2">
-              <div className="flex justify-between text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+            <div className="mb-6 bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl border border-slate-150/60 dark:border-slate-800/50 space-y-2">
+              <div className="flex justify-between text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">
                 <span>Principal: {activeTab === "custom" ? customCalculations.principalPct : bpscCalculations.principalPct}%</span>
                 <span>Gains: {activeTab === "custom" ? customCalculations.gainsPct : bpscCalculations.gainsPct}%</span>
               </div>
-              <div className="h-2 bg-slate-800 rounded-full overflow-hidden flex">
+              <div className="h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden flex">
                 <div 
-                  className="bg-violet-400 h-full transition-all" 
+                  className="bg-violet-500 dark:bg-violet-400 h-full transition-all" 
                   style={{ width: `${activeTab === "custom" ? customCalculations.principalPct : bpscCalculations.principalPct}%` }}
                 />
                 <div 
-                  className="bg-emerald-400 h-full flex-1 transition-all"
+                  className="bg-emerald-500 dark:bg-emerald-400 h-full flex-1 transition-all"
                 />
               </div>
               <span className="text-[8px] text-slate-500 block text-center font-medium">INVESTMENT DIVISION (Principal vs Gains)</span>
             </div>
 
             {/* Split At Retirement block (Lumpsum vs Annuity) */}
-            <div className="border-t border-white/10 pt-5">
-              <h5 className="text-[10px] text-slate-400 font-black uppercase tracking-wider mb-3">NPS SPLIT AT RETIREMENT</h5>
+            <div className="border-t border-slate-100 dark:border-slate-800 pt-5">
+              <h5 className="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-wider mb-3">NPS SPLIT AT RETIREMENT</h5>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-white/5 border border-white/5 rounded-xl p-4">
-                  <span className="text-[9px] text-slate-400 font-extrabold uppercase tracking-wide block">LUMP SUM WITHDRAWAL (60% Max)</span>
-                  <p className="text-xl font-bold text-emerald-450 dark:text-emerald-400 mt-1">
+                <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-150/60 dark:border-slate-800/50 rounded-xl p-4">
+                  <span className="text-[9px] text-slate-500 dark:text-slate-400 font-extrabold uppercase tracking-wide block">LUMP SUM WITHDRAWAL (60% Max)</span>
+                  <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">
                     ₹{activeTab === "custom" 
                       ? customCalculations.lumpsumWithdrawalCorpus.toLocaleString("en-IN")
                       : bpscCalculations.lumpsumWithdrawalCorpus.toLocaleString("en-IN")}
                   </p>
-                  <p className="text-[9px] text-slate-400 mt-1 font-medium flex items-center gap-1">
-                    <span className="text-emerald-400">✓</span> 100% Tax-Free lump-sum payout
+                  <p className="text-[9px] text-slate-500 dark:text-slate-400 mt-1 font-medium flex items-center gap-1">
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">✓</span> 100% Tax-Free lump-sum payout
                   </p>
                 </div>
 
-                <div className="bg-white/5 border border-white/5 rounded-xl p-4">
-                  <span className="text-[9px] text-slate-400 font-extrabold uppercase tracking-wide block">ANNUITY PURCHASE (40% Min)</span>
-                  <p className="text-xl font-bold text-violet-400 mt-1">
+                <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-150/60 dark:border-slate-800/50 rounded-xl p-4">
+                  <span className="text-[9px] text-slate-500 dark:text-slate-400 font-extrabold uppercase tracking-wide block">ANNUITY PURCHASE (40% Min)</span>
+                  <p className="text-xl font-bold text-violet-600 dark:text-violet-400 mt-1">
                     ₹{activeTab === "custom" 
                       ? customCalculations.annuityCorpus.toLocaleString("en-IN")
                       : bpscCalculations.annuityCorpus.toLocaleString("en-IN")}
                   </p>
-                  <p className="text-[9px] text-slate-400 mt-1 font-medium flex items-center gap-1">
-                    <span className="text-violet-400">✓</span> Reinvested to generate monthly pension
+                  <p className="text-[9px] text-slate-500 dark:text-slate-400 mt-1 font-medium flex items-center gap-1">
+                    <span className="text-violet-600 dark:text-violet-400 font-bold">✓</span> Reinvested to generate monthly pension
                   </p>
                 </div>
               </div>
@@ -621,12 +620,12 @@ Calculate your exact lifetime pension blueprint: ${currentUrl}`;
 
             {/* Quick Plan Overview (From Page 2 PDF) */}
             {activeTab === "custom" && (
-              <div className="bg-white/5 border border-white/5 rounded-xl p-4 mt-4 text-[10px] text-slate-300 font-medium space-y-2">
-                <span className="text-[9px] text-violet-300 font-black uppercase tracking-wider block">QUICK PLAN OVERVIEW</span>
+              <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-150/60 dark:border-slate-800/50 rounded-xl p-4 mt-4 text-[10px] text-slate-600 dark:text-slate-300 font-medium space-y-2">
+                <span className="text-[9px] text-violet-650 dark:text-violet-300 font-black uppercase tracking-wider block">QUICK PLAN OVERVIEW</span>
                 <ul className="list-disc pl-4 space-y-1">
-                  <li>Your estimated current age is <strong className="text-white">{customCalculations.currentAge}</strong> completed years.</li>
-                  <li>You will actively contribute for the next <strong className="text-white">{customCalculations.yearsToInvest}</strong> years.</li>
-                  <li>Withdrawal / Pension commencement age: <strong className="text-white">{customDeferAge}</strong> years.</li>
+                  <li>Your estimated current age is <strong className="text-slate-850 dark:text-white">{customCalculations.currentAge}</strong> completed years.</li>
+                  <li>You will actively contribute for the next <strong className="text-slate-850 dark:text-white">{customCalculations.yearsToInvest}</strong> years.</li>
+                  <li>Withdrawal / Pension commencement age: <strong className="text-slate-850 dark:text-white">{customDeferAge}</strong> years.</li>
                 </ul>
               </div>
             )}

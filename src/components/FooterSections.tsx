@@ -18,7 +18,7 @@ import { getShareableLink } from "../types";
 
 type FooterTab = "about" | "contact" | "privacy" | "disclaimer" | "terms" | null;
 
-export function FooterSections() {
+export function FooterSections({ language = "en" }: { language?: "en" | "hi" } = {}) {
   const [activeTab, setActiveTab] = useState<FooterTab>(null);
   const [visitorCount, setVisitorCount] = useState<number | null>(null);
 
@@ -232,13 +232,17 @@ export function FooterSections() {
               <li>
                 <button 
                   onClick={() => {
-                    const message = "Check out Paisa Blueprint - The Indian salaried personal finance adviser! Formulate your portfolio, optimize tax, simulate SIP and retirement targets. Try it live at: " + getShareableLink();
+                    const message = language === "hi"
+                      ? "Paisa Blueprint देखें - भारतीय वेतनभोगी कर्मचारियों के लिए स्वतंत्र वित्तीय सलाहकार! अपना पोर्टफोलियो बनाएं, टैक्स बचाएं, SIP और रिटायरमेंट लक्ष्य जांचें। इसे यहाँ लाइव उपयोग करें: " + getShareableLink()
+                      : "Check out Paisa Blueprint - The Indian salaried personal finance adviser! Formulate your portfolio, optimize tax, simulate SIP and retirement targets. Try it live at: " + getShareableLink();
                     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, "_blank");
                   }}
                   className="hover:text-emerald-400 text-slate-400 text-left transition-all cursor-pointer inline-flex items-center gap-1 hover:translate-x-0.5"
                 >
                   <ArrowRight className="w-2.5 h-2.5 opacity-60 text-emerald-450" />
-                  <span className="text-emerald-450 font-extrabold">Share App to WhatsApp 🚀</span>
+                  <span className="text-emerald-450 font-extrabold">
+                    {language === "hi" ? "व्हाट्सऐप पर ऐप साझा करें 🚀" : "Share App to WhatsApp 🚀"}
+                  </span>
                 </button>
               </li>
             </ul>
