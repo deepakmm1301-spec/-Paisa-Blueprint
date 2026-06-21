@@ -22,6 +22,7 @@ import BpscTeacherSalary from "./components/BpscTeacherSalary";
 import BiharDaCalculator from "./components/BiharDaCalculator";
 import GovtEmployeeSipCalculator from "./components/GovtEmployeeSipCalculator";
 import NpsGovtCalculator from "./components/NpsGovtCalculator";
+import EightPayCommissionHub from "./components/EightPayCommissionHub";
 // @ts-ignore
 import paisaLogo from "./assets/images/deep_paisa_logo_1780484307855.png";
 
@@ -115,7 +116,16 @@ type ActiveWidget =
   | "bpsc_salary"
   | "bihar_da"
   | "govt_sip"
-  | "nps_govt";
+  | "nps_govt"
+  | "eight_pay_calc"
+  | "eight_pay_fitment"
+  | "eight_pay_hike"
+  | "eight_pay_pension"
+  | "eight_pay_news"
+  | "eight_pay_fitment_info"
+  | "eight_pay_chart"
+  | "eight_pay_date"
+  | "eight_pay_teachers";
 
 export default function App() {
   const [showWelcomePopup, setShowWelcomePopup] = useState(true);
@@ -383,6 +393,15 @@ export default function App() {
       if (cleanPath === "/cibil-credit-card") return "cibil";
       if (cleanPath === "/debt-freedom-planner") return "debt";
       if (cleanPath === "/paisa-ai-coach") return "coach";
+      if (cleanPath === "/8th-pay-commission-calculator") return "eight_pay_calc";
+      if (cleanPath === "/8th-pay-fitment-factor-calculator") return "eight_pay_fitment";
+      if (cleanPath === "/8th-pay-salary-hike-calculator") return "eight_pay_hike";
+      if (cleanPath === "/8th-pay-pension-calculator") return "eight_pay_pension";
+      if (cleanPath === "/8th-pay-commission-latest-news") return "eight_pay_news";
+      if (cleanPath === "/8th-pay-commission-fitment-factor") return "eight_pay_fitment_info";
+      if (cleanPath === "/8th-pay-commission-salary-chart") return "eight_pay_chart";
+      if (cleanPath === "/8th-pay-commission-date") return "eight_pay_date";
+      if (cleanPath === "/8th-pay-commission-for-teachers") return "eight_pay_teachers";
       return "profiles";
     };
 
@@ -434,6 +453,15 @@ export default function App() {
     if (widget === "cibil") return "/cibil-credit-card";
     if (widget === "debt") return "/debt-freedom-planner";
     if (widget === "coach") return "/paisa-ai-coach";
+    if (widget === "eight_pay_calc") return "/8th-pay-commission-calculator";
+    if (widget === "eight_pay_fitment") return "/8th-pay-fitment-factor-calculator";
+    if (widget === "eight_pay_hike") return "/8th-pay-salary-hike-calculator";
+    if (widget === "eight_pay_pension") return "/8th-pay-pension-calculator";
+    if (widget === "eight_pay_news") return "/8th-pay-commission-latest-news";
+    if (widget === "eight_pay_fitment_info") return "/8th-pay-commission-fitment-factor";
+    if (widget === "eight_pay_chart") return "/8th-pay-commission-salary-chart";
+    if (widget === "eight_pay_date") return "/8th-pay-commission-date";
+    if (widget === "eight_pay_teachers") return "/8th-pay-commission-for-teachers";
     return "/";
   }, []);
 
@@ -452,6 +480,24 @@ export default function App() {
       targetTitle = "Government Employee SIP Calculator & Retirement Planner | Paisa Blueprint";
     } else if (activeWidget === "nps_govt") {
       targetTitle = "BPSC Teacher NPS & Pension Calculator 2026 | Paisa Blueprint";
+    } else if (activeWidget === "eight_pay_calc") {
+      targetTitle = "8th Pay Commission Salary Calculator 2026 | Paisa Blueprint";
+    } else if (activeWidget === "eight_pay_fitment") {
+      targetTitle = "8th Pay Commission Fitment Factor Calculator | Paisa Blueprint";
+    } else if (activeWidget === "eight_pay_hike") {
+      targetTitle = "8th Pay Commission Salary Hike Calculator | Paisa Blueprint";
+    } else if (activeWidget === "eight_pay_pension") {
+      targetTitle = "8th Pay Commission Pension Calculator | Paisa Blueprint";
+    } else if (activeWidget === "eight_pay_news") {
+      targetTitle = "8th Pay Commission Latest News & Projections | Paisa Blueprint";
+    } else if (activeWidget === "eight_pay_fitment_info") {
+      targetTitle = "8th Pay Commission Fitment Factor Guide | Paisa Blueprint";
+    } else if (activeWidget === "eight_pay_chart") {
+      targetTitle = "8th Pay Commission Pay Matrix & Salary Chart | Paisa Blueprint";
+    } else if (activeWidget === "eight_pay_date") {
+      targetTitle = "8th Pay Commission Expected Implementation Date | Paisa Blueprint";
+    } else if (activeWidget === "eight_pay_teachers") {
+      targetTitle = "8th Pay Commission State Teachers Salary Growth | Paisa Blueprint";
     } else if (activeWidget !== "profiles" && activeWidget !== "dashboard") {
       const capitalized = activeWidget.charAt(0).toUpperCase() + activeWidget.slice(1);
       targetTitle = `${capitalized} Tool | Paisa Blueprint`;
@@ -802,6 +848,13 @@ export default function App() {
   };
 
   const menuItems = [
+    {
+      id: "eight_pay_calc" as ActiveWidget,
+      label: language === "hi" ? "8वां वेतन आयोग हब" : "8th Pay Commission Hub",
+      desc: language === "hi" ? "वेतन वृद्धि, फिटमेंट फैक्टर और 8वें वेतन आकलन 2026" : "Calculators & guides structure of 8th CPC",
+      icon: <Sparkles className="w-5 h-5 text-amber-500 fill-amber-500/20" />,
+      color: "text-violet-650 bg-violet-50 border-violet-100",
+    },
     {
       id: "bpsc_salary" as ActiveWidget,
       label: language === "hi" ? "BPSC शिक्षक वेतन" : "BPSC Teacher Salary",
@@ -1563,6 +1616,47 @@ export default function App() {
 
                 {activeWidget === "nps_govt" && (
                   <NpsGovtCalculator language={language} />
+                )}
+
+                {(activeWidget === "eight_pay_calc" ||
+                  activeWidget === "eight_pay_fitment" ||
+                  activeWidget === "eight_pay_hike" ||
+                  activeWidget === "eight_pay_pension" ||
+                  activeWidget === "eight_pay_news" ||
+                  activeWidget === "eight_pay_fitment_info" ||
+                  activeWidget === "eight_pay_chart" ||
+                  activeWidget === "eight_pay_date" ||
+                  activeWidget === "eight_pay_teachers") && (
+                  <EightPayCommissionHub 
+                    language={language}
+                    activeSubPage={
+                      activeWidget === "eight_pay_calc" ? "calculator" :
+                      activeWidget === "eight_pay_fitment" ? "fitment" :
+                      activeWidget === "eight_pay_hike" ? "hike" :
+                      activeWidget === "eight_pay_pension" ? "pension" :
+                      activeWidget === "eight_pay_news" ? "latest-news" :
+                      activeWidget === "eight_pay_fitment_info" ? "fitment-factor" :
+                      activeWidget === "eight_pay_chart" ? "salary-chart" :
+                      activeWidget === "eight_pay_date" ? "date" :
+                      "for-teachers"
+                    }
+                    onNavigate={(subPage) => {
+                      const mapping: Record<string, ActiveWidget> = {
+                        "calculator": "eight_pay_calc",
+                        "fitment": "eight_pay_fitment",
+                        "hike": "eight_pay_hike",
+                        "pension": "eight_pay_pension",
+                        "latest-news": "eight_pay_news",
+                        "fitment-factor": "eight_pay_fitment_info",
+                        "salary-chart": "eight_pay_chart",
+                        "date": "eight_pay_date",
+                        "for-teachers": "eight_pay_teachers"
+                      };
+                      if (mapping[subPage]) {
+                        setActiveWidget(mapping[subPage]);
+                      }
+                    }}
+                  />
                 )}
               </motion.div>
             </AnimatePresence>
