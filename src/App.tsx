@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { UserProfile, LoanDetails, InvestmentDetails, getShareableLink } from "./types";
 import FinancialHealthCheck from "./components/FinancialHealthCheck";
@@ -369,8 +369,30 @@ export default function App() {
   });
 
   const [activeWidget, setActiveWidget] = useState<ActiveWidget>(() => {
+    const getWidgetFromPath = (pathName: string): ActiveWidget => {
+      const cleanPath = pathName.replace(/\/$/, "").toLowerCase();
+      if (cleanPath === "/bpsc-teacher-salary-calculator" || cleanPath === "/bihar-teacher-salary-calculator") return "bpsc_salary";
+      if (cleanPath === "/bihar-da-calculator") return "bihar_da";
+      if (cleanPath === "/government-employee-sip-calculator") return "govt_sip";
+      if (cleanPath === "/nps-calculator-for-government-employees") return "nps_govt";
+      if (cleanPath === "/salary-calculator") return "salary";
+      if (cleanPath === "/pension-calculator") return "pension";
+      if (cleanPath === "/plan-sip" || cleanPath === "/sip-planner") return "sip";
+      if (cleanPath === "/paise-to-rupee-wisdom") return "learning";
+      if (cleanPath === "/health-scorecard") return "health";
+      if (cleanPath === "/retirement-roadmap") return "retirement";
+      if (cleanPath === "/my-goal-planner") return "goals";
+      if (cleanPath === "/tax-regime-optimizer") return "tax";
+      if (cleanPath === "/my-wealth-tracker") return "networth";
+      if (cleanPath === "/cabinet-and-resources") return "seohub";
+      if (cleanPath === "/cibil-credit-card") return "cibil";
+      if (cleanPath === "/debt-freedom-planner") return "debt";
+      if (cleanPath === "/paisa-ai-coach") return "coach";
+      return "profiles";
+    };
+
     if (typeof window !== "undefined") {
-      // 1. Try URL parameters
+      // 1. Try URL parameters first for backwards compatibility
       const params = new URLSearchParams(window.location.search);
       const queryWidget = params.get("widget") || params.get("tool") || params.get("calc");
       if (queryWidget) {
@@ -389,20 +411,7 @@ export default function App() {
       }
 
       // 2. Fall back to pathname patterns
-      const path = window.location.pathname;
-      const cleanPath = path.replace(/\/$/, "").toLowerCase();
-      if (cleanPath === "/bpsc-teacher-salary-calculator" || cleanPath === "/bihar-teacher-salary-calculator") {
-        return "bpsc_salary";
-      }
-      if (cleanPath === "/bihar-da-calculator") {
-        return "bihar_da";
-      }
-      if (cleanPath === "/government-employee-sip-calculator") {
-        return "govt_sip";
-      }
-      if (cleanPath === "/nps-calculator-for-government-employees") {
-        return "nps_govt";
-      }
+      return getWidgetFromPath(window.location.pathname);
     }
     return "profiles";
   });
@@ -411,38 +420,55 @@ export default function App() {
     return (localStorage.getItem("paisa_language") as "en" | "hi") || "en";
   });
 
+  const getPathFromWidget = useCallback((widget: ActiveWidget): string => {
+    if (widget === "profiles") return "/";
+    if (widget === "bpsc_salary") return "/bpsc-teacher-salary-calculator";
+    if (widget === "bihar_da") return "/bihar-da-calculator";
+    if (widget === "govt_sip") return "/government-employee-sip-calculator";
+    if (widget === "nps_govt") return "/nps-calculator-for-government-employees";
+    if (widget === "salary") return "/salary-calculator";
+    if (widget === "pension") return "/pension-calculator";
+    if (widget === "sip") return "/plan-sip";
+    if (widget === "learning") return "/paise-to-rupee-wisdom";
+    if (widget === "health") return "/health-scorecard";
+    if (widget === "retirement") return "/retirement-roadmap";
+    if (widget === "goals") return "/my-goal-planner";
+    if (widget === "tax") return "/tax-regime-optimizer";
+    if (widget === "networth") return "/my-wealth-tracker";
+    if (widget === "seohub") return "/cabinet-and-resources";
+    if (widget === "cibil") return "/cibil-credit-card";
+    if (widget === "debt") return "/debt-freedom-planner";
+    if (widget === "coach") return "/paisa-ai-coach";
+    return "/";
+  }, []);
+
   // Keep path and page title in sync with activeWidget
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     let targetTitle = "Paisa Blueprint | India's #1 Personal Financial Wealth Dashboard";
-    let targetPath = "/";
+    let targetPath = getPathFromWidget(activeWidget);
 
     if (activeWidget === "bpsc_salary") {
       targetTitle = "BPSC Teacher Salary Calculator 2026 | Paisa Blueprint";
-      targetPath = "/?widget=bpsc_salary";
     } else if (activeWidget === "bihar_da") {
       targetTitle = "Bihar Dearness Allowance (DA) Calculator 2026 | Paisa Blueprint";
-      targetPath = "/?widget=bihar_da";
     } else if (activeWidget === "govt_sip") {
       targetTitle = "Government Employee SIP Calculator & Retirement Planner | Paisa Blueprint";
-      targetPath = "/?widget=govt_sip";
     } else if (activeWidget === "nps_govt") {
       targetTitle = "BPSC Teacher NPS & Pension Calculator 2026 | Paisa Blueprint";
-      targetPath = "/?widget=nps_govt";
     } else if (activeWidget !== "profiles") {
       const capitalized = activeWidget.charAt(0).toUpperCase() + activeWidget.slice(1);
       targetTitle = `${capitalized} Tool | Paisa Blueprint`;
-      targetPath = `/?widget=${activeWidget}`;
     }
 
     document.title = targetTitle;
 
-    const currentFull = window.location.pathname + window.location.search;
-    if (currentFull !== targetPath) {
+    const currentFull = window.location.pathname;
+    if (currentFull.replace(/\/$/, "") !== targetPath.replace(/\/$/, "")) {
       window.history.pushState({ widget: activeWidget }, "", targetPath);
     }
-  }, [activeWidget]);
+  }, [activeWidget, getPathFromWidget]);
 
   // Handle browser back & forward buttons
   useEffect(() => {
@@ -481,19 +507,29 @@ export default function App() {
       }
 
       // 2. Pathname compatibility fallback
-      const path = window.location.pathname;
-      const cleanPath = path.replace(/\/$/, "").toLowerCase();
-      if (cleanPath === "/bpsc-teacher-salary-calculator" || cleanPath === "/bihar-teacher-salary-calculator") {
-        setActiveWidget("bpsc_salary");
-      } else if (cleanPath === "/bihar-da-calculator") {
-        setActiveWidget("bihar_da");
-      } else if (cleanPath === "/government-employee-sip-calculator") {
-        setActiveWidget("govt_sip");
-      } else if (cleanPath === "/nps-calculator-for-government-employees") {
-        setActiveWidget("nps_govt");
-      } else {
-        setActiveWidget("profiles");
-      }
+      const getWidgetFromPath = (pathName: string): ActiveWidget => {
+        const cleanPath = pathName.replace(/\/$/, "").toLowerCase();
+        if (cleanPath === "/bpsc-teacher-salary-calculator" || cleanPath === "/bihar-teacher-salary-calculator") return "bpsc_salary";
+        if (cleanPath === "/bihar-da-calculator") return "bihar_da";
+        if (cleanPath === "/government-employee-sip-calculator") return "govt_sip";
+        if (cleanPath === "/nps-calculator-for-government-employees") return "nps_govt";
+        if (cleanPath === "/salary-calculator") return "salary";
+        if (cleanPath === "/pension-calculator") return "pension";
+        if (cleanPath === "/plan-sip" || cleanPath === "/sip-planner") return "sip";
+        if (cleanPath === "/paise-to-rupee-wisdom") return "learning";
+        if (cleanPath === "/health-scorecard") return "health";
+        if (cleanPath === "/retirement-roadmap") return "retirement";
+        if (cleanPath === "/my-goal-planner") return "goals";
+        if (cleanPath === "/tax-regime-optimizer") return "tax";
+        if (cleanPath === "/my-wealth-tracker") return "networth";
+        if (cleanPath === "/cabinet-and-resources") return "seohub";
+        if (cleanPath === "/cibil-credit-card") return "cibil";
+        if (cleanPath === "/debt-freedom-planner") return "debt";
+        if (cleanPath === "/paisa-ai-coach") return "coach";
+        return "profiles";
+      };
+
+      setActiveWidget(getWidgetFromPath(window.location.pathname));
     };
 
     window.addEventListener("popstate", handlePopState);
@@ -505,8 +541,9 @@ export default function App() {
   const widgetShareText = useMemo(() => {
     let currentUrl = "https://paisablueprint.in/";
     if (typeof window !== "undefined") {
-      const base = `${window.location.origin}/`;
-      currentUrl = activeWidget === "profiles" ? base : `${base}?widget=${activeWidget}`;
+      const base = window.location.origin;
+      const widgetPath = getPathFromWidget(activeWidget);
+      currentUrl = widgetPath === "/" ? `${base}/` : `${base}${widgetPath}`;
     }
     let title = "";
     if (activeWidget === "profiles") {
