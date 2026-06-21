@@ -38,6 +38,7 @@ import {
   Coins, 
   Sliders, 
   ChevronRight, 
+  LayoutGrid, 
   ShieldCheck, 
   Sparkles,
   Award,
@@ -446,6 +447,8 @@ export default function App() {
   const [language, setLanguage] = useState<"en" | "hi">(() => {
     return (localStorage.getItem("paisa_language") as "en" | "hi") || "hi";
   });
+
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const getPathFromWidget = useCallback((widget: ActiveWidget): string => {
     if (widget === "profiles") return "/";
@@ -1454,7 +1457,7 @@ export default function App() {
       </header>
 
       {/* Main Container Layout */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full flex flex-col gap-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-28 lg:pb-8 flex-1 w-full flex flex-col gap-8">
 
         {/* Dynamic Brand Tagline & Action Banner */}
         <div id="brand-tagline-hero" className="relative overflow-hidden bg-gradient-to-br from-violet-100 via-white to-emerald-100/85 dark:from-[#24173d] dark:via-slate-900 dark:to-[#052b1e] border-2 border-violet-200/70 dark:border-emerald-500/30 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 shadow-md dark:shadow-xl dark:shadow-violet-950/20 transition-all duration-300">
@@ -1790,6 +1793,161 @@ export default function App() {
 
       {/* Footer Design Credits Line */}
       <FooterSections language={language} />
+
+      {/* Floating Bottom Navigation Bar for Mobile (lg:hidden) */}
+      <div className="lg:hidden fixed bottom-4 left-4 right-4 z-[49] bg-slate-950/95 backdrop-blur-xl border border-slate-800 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-2">
+        <div className="flex items-center justify-around">
+          {/* Button 1: 8th Pay Hub */}
+          <button
+            onClick={() => {
+              setActiveWidget("eight_pay_calc");
+              setIsMobileMenuOpen(false);
+              if (contentRef.current) contentRef.current.scrollIntoView({ behavior: "smooth" });
+            }}
+            className={`flex flex-col items-center justify-center py-2 px-3 rounded-2xl transition-all cursor-pointer ${
+              (activeWidget === "eight_pay_calc" ||
+               activeWidget === "eight_pay_fitment" ||
+               activeWidget === "eight_pay_hike" ||
+               activeWidget === "eight_pay_pension" ||
+               activeWidget === "eight_pay_news" ||
+               activeWidget === "eight_pay_fitment_info" ||
+               activeWidget === "eight_pay_chart" ||
+               activeWidget === "eight_pay_date" ||
+               activeWidget === "eight_pay_teachers") && !isMobileMenuOpen
+                ? "text-orange-500 bg-orange-500/10 scale-105"
+                : "text-slate-400 hover:text-white"
+            }`}
+          >
+            <Sparkles className="w-5 h-5 shrink-0" />
+            <span className="text-[10px] mt-1 font-bold">
+              {language === "hi" ? "8वां वेतन" : "8th Pay Hub"}
+            </span>
+          </button>
+
+          {/* Button 2: Salary Planner */}
+          <button
+            onClick={() => {
+              setActiveWidget("salary");
+              setIsMobileMenuOpen(false);
+              if (contentRef.current) contentRef.current.scrollIntoView({ behavior: "smooth" });
+            }}
+            className={`flex flex-col items-center justify-center py-2 px-3 rounded-2xl transition-all cursor-pointer ${
+              activeWidget === "salary" && !isMobileMenuOpen
+                ? "text-orange-500 bg-orange-500/10 scale-105"
+                : "text-slate-400 hover:text-white"
+            }`}
+          >
+            <Coins className="w-5 h-5 shrink-0" />
+            <span className="text-[10px] mt-1 font-bold">
+              {language === "hi" ? "वेतन" : "Salary"}
+            </span>
+          </button>
+
+          {/* Button 3: AI Coach */}
+          <button
+            onClick={() => {
+              setActiveWidget("coach");
+              setIsMobileMenuOpen(false);
+              if (contentRef.current) contentRef.current.scrollIntoView({ behavior: "smooth" });
+            }}
+            className={`flex flex-col items-center justify-center py-2 px-3 rounded-2xl transition-all cursor-pointer ${
+              activeWidget === "coach" && !isMobileMenuOpen
+                ? "text-orange-500 bg-orange-500/10 scale-105"
+                : "text-slate-400 hover:text-white"
+            }`}
+          >
+            <Bot className="w-5 h-5 shrink-0" />
+            <span className="text-[10px] mt-1 font-bold">
+              {language === "hi" ? "एआई कोच" : "AI Coach"}
+            </span>
+          </button>
+
+          {/* Button 4: More Tools Trigger */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className={`flex flex-col items-center justify-center py-2 px-3 rounded-2xl transition-all cursor-pointer relative ${
+              isMobileMenuOpen
+                ? "text-orange-500 bg-orange-500/10 scale-105"
+                : "text-slate-400 hover:text-white"
+            }`}
+          >
+            <LayoutGrid className="w-5 h-5 shrink-0" />
+            <span className="text-[10px] mt-1 font-bold">
+              {language === "hi" ? "अन्य टूल" : "All Tools"}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {/* Slide-Up Bottom Drawer Sheet of Categorized Tools */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            {/* Backdrop Overlay */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.6 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="lg:hidden fixed inset-0 bg-black z-[45]"
+            />
+
+            {/* Slide up panel */}
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 220 }}
+              className="lg:hidden fixed bottom-0 left-0 right-0 max-h-[80vh] bg-white border-t border-slate-200 rounded-t-[2.5rem] shadow-2xl z-[48] overflow-y-auto pb-28 flex flex-col"
+            >
+              <div className="flex items-center justify-center p-4 sticky top-0 bg-white/95 backdrop-blur-md border-b border-slate-100 z-10">
+                {/* Drag Indicator */}
+                <div className="absolute top-2 w-12 h-1 bg-slate-300 rounded-full" />
+                <h3 className="text-sm font-black text-slate-800 mt-2 uppercase tracking-wider flex items-center gap-1.5 font-display">
+                  <LayoutGrid className="w-4 h-4 text-orange-600" />
+                  {language === "hi" ? "सभी वित्तीय सुइट टूल" : "ALL FINANCIAL TOOLS"}
+                </h3>
+              </div>
+
+              <div className="p-5 space-y-4">
+                {/* Categorized tool lists */}
+                <div className="grid grid-cols-2 gap-3.5">
+                  {menuItems.map((item) => {
+                    const isSelected = activeWidget === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => {
+                          setActiveWidget(item.id);
+                          setIsMobileMenuOpen(false);
+                          if (contentRef.current) {
+                            contentRef.current.scrollIntoView({ behavior: "smooth" });
+                          }
+                        }}
+                        className={`p-3.5 rounded-2xl flex flex-col items-start gap-2.5 transition-all text-left border cursor-pointer ${
+                          isSelected
+                            ? "bg-slate-900 border-slate-950 shadow-md text-white scale-[1.02]"
+                            : "bg-slate-50 border-slate-100/70 hover:bg-slate-100/50 text-slate-700"
+                        }`}
+                      >
+                        <div className={`p-2 rounded-xl ${isSelected ? "bg-white/10 text-white" : "bg-white border border-slate-100 text-slate-600 shadow-3xs"}`}>
+                          {item.icon}
+                        </div>
+                        <div>
+                          <p className="text-xs font-extrabold leading-snug">{item.label}</p>
+                          <p className={`text-[9px] mt-0.5 line-clamp-2 leading-tight ${isSelected ? "text-slate-300" : "text-slate-450"}`}>
+                            {item.desc}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
