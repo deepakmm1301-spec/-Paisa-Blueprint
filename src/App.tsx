@@ -59,7 +59,8 @@ import {
   Plus,
   Trash2,
   Share2,
-  TrendingDown
+  TrendingDown,
+  IndianRupee
 } from "lucide-react";
 
 // Default profile setup
@@ -1362,8 +1363,9 @@ export default function App() {
                 }}
                 className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-95 text-white text-xs sm:text-sm font-black px-3.5 py-1.5 rounded-xl shadow-md border-0 cursor-pointer transition-all flex items-center gap-1.5"
               >
-                <Sparkles className="w-3.5 h-3.5 text-emerald-100" />
+                <IndianRupee className="w-3.5 h-3.5 text-emerald-100" />
                 <span className="font-bold tracking-wide" style={{ wordSpacing: "0.25em" }}>पैसे से पैसा बनाना सीखो</span>
+                <ChevronRight className="w-3 h-3 text-emerald-400" />
               </button>
             </h2>
           </div>
