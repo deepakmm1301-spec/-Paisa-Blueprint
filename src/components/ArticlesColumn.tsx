@@ -35,7 +35,7 @@ export default function ArticlesColumn({ onNavigateToWidget, userMonthlySalary, 
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [internalLanguage, setInternalLanguage] = useState<"en" | "hi">(() => {
-    return (localStorage.getItem("paisa_language") as "en" | "hi") || "en";
+    return (localStorage.getItem("paisa_language") as "en" | "hi") || "hi";
   });
 
   const language = propLanguage || internalLanguage;

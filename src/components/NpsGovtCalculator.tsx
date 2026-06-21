@@ -22,7 +22,7 @@ interface NpsGovtCalculatorProps {
 export default function NpsGovtCalculator({ language: propLanguage }: NpsGovtCalculatorProps = {}) {
   const [activeTab, setActiveTab] = useState<"bpsc" | "custom">("custom");
   const [language, setLanguage] = useState<"en" | "hi">(() => {
-    return propLanguage || (localStorage.getItem("paisa_language") as "en" | "hi") || "en";
+    return propLanguage || (localStorage.getItem("paisa_language") as "en" | "hi") || "hi";
   });
 
   // Synchronize internal language with prop updates

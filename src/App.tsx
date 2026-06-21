@@ -444,7 +444,7 @@ export default function App() {
   });
 
   const [language, setLanguage] = useState<"en" | "hi">(() => {
-    return (localStorage.getItem("paisa_language") as "en" | "hi") || "en";
+    return (localStorage.getItem("paisa_language") as "en" | "hi") || "hi";
   });
 
   const getPathFromWidget = useCallback((widget: ActiveWidget): string => {
