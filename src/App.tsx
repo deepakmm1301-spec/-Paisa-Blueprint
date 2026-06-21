@@ -370,6 +370,25 @@ export default function App() {
 
   const [activeWidget, setActiveWidget] = useState<ActiveWidget>(() => {
     if (typeof window !== "undefined") {
+      // 1. Try URL parameters
+      const params = new URLSearchParams(window.location.search);
+      const queryWidget = params.get("widget") || params.get("tool") || params.get("calc");
+      if (queryWidget) {
+        if (queryWidget === "bpsc_salary" || queryWidget === "bpsc-salary") return "bpsc_salary";
+        if (queryWidget === "bihar_da" || queryWidget === "bihar-da" || queryWidget === "da") return "bihar_da";
+        if (queryWidget === "govt_sip" || queryWidget === "govt-sip") return "govt_sip";
+        if (queryWidget === "nps_govt" || queryWidget === "nps-govt" || queryWidget === "pension-nps") return "nps_govt";
+        
+        const validWidgets = [
+          "profiles", "salary", "pension", "health", "sip", "retirement",
+          "goals", "tax", "networth", "cibil", "debt", "coach", "seohub", "learning"
+        ];
+        if (validWidgets.includes(queryWidget)) {
+          return queryWidget as ActiveWidget;
+        }
+      }
+
+      // 2. Fall back to pathname patterns
       const path = window.location.pathname;
       const cleanPath = path.replace(/\/$/, "").toLowerCase();
       if (cleanPath === "/bpsc-teacher-salary-calculator" || cleanPath === "/bihar-teacher-salary-calculator") {
@@ -401,24 +420,26 @@ export default function App() {
 
     if (activeWidget === "bpsc_salary") {
       targetTitle = "BPSC Teacher Salary Calculator 2026 | Paisa Blueprint";
-      targetPath = "/bpsc-teacher-salary-calculator";
+      targetPath = "/?widget=bpsc_salary";
     } else if (activeWidget === "bihar_da") {
       targetTitle = "Bihar Dearness Allowance (DA) Calculator 2026 | Paisa Blueprint";
-      targetPath = "/bihar-da-calculator";
+      targetPath = "/?widget=bihar_da";
     } else if (activeWidget === "govt_sip") {
       targetTitle = "Government Employee SIP Calculator & Retirement Planner | Paisa Blueprint";
-      targetPath = "/government-employee-sip-calculator";
+      targetPath = "/?widget=govt_sip";
     } else if (activeWidget === "nps_govt") {
       targetTitle = "BPSC Teacher NPS & Pension Calculator 2026 | Paisa Blueprint";
-      targetPath = "/nps-calculator-for-government-employees";
+      targetPath = "/?widget=nps_govt";
     } else if (activeWidget !== "profiles") {
       const capitalized = activeWidget.charAt(0).toUpperCase() + activeWidget.slice(1);
       targetTitle = `${capitalized} Tool | Paisa Blueprint`;
+      targetPath = `/?widget=${activeWidget}`;
     }
 
     document.title = targetTitle;
 
-    if (window.location.pathname !== targetPath) {
+    const currentFull = window.location.pathname + window.location.search;
+    if (currentFull !== targetPath) {
       window.history.pushState({ widget: activeWidget }, "", targetPath);
     }
   }, [activeWidget]);
@@ -428,6 +449,38 @@ export default function App() {
     const handlePopState = (event: PopStateEvent) => {
       if (typeof window === "undefined") return;
 
+      // 1. Try URL parameters first
+      const params = new URLSearchParams(window.location.search);
+      const queryWidget = params.get("widget") || params.get("tool") || params.get("calc");
+      if (queryWidget) {
+        if (queryWidget === "bpsc_salary" || queryWidget === "bpsc-salary") {
+          setActiveWidget("bpsc_salary");
+          return;
+        }
+        if (queryWidget === "bihar_da" || queryWidget === "bihar-da" || queryWidget === "da") {
+          setActiveWidget("bihar_da");
+          return;
+        }
+        if (queryWidget === "govt_sip" || queryWidget === "govt-sip") {
+          setActiveWidget("govt_sip");
+          return;
+        }
+        if (queryWidget === "nps_govt" || queryWidget === "nps-govt" || queryWidget === "pension-nps") {
+          setActiveWidget("nps_govt");
+          return;
+        }
+
+        const validWidgets = [
+          "profiles", "salary", "pension", "health", "sip", "retirement",
+          "goals", "tax", "networth", "cibil", "debt", "coach", "seohub", "learning"
+        ];
+        if (validWidgets.includes(queryWidget)) {
+          setActiveWidget(queryWidget as ActiveWidget);
+          return;
+        }
+      }
+
+      // 2. Pathname compatibility fallback
       const path = window.location.pathname;
       const cleanPath = path.replace(/\/$/, "").toLowerCase();
       if (cleanPath === "/bpsc-teacher-salary-calculator" || cleanPath === "/bihar-teacher-salary-calculator") {
@@ -450,7 +503,11 @@ export default function App() {
   }, []);
 
   const widgetShareText = useMemo(() => {
-    const currentUrl = typeof window !== "undefined" ? window.location.href : "https://ais-pre-smf772g7msspcpbw4nc3rs-109224888067.asia-east1.run.app";
+    let currentUrl = "https://paisablueprint.in/";
+    if (typeof window !== "undefined") {
+      const base = `${window.location.origin}/`;
+      currentUrl = activeWidget === "profiles" ? base : `${base}?widget=${activeWidget}`;
+    }
     let title = "";
     if (activeWidget === "profiles") {
       title = language === "hi" 

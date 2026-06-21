@@ -52,7 +52,9 @@ export default function BpscTeacherSalary() {
 
   // Handle Share to WhatsApp
   const shareToWhatsApp = () => {
-    const currentUrl = typeof window !== "undefined" ? window.location.href : "";
+    const currentUrl = typeof window !== "undefined"
+      ? `${window.location.origin}/?widget=bpsc_salary`
+      : "https://paisablueprint.in/?widget=bpsc_salary";
     const text = `🎯 *BPSC BPSC Teacher Salary Structure (7th CPC)*
 Grade: ${teacherGrade.toUpperCase().replace("_", " ")}
 Basic Pay: ₹${calculations.basicPay.toLocaleString("en-IN")}

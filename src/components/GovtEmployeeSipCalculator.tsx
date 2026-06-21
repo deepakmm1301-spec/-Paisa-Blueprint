@@ -102,7 +102,9 @@ export default function GovtEmployeeSipCalculator() {
   }, [currentSalary, annualIncrement, daGrowth, monthlySip, investmentYears, sipReturnRate, stepUpPercent]);
 
   const shareToWhatsApp = () => {
-    const currentUrl = typeof window !== "undefined" ? window.location.href : "";
+    const currentUrl = typeof window !== "undefined"
+      ? `${window.location.origin}/?widget=govt_sip`
+      : "https://paisablueprint.in/?widget=govt_sip";
     const text = `🌴 *BPSC Teacher SIP + Retirement Planner Projections*
 Starting Gross: ₹${currentSalary.toLocaleString("en-IN")}/mo
 Monthly SIP: ₹${monthlySip.toLocaleString("en-IN")}/mo (with ${stepUpPercent}% hike)

@@ -38,7 +38,9 @@ export default function BiharDaCalculator() {
   }, [basicPay, daPercent, hraPercent]);
 
   const shareToWhatsApp = () => {
-    const currentUrl = typeof window !== "undefined" ? window.location.href : "";
+    const currentUrl = typeof window !== "undefined"
+      ? `${window.location.origin}/?widget=bihar_da`
+      : "https://paisablueprint.in/?widget=bihar_da";
     const text = `📊 *BPSC Teacher Dearness Allowance (DA) Calculator 2026*
 Basic Pay entered: ₹${basicPay.toLocaleString("en-IN")}
 Current DA Rate: ${daPercent}%

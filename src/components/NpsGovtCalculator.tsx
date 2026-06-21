@@ -161,7 +161,9 @@ export default function NpsGovtCalculator() {
   ]);
 
   const shareToWhatsApp = () => {
-    const currentUrl = typeof window !== "undefined" ? window.location.href : "";
+    const currentUrl = typeof window !== "undefined"
+      ? `${window.location.origin}/?widget=nps_govt`
+      : "https://paisablueprint.in/?widget=nps_govt";
     let text = "";
 
     if (activeTab === "bpsc") {

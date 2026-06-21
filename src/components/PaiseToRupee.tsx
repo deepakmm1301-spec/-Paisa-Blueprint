@@ -358,7 +358,9 @@ export default function PaiseToRupee({ userGrossMonthly = 75000 }: PaiseToRupeeP
         ? `🌴 भारत में समय से पहले रिटायरमेंट (Early FIRE): मात्र ${retireAge} वर्ष की आयु में रिटायर होने के लिए ${formatCurrencyCompact(fireComp.fireCorpusNeeded)} संपदा की जरूरत है। आज ही ${formatCurrency(fireComp.requiredSipStarting)}/माह की SIP शुरू करें!\nअपना FIRE कॉर्पस यहाँ ढूंढें:`
         : `🌴 Early Retirement in India (FIRE): To retire early at age ${retireAge}, I need a corpus of ${formatCurrencyCompact(fireComp.fireCorpusNeeded)}. Starting SIP required: ${formatCurrency(fireComp.requiredSipStarting)}/mo today!\nCalculate your FIRE index:`;
     }
-    const currentUrl = typeof window !== "undefined" ? window.location.href : "https://ais-pre-smf772g7msspcpbw4nc3rs-109224888067.asia-east1.run.app";
+    const currentUrl = typeof window !== "undefined"
+      ? `${window.location.origin}/?widget=learning`
+      : "https://paisablueprint.in/?widget=learning";
     return encodeURIComponent(`${text}\n${currentUrl}`);
   }, [
     activeQuestion, language, sip5kAmount, sip5kYears, sip5kComp,
