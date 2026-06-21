@@ -5,16 +5,11 @@ import FinancialHealthCheck from "./components/FinancialHealthCheck";
 import SalaryPlanner from "./components/SalaryPlanner";
 import SIPCalculator from "./components/SIPCalculator";
 import RetirementPlanner from "./components/RetirementPlanner";
-import GoalPlanner from "./components/GoalPlanner";
-import TaxPlanner from "./components/TaxPlanner";
-import NetWorthTracker from "./components/NetWorthTracker";
 import AICoach from "./components/AICoach";
 import ProfileManager from "./components/ProfileManager";
 import AuthScreen from "./components/AuthScreen";
-import CibilCheck from "./components/CibilCheck";
 import ArticlesColumn from "./components/ArticlesColumn";
 import PensionCalculator from "./components/PensionCalculator";
-import DebtPlanner from "./components/DebtPlanner";
 import { FooterSections } from "./components/FooterSections";
 import SeoHub from "./components/SeoHub";
 import PaiseToRupee from "./components/PaiseToRupee";
@@ -1008,46 +1003,11 @@ export default function App() {
       color: "text-violet-650 bg-violet-50 border-violet-100",
     },
     {
-      id: "goals" as ActiveWidget,
-      label: language === "hi" ? "मेरा लक्ष्य योजनाकार" : "My Goal Planner",
-      desc: language === "hi" ? "शादी, घर, वाहन आदि लक्ष्य" : "Plan weddings, homes, cars",
-      icon: <Sparkles className="w-5 h-5" />,
-      color: "text-rose-600 bg-rose-50 border-rose-100",
-    },
-    {
-      id: "tax" as ActiveWidget,
-      label: language === "hi" ? "टैक्स व्यवस्था अनुकूलक" : "Tax Regime Optimizer",
-      desc: language === "hi" ? "पुरानी और नई टैक्स व्यवस्था की तुलना" : "Compare Old vs. New Schemes",
-      icon: <Scale className="w-5 h-5" />,
-      color: "text-amber-600 bg-amber-50 border-amber-100",
-    },
-    {
-      id: "networth" as ActiveWidget,
-      label: language === "hi" ? "मेरा धन ट्रैकर" : "My Wealth Tracker",
-      desc: language === "hi" ? "सक्रिय ऋणों के मुकाबले संपत्तियां" : "Map assets against active loans",
-      icon: <Wallet className="w-5 h-5" />,
-      color: "text-blue-600 bg-blue-50 border-blue-100",
-    },
-    {
       id: "seohub" as ActiveWidget,
       label: language === "hi" ? "संसाधन व गाइड कैबिनेट" : "Cabinets & Resources",
       desc: language === "hi" ? "10+ कैलकुलेटर, शब्दावली और वित्तीय गाइड" : "10+ Calculators, Glossary & Guides",
       icon: <BookOpen className="w-5 h-5" />,
       color: "text-purple-655 bg-purple-50 border-purple-110",
-    },
-    {
-      id: "cibil" as ActiveWidget,
-      label: language === "hi" ? "सिबिल (CIBIL) क्रेड स्कोर" : "CIBIL Credit Score",
-      desc: language === "hi" ? "सिम्युलेशन और सिबिल स्वास्थ्य जांच" : "Check & simulate Credit Health",
-      icon: <CreditCard className="w-5 h-5" />,
-      color: "text-emerald-650 bg-emerald-50 border-emerald-110",
-    },
-    {
-      id: "debt" as ActiveWidget,
-      label: language === "hi" ? "ऋण मुक्ति योजनाकार" : "Debt Freedom Planner",
-      desc: language === "hi" ? "प्री-पेमेंट से कर्जों को शीघ्र मिटाएं" : "Accelerate debt payoffs with pre-payments",
-      icon: <TrendingDown className="w-5 h-5" />,
-      color: "text-rose-600 bg-rose-50 border-rose-100",
     },
     {
       id: "coach" as ActiveWidget,
@@ -1645,26 +1605,6 @@ export default function App() {
 
                 {activeWidget === "retirement" && (
                   <RetirementPlanner />
-                )}
-
-                {activeWidget === "goals" && (
-                  <GoalPlanner />
-                )}
-
-                {activeWidget === "tax" && (
-                  <TaxPlanner profile={profile} />
-                )}
-
-                {activeWidget === "networth" && (
-                  <NetWorthTracker profile={profile} />
-                )}
-
-                {activeWidget === "cibil" && (
-                  <CibilCheck profile={profile} />
-                )}
-
-                {activeWidget === "debt" && (
-                  <DebtPlanner profile={profile} />
                 )}
 
                 {activeWidget === "coach" && (
