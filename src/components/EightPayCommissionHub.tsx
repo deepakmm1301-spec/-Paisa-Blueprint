@@ -33,8 +33,9 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
   
   // Salary / Hike calculator state
   const [currentSelectedLevel, setCurrentSelectedLevel] = useState<string>("Level 6 (GP 4200)");
-  const [currentDaPercent, setCurrentDaPercent] = useState<number>(53); // Current DA in 7th pay is 53%
+  const [currentDaPercent, setCurrentDaPercent] = useState<number>(60); // Defaulting current DA to 60% as requested
   const [hraClass, setHraClass] = useState<string>("Y"); // Class Y (20% or 16%)
+  const [manualHraPercent, setManualHraPercent] = useState<string>("15"); // State for custom manual HRA percentage
   const [expectedDa8th, setExpectedDa8th] = useState<number>(0); // Starts at 0%
   const [otherAllowances, setOtherAllowances] = useState<number>(1000); // Medical, etc.
 
@@ -107,17 +108,17 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
   
   // HRA calculation helper
   const getHraRate = (hraClassParam: string, isRevised: boolean) => {
-    if (isRevised) {
-      // Projected 8th Pay HRA (Usually revised upward slightly)
-      if (hraClassParam === "X") return 0.30; // 30%
-      if (hraClassParam === "Y") return 0.20; // 20%
-      return 0.10; // Class Z 10%
-    } else {
-      // Existing 7th Pay HRA as of standard current rules
-      if (hraClassParam === "X") return 0.27; // 27%
-      if (hraClassParam === "Y") return 0.18; // 18%
-      return 0.09; // Class Z 9%
+    if (hraClassParam === "X") return isRevised ? 0.30 : 0.27;
+    if (hraClassParam === "Y") return isRevised ? 0.20 : 0.18;
+    if (hraClassParam === "Z") return isRevised ? 0.10 : 0.09;
+    
+    // Custom manual HRA
+    const parsed = parseFloat(manualHraPercent);
+    if (!isNaN(parsed)) {
+      // For maximum accuracy, the user-defined percentage is divided by 100.
+      return parsed / 100;
     }
+    return isRevised ? 0.10 : 0.09;
   };
 
   const hraOld = basicPay * getHraRate(hraClass, false);
@@ -316,15 +317,15 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
                   </div>
                 </div>
 
-                <div className="grid grid-cols-4 gap-2 mb-3">
-                  {[2.57, 2.72, 2.86, 3.00].map((f) => (
+                <div className="grid grid-cols-5 gap-1.5 mb-3">
+                  {[1.92, 2.57, 2.72, 2.86, 3.00].map((f) => (
                     <button
                       key={f}
                       onClick={() => {
                         setFitmentFactor(f);
                         setCustomFitment(f.toString());
                       }}
-                      className={`py-1.5 px-1 rounded-xl border text-xs font-black text-center cursor-pointer transition-all ${
+                      className={`py-1.5 px-0.5 rounded-xl border text-xs font-black text-center cursor-pointer transition-all ${
                         fitmentFactor === f
                           ? "bg-violet-600 border-violet-600 text-white"
                           : "bg-white dark:bg-slate-900 border-slate-200 hover:bg-slate-50 text-slate-800 dark:text-slate-300"
@@ -337,9 +338,9 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
 
                 <input
                   type="range"
-                  min="2.5"
+                  min="1.8"
                   max="3.7"
-                  step="0.05"
+                  step="0.01"
                   value={fitmentFactor}
                   onChange={(e) => {
                     const val = parseFloat(e.target.value);
@@ -349,9 +350,10 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
                   className="w-full accent-violet-600"
                 />
                 <div className="flex justify-between text-[10px] text-slate-400 font-bold mt-1">
-                  <span>2.50 (7th Pay)</span>
+                  <span>1.92 (New Option)</span>
+                  <span>2.57 (7th Pay)</span>
                   <span>2.86 (Unified Demand)</span>
-                  <span>3.68 (Max Union Demand)</span>
+                  <span>3.68 (Max Demand)</span>
                 </div>
               </div>
 
@@ -369,6 +371,7 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
                     <option value="X">Class X (Metros - revised 30%)</option>
                     <option value="Y">Class Y (Cities - revised 20%)</option>
                     <option value="Z">Class Z (Rural - revised 10%)</option>
+                    <option value="custom">{language === "hi" ? "✍️ मैन्युअल कस्टम %" : "✍️ Custom Manual %"}</option>
                   </select>
                 </div>
                 <div>
@@ -386,6 +389,26 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
                   </select>
                 </div>
               </div>
+
+              {hraClass === "custom" && (
+                <div className="mb-4 bg-violet-55 bg-violet-50/50 dark:bg-slate-800/40 p-3.5 rounded-2xl border border-violet-100 transition-all">
+                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider mb-1.5">
+                    {language === "hi" ? "मैन्युअल HRA लिखें (%)" : "Enter Manual HRA percentage (%)"}
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min="0"
+                      max="50"
+                      value={manualHraPercent}
+                      onChange={(e) => setManualHraPercent(e.target.value)}
+                      className="w-full text-xs font-bold border border-slate-200 bg-white dark:bg-slate-900 rounded-xl p-2.5 focus:ring-1 focus:ring-violet-500 text-violet-750"
+                      placeholder="e.g. 15"
+                    />
+                    <span className="text-xs font-black text-slate-400">%</span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Calculations and comparisons right panel */}
@@ -531,7 +554,7 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
                 </label>
                 <input
                   type="range"
-                  min="2.50"
+                  min="1.80"
                   max="3.68"
                   step="0.01"
                   value={fitmentFactor}
@@ -543,7 +566,7 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
                 />
                 
                 <div className="space-y-2">
-                  {[2.57, 2.72, 2.86, 3.00, 3.25, 3.68].map((fac) => (
+                  {[1.92, 2.57, 2.72, 2.86, 3.00, 3.25, 3.68].map((fac) => (
                     <button
                       key={fac}
                       onClick={() => {
@@ -557,7 +580,8 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
                       }`}
                     >
                       <span className="font-bold">
-                        {fac === 2.57 ? "2.57 (Standard 7th CPC default)" :
+                        {fac === 1.92 ? "1.92 (Accurate Custom fitment factor)" :
+                         fac === 2.57 ? "2.57 (Standard 7th CPC default)" :
                          fac === 2.86 ? "2.86 (Unified JCM demand)" :
                          fac === 3.00 ? "3.00 (Proposed round-off factor)" :
                          fac === 3.68 ? "3.68 (Aggressive employee union demand)" :
@@ -592,7 +616,7 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
                   </h4>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    {[2.57, 2.72, 2.86, 3.00, 3.25, 3.68].map((f) => {
+                    {[1.92, 2.57, 2.72, 2.86, 3.00, 3.25, 3.68].map((f) => {
                       const estimated = getRevisedBasic(basicPay, f);
                       const increaseAmount = estimated - basicPay;
                       const isCurrentActive = fitmentFactor === f;
@@ -691,6 +715,7 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
                       onChange={(e) => setFitmentFactor(parseFloat(e.target.value))}
                       className="w-full text-xs font-bold border border-slate-200 bg-slate-50 rounded-xl p-2 focus:ring-1"
                     >
+                      <option value="1.92">1.92x (Custom Option)</option>
                       <option value="2.57">2.57x (Base Ratio)</option>
                       <option value="2.72">2.72x (Mid Ratio)</option>
                       <option value="2.86">2.86x (Preferred)</option>
@@ -826,6 +851,7 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
                     onChange={(e) => setFitmentFactor(parseFloat(e.target.value))}
                     className="w-full text-xs font-bold border border-slate-200 bg-slate-50 rounded-xl p-2.5 focus:ring-1"
                   >
+                    <option value="1.92">1.92x (Custom Option)</option>
                     <option value="2.57">2.57x (Default Factor)</option>
                     <option value="2.86">2.86x (Sought-After)</option>
                     <option value="3.00">3.00x (Optimal Scheme)</option>
