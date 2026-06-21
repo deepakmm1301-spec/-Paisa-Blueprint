@@ -340,14 +340,12 @@ export function FooterSections({ language = "en" }: { language?: "en" | "hi" } =
         </div>
 
         {/* Bottom Credits */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] text-slate-600 font-mono">
-          <div className="flex items-center gap-1">
-            <span>🇮🇳 Paisa Blueprint is calibrated to standard Indian Union Income Tax Codes.</span>
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-600 font-medium">
+          <div className="flex items-center gap-1 text-center sm:text-left">
+            <span>Salary Calculator • NPS Calculator Pension Calculator SIP Calculator</span>
           </div>
-          <div className="flex items-center gap-1 text-slate-500">
-            <span>Made with</span>
-            <Heart className="w-3 h-3 text-rose-500 fill-rose-500 animate-pulse" />
-            <span>for personal Indian financial freedom.</span>
+          <div className="flex items-center gap-1 text-slate-500 text-center sm:text-right">
+            <span>Visit India's Own Salaried Personal Calculator</span>
           </div>
         </div>
 

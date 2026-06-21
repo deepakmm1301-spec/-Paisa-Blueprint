@@ -441,7 +441,7 @@ export default function App() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    let targetTitle = "Paisa Blueprint - Free Financial Calculators for India";
+    let targetTitle = "Salary Calculator • NPS Calculator Pension Calculator SIP Calculator";
     let targetPath = getPathFromWidget(activeWidget);
 
     if (activeWidget === "bpsc_salary") {
@@ -452,12 +452,21 @@ export default function App() {
       targetTitle = "Government Employee SIP Calculator & Retirement Planner | Paisa Blueprint";
     } else if (activeWidget === "nps_govt") {
       targetTitle = "BPSC Teacher NPS & Pension Calculator 2026 | Paisa Blueprint";
-    } else if (activeWidget !== "profiles") {
+    } else if (activeWidget !== "profiles" && activeWidget !== "dashboard") {
       const capitalized = activeWidget.charAt(0).toUpperCase() + activeWidget.slice(1);
       targetTitle = `${capitalized} Tool | Paisa Blueprint`;
     }
 
     document.title = targetTitle;
+
+    // Dynamically update meta description to target SEO snippet
+    let metaDesc = document.querySelector('meta[name="description"]');
+    if (!metaDesc) {
+      metaDesc = document.createElement('meta');
+      metaDesc.setAttribute('name', 'description');
+      document.head.appendChild(metaDesc);
+    }
+    metaDesc.setAttribute('content', "Visit India's Own Salaried Personal Calculator");
 
     const currentFull = window.location.pathname;
     if (currentFull.replace(/\/$/, "") !== targetPath.replace(/\/$/, "")) {
