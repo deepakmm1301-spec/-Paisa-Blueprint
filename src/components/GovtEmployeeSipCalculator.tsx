@@ -157,9 +157,22 @@ export default function GovtEmployeeSipCalculator({ language = "en" }: GovtEmplo
 
           {/* Starting Monthly Salary Slider */}
           <div>
-            <div className="flex justify-between text-xs font-semibold mb-2">
+            <div className="flex justify-between items-center text-xs font-semibold mb-2">
               <span className="font-black text-slate-500 uppercase tracking-wide">Gross Monthly Salary</span>
-              <span className="text-indigo-600 dark:text-indigo-400 font-extrabold">₹{currentSalary.toLocaleString("en-IN")}/mo</span>
+              <div className="flex items-center gap-1 bg-slate-50 dark:bg-slate-850 border border-slate-200 dark:border-slate-800 rounded-lg px-2 py-0.5">
+                <span className="text-slate-450 dark:text-slate-400 font-bold text-[10px]">₹</span>
+                <input
+                  type="number"
+                  value={currentSalary || ""}
+                  onChange={(e) => {
+                    const val = e.target.value === "" ? 0 : parseInt(e.target.value);
+                    setCurrentSalary(isNaN(val) ? 0 : val);
+                  }}
+                  className="w-20 text-right bg-transparent text-indigo-600 dark:text-indigo-400 font-extrabold text-xs border-0 p-0 focus:ring-0 focus:outline-none"
+                  placeholder="25000"
+                />
+                <span className="text-slate-450 dark:text-slate-400 font-bold text-[9px] uppercase">/mo</span>
+              </div>
             </div>
             <input
               type="range"

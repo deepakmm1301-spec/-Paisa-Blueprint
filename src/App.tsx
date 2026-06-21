@@ -1370,11 +1370,11 @@ export default function App() {
                     contentRef.current.scrollIntoView({ behavior: "smooth" });
                   }
                 }}
-                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-95 text-white text-xs sm:text-sm font-black px-3.5 py-1.5 rounded-xl shadow-md border-0 cursor-pointer transition-all flex items-center gap-1.5"
+                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 active:scale-95 text-white text-sm sm:text-base font-black px-5 py-2.5 sm:px-6 sm:py-3 rounded-2xl shadow-lg border-0 cursor-pointer transition-all flex items-center gap-2"
               >
-                <IndianRupee className="w-3.5 h-3.5 text-emerald-100" />
-                <span className="font-bold tracking-wide" style={{ wordSpacing: "0.25em" }}>पैसे से पैसा बनाना सीखो</span>
-                <ChevronRight className="w-3 h-3 text-emerald-400" />
+                <IndianRupee className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-100" />
+                <span className="font-extrabold tracking-wide" style={{ wordSpacing: "0.25em" }}>पैसे से पैसा बनाना सीखो</span>
+                <ChevronRight className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5 text-emerald-300" />
               </button>
             </h2>
           </div>
