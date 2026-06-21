@@ -445,7 +445,7 @@ export default function App() {
   });
 
   const [language, setLanguage] = useState<"en" | "hi">(() => {
-    return (localStorage.getItem("paisa_language") as "en" | "hi") || "hi";
+    return (localStorage.getItem("paisa_lang_selection") as "en" | "hi") || "hi";
   });
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -1264,6 +1264,7 @@ export default function App() {
               <button
                 onClick={() => {
                   setLanguage("en");
+                  localStorage.setItem("paisa_lang_selection", "en");
                   localStorage.setItem("paisa_language", "en");
                 }}
                 className={`px-3 py-1.5 rounded-lg text-xs font-black tracking-wide transition-all cursor-pointer ${
@@ -1278,6 +1279,7 @@ export default function App() {
               <button
                 onClick={() => {
                   setLanguage("hi");
+                  localStorage.setItem("paisa_lang_selection", "hi");
                   localStorage.setItem("paisa_language", "hi");
                 }}
                 className={`px-3 py-1.5 rounded-lg text-xs font-black tracking-wide transition-all cursor-pointer ${
@@ -1783,6 +1785,7 @@ export default function App() {
             language={language}
             onLanguageChange={(lang) => {
               setLanguage(lang);
+              localStorage.setItem("paisa_lang_selection", lang);
               localStorage.setItem("paisa_language", lang);
             }}
           />

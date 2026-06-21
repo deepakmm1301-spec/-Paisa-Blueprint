@@ -35,11 +35,12 @@ export default function ArticlesColumn({ onNavigateToWidget, userMonthlySalary, 
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [internalLanguage, setInternalLanguage] = useState<"en" | "hi">(() => {
-    return (localStorage.getItem("paisa_language") as "en" | "hi") || "hi";
+    return (localStorage.getItem("paisa_lang_selection") as "en" | "hi") || "hi";
   });
 
   const language = propLanguage || internalLanguage;
   const setLanguage = (lang: "en" | "hi") => {
+    localStorage.setItem("paisa_lang_selection", lang);
     localStorage.setItem("paisa_language", lang);
     if (onLanguageChange) {
       onLanguageChange(lang);

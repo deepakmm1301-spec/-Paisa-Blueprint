@@ -30,7 +30,7 @@ interface PaiseToRupeeProps {
 export default function PaiseToRupee({ userGrossMonthly = 75000, language: propLanguage }: PaiseToRupeeProps) {
   const [activeQuestion, setActiveQuestion] = useState<string>("returns");
   const [language, setLanguage] = useState<"hi" | "en">(() => {
-    return propLanguage || (localStorage.getItem("paisa_language") as "hi" | "en") || "hi";
+    return propLanguage || (localStorage.getItem("paisa_lang_selection") as "hi" | "en") || "hi";
   });
 
   // Synchronize internal language with prop updates
