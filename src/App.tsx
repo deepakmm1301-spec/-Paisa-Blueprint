@@ -408,16 +408,29 @@ export default function App() {
     if (typeof window !== "undefined") {
       // 1. Try URL parameters first for backwards compatibility
       const params = new URLSearchParams(window.location.search);
-      const queryWidget = params.get("widget") || params.get("tool") || params.get("calc");
+      let queryWidget = params.get("widget") || params.get("tool") || params.get("calc");
       if (queryWidget) {
         if (queryWidget === "bpsc_salary" || queryWidget === "bpsc-salary") return "bpsc_salary";
         if (queryWidget === "bihar_da" || queryWidget === "bihar-da" || queryWidget === "da") return "bihar_da";
         if (queryWidget === "govt_sip" || queryWidget === "govt-sip") return "govt_sip";
         if (queryWidget === "nps_govt" || queryWidget === "nps-govt" || queryWidget === "pension-nps") return "nps_govt";
         
+        // 8th Pay Aliases
+        if (queryWidget === "8th_pay_calc" || queryWidget === "8th-pay-calc" || queryWidget === "eight-pay-calc") queryWidget = "eight_pay_calc";
+        if (queryWidget === "8th_pay_fitment" || queryWidget === "8th-pay-fitment" || queryWidget === "eight-pay-fitment") queryWidget = "eight_pay_fitment";
+        if (queryWidget === "8th_pay_hike" || queryWidget === "8th-pay-hike" || queryWidget === "eight-pay-hike") queryWidget = "eight_pay_hike";
+        if (queryWidget === "8th_pay_pension" || queryWidget === "8th-pay-pension" || queryWidget === "eight-pay-pension") queryWidget = "eight_pay_pension";
+        if (queryWidget === "8th_pay_news" || queryWidget === "8th-pay-news" || queryWidget === "eight-pay-news") queryWidget = "eight_pay_news";
+        if (queryWidget === "8th_pay_fitment_info" || queryWidget === "8th-pay-fitment-info" || queryWidget === "eight-pay-fitment-info") queryWidget = "eight_pay_fitment_info";
+        if (queryWidget === "8th_pay_chart" || queryWidget === "8th-pay-chart" || queryWidget === "eight-pay-chart") queryWidget = "eight_pay_chart";
+        if (queryWidget === "8th_pay_date" || queryWidget === "8th-pay-date" || queryWidget === "eight-pay-date") queryWidget = "eight_pay_date";
+        if (queryWidget === "8th_pay_teachers" || queryWidget === "8th-pay-teachers" || queryWidget === "eight-pay-teachers") queryWidget = "eight_pay_teachers";
+
         const validWidgets = [
           "profiles", "salary", "pension", "health", "sip", "retirement",
-          "goals", "tax", "networth", "cibil", "debt", "coach", "seohub", "learning"
+          "goals", "tax", "networth", "cibil", "debt", "coach", "seohub", "learning",
+          "eight_pay_calc", "eight_pay_fitment", "eight_pay_hike", "eight_pay_pension",
+          "eight_pay_news", "eight_pay_fitment_info", "eight_pay_chart", "eight_pay_date", "eight_pay_teachers"
         ];
         if (validWidgets.includes(queryWidget)) {
           return queryWidget as ActiveWidget;
@@ -527,7 +540,7 @@ export default function App() {
 
       // 1. Try URL parameters first
       const params = new URLSearchParams(window.location.search);
-      const queryWidget = params.get("widget") || params.get("tool") || params.get("calc");
+      let queryWidget = params.get("widget") || params.get("tool") || params.get("calc");
       if (queryWidget) {
         if (queryWidget === "bpsc_salary" || queryWidget === "bpsc-salary") {
           setActiveWidget("bpsc_salary");
@@ -546,9 +559,22 @@ export default function App() {
           return;
         }
 
+        // 8th Pay Aliases
+        if (queryWidget === "8th_pay_calc" || queryWidget === "8th-pay-calc" || queryWidget === "eight-pay-calc") queryWidget = "eight_pay_calc";
+        if (queryWidget === "8th_pay_fitment" || queryWidget === "8th-pay-fitment" || queryWidget === "eight-pay-fitment") queryWidget = "eight_pay_fitment";
+        if (queryWidget === "8th_pay_hike" || queryWidget === "8th-pay-hike" || queryWidget === "eight-pay-hike") queryWidget = "eight_pay_hike";
+        if (queryWidget === "8th_pay_pension" || queryWidget === "8th-pay-pension" || queryWidget === "eight-pay-pension") queryWidget = "eight_pay_pension";
+        if (queryWidget === "8th_pay_news" || queryWidget === "8th-pay-news" || queryWidget === "eight-pay-news") queryWidget = "eight_pay_news";
+        if (queryWidget === "8th_pay_fitment_info" || queryWidget === "8th-pay-fitment-info" || queryWidget === "eight-pay-fitment-info") queryWidget = "eight_pay_fitment_info";
+        if (queryWidget === "8th_pay_chart" || queryWidget === "8th-pay-chart" || queryWidget === "eight-pay-chart") queryWidget = "eight_pay_chart";
+        if (queryWidget === "8th_pay_date" || queryWidget === "8th-pay-date" || queryWidget === "eight-pay-date") queryWidget = "eight_pay_date";
+        if (queryWidget === "8th_pay_teachers" || queryWidget === "8th-pay-teachers" || queryWidget === "eight-pay-teachers") queryWidget = "eight_pay_teachers";
+
         const validWidgets = [
           "profiles", "salary", "pension", "health", "sip", "retirement",
-          "goals", "tax", "networth", "cibil", "debt", "coach", "seohub", "learning"
+          "goals", "tax", "networth", "cibil", "debt", "coach", "seohub", "learning",
+          "eight_pay_calc", "eight_pay_fitment", "eight_pay_hike", "eight_pay_pension",
+          "eight_pay_news", "eight_pay_fitment_info", "eight_pay_chart", "eight_pay_date", "eight_pay_teachers"
         ];
         if (validWidgets.includes(queryWidget)) {
           setActiveWidget(queryWidget as ActiveWidget);
@@ -576,6 +602,15 @@ export default function App() {
         if (cleanPath === "/cibil-credit-card") return "cibil";
         if (cleanPath === "/debt-freedom-planner") return "debt";
         if (cleanPath === "/paisa-ai-coach") return "coach";
+        if (cleanPath === "/8th-pay-commission-calculator") return "eight_pay_calc";
+        if (cleanPath === "/8th-pay-fitment-factor-calculator") return "eight_pay_fitment";
+        if (cleanPath === "/8th-pay-salary-hike-calculator") return "eight_pay_hike";
+        if (cleanPath === "/8th-pay-pension-calculator") return "eight_pay_pension";
+        if (cleanPath === "/8th-pay-commission-latest-news") return "eight_pay_news";
+        if (cleanPath === "/8th-pay-commission-fitment-factor") return "eight_pay_fitment_info";
+        if (cleanPath === "/8th-pay-commission-salary-chart") return "eight_pay_chart";
+        if (cleanPath === "/8th-pay-commission-date") return "eight_pay_date";
+        if (cleanPath === "/8th-pay-commission-for-teachers") return "eight_pay_teachers";
         return "profiles";
       };
 
@@ -593,7 +628,8 @@ export default function App() {
     if (typeof window !== "undefined") {
       const base = window.location.origin;
       const widgetPath = getPathFromWidget(activeWidget);
-      currentUrl = widgetPath === "/" ? `${base}/` : `${base}${widgetPath}`;
+      const search = window.location.search || "";
+      currentUrl = widgetPath === "/" ? `${base}/${search}` : `${base}${widgetPath}${search}`;
     }
     let title = "";
     if (activeWidget === "profiles") {
@@ -652,6 +688,42 @@ export default function App() {
       title = language === "hi"
         ? `🔥 पैसे से पैसा बनाना सीखो! ₹5,000 SIP, तुलनात्मक FD, ₹1 करोड़ रोडमैप, बजट और FIRE नियम...`
         : `🔥 Learn to grow money! ₹5,000 SIP returns, FD vs SIP battles, ₹1 Crore goals, 50-30-20 budget rules...`;
+    } else if (activeWidget === "eight_pay_calc") {
+      title = language === "hi"
+        ? `📊 मैंने 8वें वेतन आयोग के बाद अपने वेतन वृद्धि और नए मूल वेतन का अनुमान लगाया!`
+        : `📊 I projected my estimated salary hike & revised basic pay under the 8th Pay Commission!`;
+    } else if (activeWidget === "eight_pay_fitment") {
+      title = language === "hi"
+        ? `📈 मैंने 1.92, 2.57, 2.86 और 3.00 फिटमेंट फैक्टर के साथ 8वें वेतन आयोग के वेतन की गणना की!`
+        : `📈 I calculated my 8th Pay Commission revised basic with 1.92, 2.57, 2.86 and 3.00 fitment factors!`;
+    } else if (activeWidget === "eight_pay_hike") {
+      title = language === "hi"
+        ? `🔥 मैंने 8वें वेतन आयोग से अपनी कुल वेतन वृद्धि का सटीक आकलन किया!`
+        : `🔥 I analyzed my exact percentage salary growth with 8th CPC projections!`;
+    } else if (activeWidget === "eight_pay_pension") {
+      title = language === "hi"
+        ? `👵 मैंने 8वें वेतन आयोग के फिटमेंट फैक्टर के साथ अपनी संशोधित पेंशन का अनुमान लगाया!`
+        : `👵 Proportional pension assessment for 8th pay revision matrix calculated here:`;
+    } else if (activeWidget === "eight_pay_news") {
+      title = language === "hi"
+        ? `📰 8वें वेतन आयोग के कार्यान्वयन और सरकार के नवीनतम अपडेट की जाँच करें!`
+        : `📰 Read the latest official news and recommendations for the 8th Pay Commission:`;
+    } else if (activeWidget === "eight_pay_fitment_info") {
+      title = language === "hi"
+        ? `🔍 8वें वेतन आयोग के फिटमेंट फैक्टर और इसके विभिन्न प्रस्तावों की पूरी जानकारी!`
+        : `🔍 Detailed guide on how 8th CPC fitment factors affect central & state scales:`;
+    } else if (activeWidget === "eight_pay_chart") {
+      title = language === "hi"
+        ? `📋 8वें वेतन आयोग का वेतन मैट्रिक्स और अपनी पे-लेवल का नया मूल वेतन चार्ट देखें!`
+        : `📋 Explored the projected 8th Pay Commission salary matrix and pay-level chart here:`;
+    } else if (activeWidget === "eight_pay_date") {
+      title = language === "hi"
+        ? `📅 8वां वेतन आयोग कब लागू होगा? संभावित समय सीमा और एरियर की तिथि देखें!`
+        : `📅 Expected official resolution timeline & arrears date for the 8th Pay Commission:`;
+    } else if (activeWidget === "eight_pay_teachers") {
+      title = language === "hi"
+        ? `🍎 सरकारी शिक्षकों के वेतन पर 8वें वेतन आयोग का प्रभाव और नई वेतन संरचना!`
+        : `🍎 Calculated state government and teacher pay grid impact under 8th CPC:`;
     }
 
     return encodeURIComponent(`${title}\n${currentUrl}`);

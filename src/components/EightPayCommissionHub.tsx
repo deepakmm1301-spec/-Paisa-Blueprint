@@ -42,6 +42,97 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
   // Pension state
   const [retiringBasic, setRetiringBasic] = useState<number>(67700); // eg. Level 11
 
+  // Parse state from URL search params at mount
+  React.useEffect(() => {
+    if (typeof window === "undefined" || !window.location.search) return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      
+      const bp = params.get("bp") || params.get("basic");
+      if (bp) {
+        const val = parseInt(bp);
+        if (!isNaN(val) && val > 0) {
+          setBasicPay(val);
+          setCustomBasic(val.toString());
+        }
+      }
+      const ff = params.get("ff") || params.get("factor");
+      if (ff) {
+        const val = parseFloat(ff);
+        if (!isNaN(val) && val > 0) {
+          setFitmentFactor(val);
+          setCustomFitment(ff);
+        }
+      }
+      const da = params.get("da");
+      if (da) {
+        const val = parseInt(da);
+        if (!isNaN(val) && val >= 0) {
+          setCurrentDaPercent(val);
+        }
+      }
+      const eda = params.get("eda");
+      if (eda) {
+        const val = parseInt(eda);
+        if (!isNaN(val) && val >= 0) {
+          setExpectedDa8th(val);
+        }
+      }
+      const hra = params.get("hra");
+      if (hra) {
+        setHraClass(hra);
+      }
+      const mhra = params.get("mhra") || params.get("manual_hra");
+      if (mhra) {
+        setManualHraPercent(mhra);
+      }
+      const rb = params.get("rb") || params.get("retBasic");
+      if (rb) {
+        const val = parseInt(rb);
+        if (!isNaN(val) && val > 0) {
+          setRetiringBasic(val);
+        }
+      }
+    } catch (e) {
+      console.warn("Could not load initial 8th Pay states from query parameters", e);
+    }
+  }, []);
+
+  // Serialize states to URL search params in real-time
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      let changed = false;
+
+      const setParamWithChange = (key: string, value: string) => {
+        if (params.get(key) !== value) {
+          params.set(key, value);
+          changed = true;
+        }
+      };
+
+      setParamWithChange("bp", basicPay.toString());
+      setParamWithChange("ff", fitmentFactor.toString());
+      setParamWithChange("da", currentDaPercent.toString());
+      setParamWithChange("eda", expectedDa8th.toString());
+      setParamWithChange("hra", hraClass);
+      setParamWithChange("mhra", manualHraPercent);
+      setParamWithChange("rb", retiringBasic.toString());
+
+      if (changed) {
+        const newSearch = params.toString();
+        const currentSearch = window.location.search.replace(/^\?/, "");
+        if (newSearch !== currentSearch) {
+          const newUrl = `${window.location.pathname}?${newSearch}`;
+          window.history.replaceState(null, "", newUrl);
+        }
+      }
+    } catch (e) {
+      console.warn("Could not serialize 8th Pay states to URL parameters", e);
+    }
+  }, [basicPay, fitmentFactor, currentDaPercent, expectedDa8th, hraClass, manualHraPercent, retiringBasic]);
+
   // Handle standard pay levels
   const payLevels = [
     { name: "Level 1 (GP 1800)", basic: 18000, desc: "Peon / Multi-Tasking Staff" },
