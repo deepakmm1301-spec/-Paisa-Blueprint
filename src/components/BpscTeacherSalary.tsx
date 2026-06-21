@@ -79,7 +79,7 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-slate-50 dark:bg-slate-950 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden mobile-light-container">
+    <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-slate-50 dark:bg-slate-950 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
       {/* Title Header */}
       <div className="mb-8 text-center sm:text-left flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/60 dark:border-slate-800/60 pb-6">
         <div>
@@ -277,7 +277,7 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
 
         {/* Output Dashboard Column */}
         <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
-          <div className="bg-white border border-slate-200/80 dark:bg-slate-900 dark:border-slate-800/80 text-slate-900 dark:text-white rounded-3xl p-6 shadow-xl relative overflow-hidden mobile-light-card">
+          <div className="bg-white border border-slate-200/80 dark:bg-slate-900 dark:border-slate-800/80 text-slate-900 dark:text-white rounded-3xl p-6 shadow-xl relative overflow-hidden">
             {/* Visual background accents */}
             <div className="absolute right-0 top-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl" />
             <div className="absolute left-0 bottom-0 w-32 h-32 bg-emerald-600/5 rounded-full blur-3xl" />
@@ -293,7 +293,7 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
             {/* Income Display cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               
-              <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-150/60 dark:border-slate-800/50 rounded-2xl p-4 mobile-light-subcard">
+              <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-150/60 dark:border-slate-800/50 rounded-2xl p-4">
                 <span className="text-[10px] text-slate-500 dark:text-slate-400 font-extrabold uppercase tracking-wide">Basic Pay (मूल वेतन)</span>
                 <p className="text-2xl font-black text-slate-800 dark:text-white mt-1">₹{calculations.basicPay.toLocaleString("en-IN")}</p>
                 <div className="mt-2.5 pt-2 border-t border-slate-200/60 dark:border-slate-800/50 text-[9px] text-slate-500 dark:text-slate-400 font-medium">
@@ -301,7 +301,7 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
                 </div>
               </div>
  
-              <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-150/60 dark:border-slate-800/50 rounded-2xl p-4 mobile-light-subcard">
+              <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-150/60 dark:border-slate-800/50 rounded-2xl p-4">
                 <span className="text-[10px] text-slate-500 dark:text-slate-400 font-extrabold uppercase tracking-wide">Gross Salary (सकल वेतन)</span>
                 <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">₹{calculations.grossSalary.toLocaleString("en-IN")}</p>
                 <div className="mt-2.5 pt-2 border-t border-slate-200/60 dark:border-slate-800/50 text-[9px] text-slate-500 dark:text-slate-400 font-medium">
