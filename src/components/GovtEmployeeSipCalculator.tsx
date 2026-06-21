@@ -1,7 +1,11 @@
 import React, { useState, useMemo } from "react";
 import { Sparkles, Share2, HelpCircle, Info, Calculator, Percent, ShieldCheck, ArrowUpRight, TrendingUp } from "lucide-react";
 
-export default function GovtEmployeeSipCalculator() {
+interface GovtEmployeeSipCalculatorProps {
+  language?: "en" | "hi";
+}
+
+export default function GovtEmployeeSipCalculator({ language = "en" }: GovtEmployeeSipCalculatorProps = {}) {
   const [currentSalary, setCurrentSalary] = useState<number>(60000); // Gross monthly
   const [annualIncrement, setAnnualIncrement] = useState<number>(3); // Government increment is usually 3% basic
   const [daGrowth, setDaGrowth] = useState<number>(4); // Average DA increases 4% annually
@@ -105,17 +109,9 @@ export default function GovtEmployeeSipCalculator() {
     const currentUrl = typeof window !== "undefined"
       ? `${window.location.origin}/?widget=govt_sip`
       : "https://paisablueprint.in/?widget=govt_sip";
-    const text = `🌴 *BPSC Teacher SIP + Retirement Planner Projections*
-Starting Gross: ₹${currentSalary.toLocaleString("en-IN")}/mo
-Monthly SIP: ₹${monthlySip.toLocaleString("en-IN")}/mo (with ${stepUpPercent}% hike)
-Tenure: ${investmentYears} Years
------------------------------------
-*Wealth Corpus: ₹${projectionData.finalSipBalance.toLocaleString("en-IN")}*
-NPS Balance: ₹${projectionData.finalNpsBalance.toLocaleString("en-IN")}
-*Combined Net Corpus: ₹${projectionData.combinedCorpus.toLocaleString("en-IN")}*
-*Est. Max Pension + SWP: ₹${projectionData.totalEstimatedMonthlyRetirementIncome.toLocaleString("en-IN")}/mo*
-
-Chart your teacher compounding roadmap here: ${currentUrl}`;
+    const text = language === "hi"
+      ? `🌴 *BPSC शिक्षक एसआईपी + सेवानिवृत्ति योजना अनुमान*\nप्रारंभिक सकल वेतन: ₹${currentSalary.toLocaleString("en-IN")}/माह\nमासिक एसआईपी: ₹${monthlySip.toLocaleString("en-IN")}/माह (${stepUpPercent}% सालाना वृद्धि के साथ)\nअवधि: ${investmentYears} वर्ष\n-----------------------------------\n*एसआईपी संचित धन: ₹${projectionData.finalSipBalance.toLocaleString("en-IN")}*\nएनपीएस (NPS) कोष: ₹${projectionData.finalNpsBalance.toLocaleString("en-IN")}\n*कुल मिलाकर नेट फंड संपदा: ₹${projectionData.combinedCorpus.toLocaleString("en-IN")}*\n*अपेक्षित मासिक पेंशन + SWP आय: ₹${projectionData.totalEstimatedMonthlyRetirementIncome.toLocaleString("en-IN")}/माह*\n\nअपनी शिक्षक एसआईपी व वेल्थ वेव की गणना यहाँ करें: ${currentUrl}`
+      : `🌴 *BPSC Teacher SIP + Retirement Planner Projections*\nStarting Gross: ₹${currentSalary.toLocaleString("en-IN")}/mo\nMonthly SIP: ₹${monthlySip.toLocaleString("en-IN")}/mo (with ${stepUpPercent}% hike)\nTenure: ${investmentYears} Years\n-----------------------------------\n*Wealth Corpus: ₹${projectionData.finalSipBalance.toLocaleString("en-IN")}*\nNPS Balance: ₹${projectionData.finalNpsBalance.toLocaleString("en-IN")}\n*Combined Net Corpus: ₹${projectionData.combinedCorpus.toLocaleString("en-IN")}*\n*Est. Max Pension + SWP: ₹${projectionData.totalEstimatedMonthlyRetirementIncome.toLocaleString("en-IN")}/mo*\n\nChart your teacher compounding roadmap here: ${currentUrl}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
@@ -141,7 +137,7 @@ Chart your teacher compounding roadmap here: ${currentUrl}`;
           className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 self-start sm:self-center shadow-md transition-all border-0"
         >
           <Share2 className="w-4 h-4" />
-          <span>सहेजें और साझा करें</span>
+          <span>{language === "hi" ? "सहेजें और साझा करें" : "Save & Share on WhatsApp"}</span>
         </button>
       </div>
 

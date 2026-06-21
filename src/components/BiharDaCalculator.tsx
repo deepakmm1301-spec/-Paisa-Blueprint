@@ -1,7 +1,11 @@
 import React, { useState, useMemo } from "react";
 import { Sparkles, Share2, Info, Percent, Calculator, ListCollapse, BookOpen, AlertCircle, Coins } from "lucide-react";
 
-export default function BiharDaCalculator() {
+interface BiharDaCalculatorProps {
+  language?: "en" | "hi";
+}
+
+export default function BiharDaCalculator({ language = "en" }: BiharDaCalculatorProps = {}) {
   const [basicPay, setBasicPay] = useState<number>(35400); // Standard Level 6 basic pay
   const [daPercent, setDaPercent] = useState<number>(50); // Current rate 50%
   const [hraPercent, setHraPercent] = useState<number>(8); // Typical town rate
@@ -41,14 +45,9 @@ export default function BiharDaCalculator() {
     const currentUrl = typeof window !== "undefined"
       ? `${window.location.origin}/?widget=bihar_da`
       : "https://paisablueprint.in/?widget=bihar_da";
-    const text = `📊 *BPSC Teacher Dearness Allowance (DA) Calculator 2026*
-Basic Pay entered: ₹${basicPay.toLocaleString("en-IN")}
-Current DA Rate: ${daPercent}%
-*Formulated DA Amount: ₹${computedData.daAmount.toLocaleString("en-IN")}*
-Monthly Gross Pay: ₹${computedData.grossSalary.toLocaleString("en-IN")}
-Net In-Hand (After Deductions): ₹${computedData.inHandSalary.toLocaleString("en-IN")}
-
-Calculate yours instantly: ${currentUrl}`;
+    const text = language === "hi"
+      ? `📊 *BPSC बिहार शिक्षक महंगाई भत्ता (DA) कैलकुलेटर 2026*\nदर्ज मूल वेतन (Basic Pay): ₹${basicPay.toLocaleString("en-IN")}\nवर्तमान डीए (DA) दर: ${daPercent}%\n*परिणाम स्वरूप कुल डीए राशि: ₹${computedData.daAmount.toLocaleString("en-IN")}*\nसकल मासिक वेतन (Gross Pay): ₹${computedData.grossSalary.toLocaleString("en-IN")}\nशुद्ध इन-हैंड वेतन (Net In-Hand): ₹${computedData.inHandSalary.toLocaleString("en-IN")}\n\nतुरंत गणना करें: ${currentUrl}`
+      : `📊 *BPSC Teacher Dearness Allowance (DA) Calculator 2026*\nBasic Pay entered: ₹${basicPay.toLocaleString("en-IN")}\nCurrent DA Rate: ${daPercent}%\n*Formulated DA Amount: ₹${computedData.daAmount.toLocaleString("en-IN")}*\nMonthly Gross Pay: ₹${computedData.grossSalary.toLocaleString("en-IN")}\nNet In-Hand (After Deductions): ₹${computedData.inHandSalary.toLocaleString("en-IN")}\n\nCalculate yours instantly: ${currentUrl}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
@@ -74,7 +73,7 @@ Calculate yours instantly: ${currentUrl}`;
           className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 self-start sm:self-center shadow-md transition-all border-0"
         >
           <Share2 className="w-4 h-4" />
-          <span>व्हाट्सएप पर साझा करें</span>
+          <span>{language === "hi" ? "व्हाट्सऐप पर साझा करें" : "Share on WhatsApp"}</span>
         </button>
       </div>
 

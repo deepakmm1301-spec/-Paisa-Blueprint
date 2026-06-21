@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { 
   Sparkles, 
   Share2, 
@@ -14,11 +14,22 @@ import {
   ArrowRight
 } from "lucide-react";
 
-export default function NpsGovtCalculator() {
+interface NpsGovtCalculatorProps {
+  language?: "en" | "hi";
+}
+
+export default function NpsGovtCalculator({ language: propLanguage }: NpsGovtCalculatorProps = {}) {
   const [activeTab, setActiveTab] = useState<"bpsc" | "custom">("custom");
   const [language, setLanguage] = useState<"en" | "hi">(() => {
-    return (localStorage.getItem("paisa_language") as "en" | "hi") || "en";
+    return propLanguage || (localStorage.getItem("paisa_language") as "en" | "hi") || "en";
   });
+
+  // Synchronize internal language with prop updates
+  useEffect(() => {
+    if (propLanguage) {
+      setLanguage(propLanguage);
+    }
+  }, [propLanguage]);
 
   // State for TAB A: BPSC Teacher Salary-based matching
   const [basicPayDa, setBasicPayDa] = useState<number>(45000); // Combined Basic + DA

@@ -1553,23 +1553,23 @@ export default function App() {
                 )}
 
                 {activeWidget === "learning" && (
-                  <PaiseToRupee userGrossMonthly={profile.salary} />
+                  <PaiseToRupee userGrossMonthly={profile.salary} language={language} />
                 )}
 
                 {activeWidget === "bpsc_salary" && (
-                  <BpscTeacherSalary />
+                  <BpscTeacherSalary language={language} />
                 )}
 
                 {activeWidget === "bihar_da" && (
-                  <BiharDaCalculator />
+                  <BiharDaCalculator language={language} />
                 )}
 
                 {activeWidget === "govt_sip" && (
-                  <GovtEmployeeSipCalculator />
+                  <GovtEmployeeSipCalculator language={language} />
                 )}
 
                 {activeWidget === "nps_govt" && (
-                  <NpsGovtCalculator />
+                  <NpsGovtCalculator language={language} />
                 )}
               </motion.div>
             </AnimatePresence>

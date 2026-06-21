@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { 
   TrendingUp, 
   HelpCircle, 
@@ -24,11 +24,21 @@ import {
 
 interface PaiseToRupeeProps {
   userGrossMonthly?: number;
+  language?: "hi" | "en";
 }
 
-export default function PaiseToRupee({ userGrossMonthly = 75000 }: PaiseToRupeeProps) {
+export default function PaiseToRupee({ userGrossMonthly = 75000, language: propLanguage }: PaiseToRupeeProps) {
   const [activeQuestion, setActiveQuestion] = useState<string>("returns");
-  const [language, setLanguage] = useState<"hi" | "en">("hi");
+  const [language, setLanguage] = useState<"hi" | "en">(() => {
+    return propLanguage || (localStorage.getItem("paisa_language") as "hi" | "en") || "hi";
+  });
+
+  // Synchronize internal language with prop updates
+  useEffect(() => {
+    if (propLanguage) {
+      setLanguage(propLanguage);
+    }
+  }, [propLanguage]);
 
   // 1. ₹5,000 SIP FOR 20 YEARS STATES
   const [sip5kAmount, setSip5kAmount] = useState<number>(5000);

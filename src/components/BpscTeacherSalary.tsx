@@ -1,7 +1,11 @@
 import React, { useState, useMemo } from "react";
 import { Sparkles, ArrowLeft, Info, HelpCircle, Share2, Calculator, CheckCircle, Percent, ShieldCheck } from "lucide-react";
 
-export default function BpscTeacherSalary() {
+interface BpscTeacherSalaryProps {
+  language?: "en" | "hi";
+}
+
+export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalaryProps = {}) {
   const [teacherGrade, setTeacherGrade] = useState<"primary" | "middle" | "secondary" | "higher_secondary">("primary");
   const [customBasicPay, setCustomBasicPay] = useState<number>(0);
   const [daPercent, setDaPercent] = useState<number>(50); // Current DA rate is 50%
@@ -55,15 +59,16 @@ export default function BpscTeacherSalary() {
     const currentUrl = typeof window !== "undefined"
       ? `${window.location.origin}/?widget=bpsc_salary`
       : "https://paisablueprint.in/?widget=bpsc_salary";
-    const text = `🎯 *BPSC BPSC Teacher Salary Structure (7th CPC)*
-Grade: ${teacherGrade.toUpperCase().replace("_", " ")}
-Basic Pay: ₹${calculations.basicPay.toLocaleString("en-IN")}
-Gross Monthly Income: ₹${calculations.grossSalary.toLocaleString("en-IN")}
-NPS Deduction: ₹${calculations.npsDeduction.toLocaleString("en-IN")}
-*Net In-Hand (Net Pay): ₹${calculations.inHandSalary.toLocaleString("en-IN")}*
-Govt Contribution (14%): ₹${calculations.govtNpsContribution.toLocaleString("en-IN")}
+    
+    const translatedGrade = teacherGrade === "primary" ? "प्राथमिक (Primary 1-5)" 
+      : teacherGrade === "middle" ? "मध्य (Middle 6-8)" 
+      : teacherGrade === "secondary" ? "माध्यमिक (Secondary 9-10)" 
+      : "उच्च माध्यमिक (Higher Secondary 11-12)";
 
-Calculate yours here: ${currentUrl}`;
+    const text = language === "hi"
+      ? `🎯 *BPSC बिहार शिक्षक वेतन संरचना 2026 (7वें वेतन आयोग)*\nश्रेणी: ${translatedGrade}\nमूल वेतन (Basic Pay): ₹${calculations.basicPay.toLocaleString("en-IN")}\nसकल मासिक आय (Gross): ₹${calculations.grossSalary.toLocaleString("en-IN")}\nएनपीएस कटौती (NPS Deduction): ₹${calculations.npsDeduction.toLocaleString("en-IN")}\n*शुद्ध इन-हैंड वेतन (Net In-Hand): ₹${calculations.inHandSalary.toLocaleString("en-IN")}*\nसरकारी पेंशन योगदान (14% NPS): ₹${calculations.govtNpsContribution.toLocaleString("en-IN")}\n\nअपना लाइव वेतन यहाँ देखें: ${currentUrl}`
+      : `🎯 *BPSC Teacher Salary Structure 2026 (7th CPC)*\nGrade: ${teacherGrade.toUpperCase().replace("_", " ")}\nBasic Pay: ₹${calculations.basicPay.toLocaleString("en-IN")}\nGross Monthly Income: ₹${calculations.grossSalary.toLocaleString("en-IN")}\nNPS Deduction: ₹${calculations.npsDeduction.toLocaleString("en-IN")}\n*Net In-Hand (Net Pay): ₹${calculations.inHandSalary.toLocaleString("en-IN")}*\nGovt Contribution (14%): ₹${calculations.govtNpsContribution.toLocaleString("en-IN")}\n\nCalculate yours instantly here: ${currentUrl}`;
+      
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
@@ -88,7 +93,7 @@ Calculate yours here: ${currentUrl}`;
           className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 self-start sm:self-center shadow-md transition-all border-0"
         >
           <Share2 className="w-4 h-4" />
-          <span>व्हाट्सएप पर साझा करें</span>
+          <span>{language === "hi" ? "व्हाट्सऐप पर साझा करें" : "Share on WhatsApp"}</span>
         </button>
       </div>
 
