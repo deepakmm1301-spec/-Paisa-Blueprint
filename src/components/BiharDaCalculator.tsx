@@ -55,7 +55,7 @@ export default function BiharDaCalculator({ language = "en" }: BiharDaCalculator
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-slate-50 dark:bg-slate-950 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
+    <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-slate-50 dark:bg-slate-950 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden mobile-light-container">
       
       {/* Title Header */}
       <div className="mb-8 text-center sm:text-left flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/60 dark:border-slate-800/60 pb-6">
@@ -181,7 +181,7 @@ export default function BiharDaCalculator({ language = "en" }: BiharDaCalculator
 
         {/* Output Dashboard column */}
         <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
-          <div className="bg-white border border-slate-200/80 dark:bg-slate-900 dark:border-slate-800/80 text-slate-900 dark:text-white rounded-3xl p-6 shadow-xl relative overflow-hidden">
+          <div className="bg-white border border-slate-200/80 dark:bg-slate-900 dark:border-slate-800/80 text-slate-900 dark:text-white rounded-3xl p-6 shadow-xl relative overflow-hidden mobile-light-card">
             <div className="absolute right-0 top-0 w-24 h-24 bg-teal-500/10 rounded-full blur-2xl" />
 
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-4">
@@ -191,14 +191,14 @@ export default function BiharDaCalculator({ language = "en" }: BiharDaCalculator
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Computed DA Amount */}
-              <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-150/60 dark:border-slate-800/50 rounded-2xl p-4.5">
+              <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-150/60 dark:border-slate-800/50 rounded-2xl p-4.5 mobile-light-subcard">
                 <span className="text-[10px] text-slate-500 dark:text-slate-400 font-extrabold uppercase tracking-wide">DA Component Net Pay</span>
                 <p className="text-3xl font-black text-teal-600 dark:text-teal-400 mt-1">₹{computedData.daAmount.toLocaleString("en-IN")}</p>
                 <p className="text-[9px] text-slate-500 dark:text-slate-400 mt-1.5 font-medium">Adds up directly to your baseline Basic Pay weight.</p>
               </div>
 
               {/* Combined Basic + DA */}
-              <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-150/60 dark:border-slate-800/50 rounded-2xl p-4.5">
+              <div className="bg-slate-50 dark:bg-slate-800/60 border border-slate-150/60 dark:border-slate-800/50 rounded-2xl p-4.5 mobile-light-subcard">
                 <span className="text-[10px] text-slate-500 dark:text-slate-400 font-extrabold uppercase tracking-wide">New Basic + DA Salary Weight</span>
                 <p className="text-2xl font-black text-slate-850 dark:text-white mt-1">₹{(basicPay + computedData.daAmount).toLocaleString("en-IN")}</p>
                 <p className="text-[9px] text-slate-500 dark:text-slate-400 mt-1.5 font-medium">The key base metric used to calculate NPS & Insurance.</p>

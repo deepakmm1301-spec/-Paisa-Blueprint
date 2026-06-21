@@ -315,3 +315,54 @@ header .border-slate-100\/80 {
   color: #ffffff !important;
 }
 
+/* Custom responsive theme overrides to prevent deep dark modes on mobile result sheets */
+@media (max-width: 1024px) {
+  /* Prevent dark backgrounds on mobile pages and make them light/airy */
+  .mobile-light-container,
+  .dark .mobile-light-container {
+    background-color: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+    color: #0f172a !important;
+  }
+  
+  .mobile-light-card,
+  .dark .mobile-light-card {
+    background-color: #ffffff !important;
+    border-color: #cbd5e1/40 !important;
+    color: #0f172a !important;
+    background-image: none !important;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05) !important;
+  }
+
+  /* Make subcards light */
+  .mobile-light-subcard,
+  .dark .mobile-light-subcard {
+    background-color: #f8fafc !important;
+    border-color: #cbd5e1/20 !important;
+    color: #1e293b !important;
+  }
+
+  /* Ensure text remains dark-colored inside light containers on mobile */
+  .mobile-light-card span,
+  .dark .mobile-light-card span:not(.text-emerald-600):not(.text-emerald-400):not(.text-rose-600):not(.text-rose-400):not(.text-teal-600):not(.text-teal-400):not(.text-violet-600):not(.text-violet-400):not(.text-indigo-600):not(.text-indigo-400),
+  .mobile-light-card p,
+  .dark .mobile-light-card p:not(.text-emerald-600):not(.text-emerald-400):not(.text-rose-600):not(.text-rose-400):not(.text-teal-600):not(.text-teal-400):not(.text-violet-600):not(.text-violet-400):not(.text-indigo-600):not(.text-indigo-400),
+  .mobile-light-card h4,
+  .dark .mobile-light-card h4,
+  .mobile-light-card div,
+  .dark .mobile-light-card div {
+    /* Set color to slate-800 for readability inside the light-mode on mobile, except special key badges */
+    color: #1e293b !important;
+  }
+
+  .mobile-light-card .border-slate-800,
+  .dark .mobile-light-card .border-slate-800,
+  .dark .mobile-light-card .border-slate-800\/50,
+  .dark .mobile-light-card .border-slate-100,
+  .dark .mobile-light-card .border-b,
+  .dark .mobile-light-card .border-t {
+    border-color: #e2e8f0 !important;
+  }
+}
+
+

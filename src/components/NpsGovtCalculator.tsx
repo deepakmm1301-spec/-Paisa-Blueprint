@@ -199,7 +199,7 @@ Calculate your exact lifetime pension blueprint: ${currentUrl}`;
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-slate-50 dark:bg-slate-950 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
+    <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-slate-50 dark:bg-slate-950 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden mobile-light-container">
       
       {/* Title Header */}
       <div className="mb-6 text-center sm:text-left flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/60 dark:border-slate-800/60 pb-6">
@@ -512,7 +512,7 @@ Calculate your exact lifetime pension blueprint: ${currentUrl}`;
         <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
           
           {/* Main output box */}
-          <div className="bg-white border border-slate-200/80 dark:bg-slate-900 dark:border-slate-800/80 text-slate-900 dark:text-white rounded-3xl p-6 shadow-xl relative overflow-hidden">
+          <div className="bg-white border border-slate-200/80 dark:bg-slate-900 dark:border-slate-800/80 text-slate-900 dark:text-white rounded-3xl p-6 shadow-xl relative overflow-hidden mobile-light-card">
             <div className="absolute right-0 top-0 w-32 h-32 bg-violet-600/10 rounded-full blur-3xl text-violet-500" />
 
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 mb-5">
@@ -544,7 +544,7 @@ Calculate your exact lifetime pension blueprint: ${currentUrl}`;
 
             {/* Total balance accumulated & stats matching PDF top info */}
             <div className="grid grid-cols-3 gap-3 text-center mb-6 border-b border-slate-100 dark:border-slate-800 pb-6">
-              <div className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-150/60 dark:border-slate-800/50">
+              <div className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-150/60 dark:border-slate-800/50 mobile-light-subcard">
                 <span className="text-[8px] sm:text-[9px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-wider block">TOTAL CORPUS</span>
                 <p className="text-sm sm:text-base font-extrabold text-slate-850 dark:text-white mt-1">
                   ₹{activeTab === "custom" 
@@ -552,7 +552,7 @@ Calculate your exact lifetime pension blueprint: ${currentUrl}`;
                     : bpscCalculations.totalAccumulatedCorpus.toLocaleString("en-IN")}
                 </p>
               </div>
-              <div className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-150/60 dark:border-slate-800/50">
+              <div className="bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-150/60 dark:border-slate-800/50 mobile-light-subcard">
                 <span className="text-[8px] sm:text-[9px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-wider block">TOTAL INVESTED</span>
                 <p className="text-sm sm:text-base font-extrabold text-slate-850 dark:text-white mt-1">
                   ₹{activeTab === "custom" 
