@@ -195,9 +195,7 @@ export default function App() {
   });
 
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    return localStorage.getItem("paisa_theme") === "dark";
-  });
+  const isDarkMode = false;
 
   // Custom dashboard fields active state
   const [showDashboardSettings, setShowDashboardSettings] = useState(false);
@@ -222,13 +220,9 @@ export default function App() {
   }, [dbOptions]);
 
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    localStorage.setItem("paisa_theme", isDarkMode ? "dark" : "light");
-  }, [isDarkMode]);
+    document.documentElement.classList.remove("dark");
+    localStorage.setItem("paisa_theme", "light");
+  }, []);
 
   const [isEditingAccountName, setIsEditingAccountName] = useState(false);
   const [newAccountName, setNewAccountName] = useState("");
@@ -1172,19 +1166,7 @@ export default function App() {
               <span>Share on WhatsApp</span>
             </button>
 
-            {/* Global Theme Toggle Button */}
-            <button
-              onClick={() => setIsDarkMode(!isDarkMode)}
-              className="p-2.5 bg-slate-100 hover:bg-slate-200 border border-slate-200 hover:border-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 text-slate-750 dark:text-amber-400 rounded-full cursor-pointer transition-all duration-200 flex items-center justify-center focus:outline-none shadow-3xs"
-              title={isDarkMode ? "Switch to Day Light Mode" : "Switch to Night-Time High-Contrast Mode"}
-              aria-label="Toggle High Contrast Dark Mode"
-            >
-              {isDarkMode ? (
-                <Sun className="w-4 h-4 text-amber-400" />
-              ) : (
-                <Moon className="w-4 h-4 text-slate-700" />
-              )}
-            </button>
+
 
             {/* Paisabazar style Top-Right Sign In / User Profile Dropdown Menu */}
             <div className="relative">
