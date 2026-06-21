@@ -6,27 +6,31 @@ interface BiharDaCalculatorProps {
 }
 
 export default function BiharDaCalculator({ language = "en" }: BiharDaCalculatorProps = {}) {
-  const [basicPay, setBasicPay] = useState<number>(35400); // Standard Level 6 basic pay
+  const [basicPay, setBasicPay] = useState<number | "">(35400); // Standard Level 6 basic pay
   const [daPercent, setDaPercent] = useState<number>(50); // Current rate 50%
-  const [hraPercent, setHraPercent] = useState<number>(8); // Typical town rate
+  const [hraPercent, setHraPercent] = useState<number | "">(8); // Typical town rate
 
   const computedData = useMemo(() => {
-    const daAmount = Math.round((basicPay * daPercent) / 100);
+    const activeBasicPay = typeof basicPay === "string" ? 0 : basicPay;
+    const activeDaPercent = typeof daPercent === "string" ? 0 : daPercent;
+    const activeHraPercent = typeof hraPercent === "string" ? 0 : hraPercent;
+
+    const daAmount = Math.round((activeBasicPay * activeDaPercent) / 100);
     
-    const hraRate = hraPercent;
-    const hraAmount = Math.round((basicPay * hraRate) / 100);
+    const hraRate = activeHraPercent;
+    const hraAmount = Math.round((activeBasicPay * hraRate) / 100);
 
     const medicalAllowance = 1000; // Bihar state standard
-    const grossSalary = basicPay + daAmount + hraAmount + medicalAllowance;
+    const grossSalary = activeBasicPay + daAmount + hraAmount + medicalAllowance;
 
     // NPS Deduction (10% of Basic + DA)
-    const npsDeduction = Math.round(((basicPay + daAmount) * 10) / 100);
+    const npsDeduction = Math.round(((activeBasicPay + daAmount) * 10) / 100);
     const professionalTax = 150;
     const totalDeductions = npsDeduction + professionalTax;
     const inHandSalary = grossSalary - totalDeductions;
 
     // 14% Government NPS Contribution
-    const govtNpsContribution = Math.round(((basicPay + daAmount) * 14) / 100);
+    const govtNpsContribution = Math.round(((activeBasicPay + daAmount) * 14) / 100);
 
     return {
       daAmount,
@@ -96,7 +100,11 @@ export default function BiharDaCalculator({ language = "en" }: BiharDaCalculator
               <input
                 type="number"
                 value={basicPay}
-                onChange={(e) => setBasicPay(parseInt(e.target.value) || 0)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setBasicPay(val === "" ? "" : parseInt(val) || 0);
+                }}
+                placeholder="35,400"
                 className="w-full bg-slate-50 dark:bg-slate-850 text-slate-800 dark:text-white rounded-xl border border-slate-200 dark:border-slate-700 pl-8 pr-4 py-3 text-sm font-black focus:outline-emerald-500"
               />
             </div>
@@ -113,17 +121,17 @@ export default function BiharDaCalculator({ language = "en" }: BiharDaCalculator
             </div>
             <input
               type="range"
-              min={34}
-              max={65}
+              min={0}
+              max={100}
               step={1}
               value={daPercent}
-              onChange={(e) => setDaPercent(parseInt(e.target.value))}
+              onChange={(e) => setDaPercent(parseInt(e.target.value) || 0)}
               className="w-full accent-teal-500 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg cursor-pointer"
             />
             <div className="flex justify-between text-[10px] text-slate-400 mt-1 font-medium">
-              <span>Previous: 42%</span>
+              <span>Min: 0%</span>
               <span>Current (50% Milestone)</span>
-              <span>Max: 65%</span>
+              <span>Max: 100%</span>
             </div>
           </div>
 
@@ -145,7 +153,7 @@ export default function BiharDaCalculator({ language = "en" }: BiharDaCalculator
                 min={0}
                 max={30}
                 step={0.5}
-                value={hraPercent}
+                value={hraPercent === "" ? 0 : hraPercent}
                 onChange={(e) => setHraPercent(parseFloat(e.target.value) || 0)}
                 className="flex-1 accent-teal-500 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg cursor-pointer"
               />
@@ -153,16 +161,16 @@ export default function BiharDaCalculator({ language = "en" }: BiharDaCalculator
                 <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">%</span>
                 <input
                   type="number"
-                  value={hraPercent || ""}
+                  value={hraPercent}
                   step={0.1}
                   onChange={(e) => {
-                    const val = parseFloat(e.target.value) || 0;
-                    setHraPercent(val);
+                    const val = e.target.value;
+                    setHraPercent(val === "" ? "" : parseFloat(val) || 0);
                   }}
                   className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg py-1 pl-2 pr-5 text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-teal-500"
                   min={0}
                   max={100}
-                  placeholder="Custom %"
+                  placeholder="0"
                 />
               </div>
             </div>

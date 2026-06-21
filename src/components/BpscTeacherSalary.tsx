@@ -7,12 +7,12 @@ interface BpscTeacherSalaryProps {
 
 export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalaryProps = {}) {
   const [teacherGrade, setTeacherGrade] = useState<"primary" | "middle" | "secondary" | "higher_secondary">("primary");
-  const [customBasicPay, setCustomBasicPay] = useState<number>(0);
+  const [customBasicPay, setCustomBasicPay] = useState<number | "">("");
   const [daPercent, setDaPercent] = useState<number>(50); // Current DA rate is 50%
-  const [hraPercent, setHraPercent] = useState<number>(8); // State HRA rates typically 4%, 6%, 8%, 16%, 20%
-  const [medicalAllowance, setMedicalAllowance] = useState<number>(1000); // Fixed Rs 1000 for Bihar Gov
-  const [otherAllowances, setOtherAllowances] = useState<number>(2000); // CTA or specific school allowance
-  const [gpfNpsPercent, setGpfNpsPercent] = useState<number>(10); // Standard employee contribution is 10% for NPS
+  const [hraPercent, setHraPercent] = useState<number | "">(8); // State HRA rates typically 4%, 6%, 8%, 16%, 20%
+  const [medicalAllowance, setMedicalAllowance] = useState<number | "">(1000); // Fixed Rs 1000 for Bihar Gov
+  const [otherAllowances, setOtherAllowances] = useState<number | "">(2000); // CTA or specific school allowance
+  const [gpfNpsPercent, setGpfNpsPercent] = useState<number | "">(10); // Standard employee contribution is 10% for NPS
 
   // Bihar BPSC Teacher Pay Commission Matrix Core Constants
   // Basic Pay for grades as of Bihar BPSC TRE 2026/Recent Rules
@@ -23,25 +23,32 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
     higher_secondary: 32000  // Higher Secondary (Class 11-12): Basic Pay Rs 32,000
   };
 
-  const basicPay = customBasicPay > 0 ? customBasicPay : standardBasicPay[teacherGrade];
+  const basicPay = (customBasicPay === "" || customBasicPay === 0) ? standardBasicPay[teacherGrade] : customBasicPay;
 
   const calculations = useMemo(() => {
-    const daAmount = Math.round((basicPay * daPercent) / 100);
-    const hraAmount = Math.round((basicPay * hraPercent) / 100);
-    const grossSalary = basicPay + daAmount + hraAmount + medicalAllowance + otherAllowances;
+    const activeBasicPay = typeof basicPay === "string" ? 0 : basicPay;
+    const activeDaPercent = typeof daPercent === "string" ? 0 : daPercent;
+    const activeHraPercent = typeof hraPercent === "string" ? 0 : hraPercent;
+    const activeMedicalAllowance = typeof medicalAllowance === "string" ? 0 : medicalAllowance;
+    const activeOtherAllowances = typeof otherAllowances === "string" ? 0 : otherAllowances;
+    const activeGpfNpsPercent = typeof gpfNpsPercent === "string" ? 0 : gpfNpsPercent;
+
+    const daAmount = Math.round((activeBasicPay * activeDaPercent) / 100);
+    const hraAmount = Math.round((activeBasicPay * activeHraPercent) / 100);
+    const grossSalary = activeBasicPay + daAmount + hraAmount + activeMedicalAllowance + activeOtherAllowances;
 
     // Deductions: NPS (10% of Basic + DA), GIS (Group Insurance Scheme ~Rs 30), GIS/LIC/PF/Tax (~Rs 150)
-    const npsDeduction = Math.round(((basicPay + daAmount) * gpfNpsPercent) / 100);
+    const npsDeduction = Math.round(((activeBasicPay + daAmount) * activeGpfNpsPercent) / 100);
     const stateTaxPro = 150; // Bihar Professional Tax typically
     const groupInsurance = 30; // standard GIS Bihar Govt
     const totalDeductions = npsDeduction + stateTaxPro + groupInsurance;
     const inHandSalary = Math.max(0, grossSalary - totalDeductions);
 
     // Employer Contribution (14% NPS Bihar State Government)
-    const govtNpsContribution = Math.round(((basicPay + daAmount) * 14) / 100);
+    const govtNpsContribution = Math.round(((activeBasicPay + daAmount) * 14) / 100);
 
     return {
-      basicPay,
+      basicPay: activeBasicPay,
       daAmount,
       hraAmount,
       grossSalary,
@@ -124,10 +131,10 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
                   type="button"
                   onClick={() => {
                     setTeacherGrade(item.id as any);
-                    setCustomBasicPay(0); // Reset custom pay to default grade pay
+                    setCustomBasicPay(""); // Reset custom pay to default grade pay
                   }}
                   className={`py-2 px-3 text-xs font-bold rounded-xl border text-center transition-all ${
-                    teacherGrade === item.id && customBasicPay === 0
+                    teacherGrade === item.id && (customBasicPay === "" || customBasicPay === 0)
                       ? "bg-slate-900 text-white border-slate-900 dark:bg-slate-200 dark:text-slate-900 dark:border-slate-200"
                       : "bg-slate-50 text-slate-600 border-slate-200/80 hover:bg-slate-100 dark:bg-slate-800/55 dark:text-slate-300 dark:border-slate-700/60"
                   }`}
@@ -150,7 +157,7 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
                 min={18000}
                 max={65000}
                 step={500}
-                value={basicPay}
+                value={customBasicPay === "" ? standardBasicPay[teacherGrade] : customBasicPay}
                 onChange={(e) => setCustomBasicPay(parseInt(e.target.value) || 0)}
                 className="flex-1 accent-emerald-500 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg cursor-pointer"
               />
@@ -158,14 +165,14 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
                 <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">₹</span>
                 <input
                   type="number"
-                  value={basicPay || ""}
+                  value={customBasicPay}
                   onChange={(e) => {
-                    const val = parseInt(e.target.value) || 0;
-                    setCustomBasicPay(val);
+                    const val = e.target.value;
+                    setCustomBasicPay(val === "" ? "" : parseInt(val) || 0);
                   }}
                   className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg py-1 pl-5 pr-1 text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   min={0}
-                  placeholder="Enter custom"
+                  placeholder={standardBasicPay[teacherGrade].toLocaleString("en-IN")}
                 />
               </div>
             </div>
@@ -184,11 +191,11 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
             </div>
             <input
               type="range"
-              min={38}
-              max={60}
+              min={0}
+              max={100}
               step={1}
               value={daPercent}
-              onChange={(e) => setDaPercent(parseInt(e.target.value))}
+              onChange={(e) => setDaPercent(parseInt(e.target.value) || 0)}
               className="w-full accent-emerald-500 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg cursor-pointer"
             />
           </div>
@@ -211,7 +218,7 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
                 min={0}
                 max={30}
                 step={0.5}
-                value={hraPercent}
+                value={hraPercent === "" ? 0 : hraPercent}
                 onChange={(e) => setHraPercent(parseFloat(e.target.value) || 0)}
                 className="flex-1 accent-emerald-500 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-lg cursor-pointer"
               />
@@ -219,16 +226,16 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
                 <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">%</span>
                 <input
                   type="number"
-                  value={hraPercent || ""}
+                  value={hraPercent}
                   step={0.1}
                   onChange={(e) => {
-                    const val = parseFloat(e.target.value) || 0;
-                    setHraPercent(val);
+                    const val = e.target.value;
+                    setHraPercent(val === "" ? "" : parseFloat(val) || 0);
                   }}
                   className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg py-1 pl-2 pr-5 text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
                   min={0}
                   max={100}
-                  placeholder="Custom %"
+                  placeholder="0"
                 />
               </div>
             </div>
@@ -243,8 +250,12 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
               <input
                 type="number"
                 value={medicalAllowance}
-                onChange={(e) => setMedicalAllowance(parseInt(e.target.value) || 0)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setMedicalAllowance(val === "" ? "" : parseInt(val) || 0);
+                }}
                 className="w-full bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-white rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-xs font-bold"
+                placeholder="0"
               />
             </div>
             <div>
@@ -254,8 +265,12 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
               <input
                 type="number"
                 value={otherAllowances}
-                onChange={(e) => setOtherAllowances(parseInt(e.target.value) || 0)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setOtherAllowances(val === "" ? "" : parseInt(val) || 0);
+                }}
                 className="w-full bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-white rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 text-xs font-bold"
+                placeholder="0"
               />
             </div>
           </div>

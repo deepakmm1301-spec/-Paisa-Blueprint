@@ -7,15 +7,20 @@ interface GovtEmployeeSipCalculatorProps {
 
 export default function GovtEmployeeSipCalculator({ language = "en" }: GovtEmployeeSipCalculatorProps = {}) {
   const [currentSalary, setCurrentSalary] = useState<number>(60000); // Gross monthly
-  const [annualIncrement, setAnnualIncrement] = useState<number>(3); // Government increment is usually 3% basic
-  const [daGrowth, setDaGrowth] = useState<number>(4); // Average DA increases 4% annually
+  const [annualIncrement, setAnnualIncrement] = useState<number | "">(3); // Government increment is usually 3% basic
+  const [daGrowth, setDaGrowth] = useState<number | "">(4); // Average DA increases 4% annually
   const [monthlySip, setMonthlySip] = useState<number>(6000); // Starting SIP
   const [investmentYears, setInvestmentYears] = useState<number>(20); // Years to retirement
-  const [sipReturnRate, setSipReturnRate] = useState<number>(12); // Mutual fund conservative CAGR
-  const [stepUpPercent, setStepUpPercent] = useState<number>(8); // Auto step-up matching salary hike
+  const [sipReturnRate, setSipReturnRate] = useState<number | "">(12); // Mutual fund conservative CAGR
+  const [stepUpPercent, setStepUpPercent] = useState<number | "">(8); // Auto step-up matching salary hike
 
   // Calculations for retirement corpus and Pension + SIP Combined projections
   const projectionData = useMemo(() => {
+    const activeSipReturnRate = typeof sipReturnRate === "string" ? 0 : sipReturnRate;
+    const activeStepUpPercent = typeof stepUpPercent === "string" ? 0 : stepUpPercent;
+    const activeAnnualIncrement = typeof annualIncrement === "string" ? 0 : annualIncrement;
+    const activeDaGrowth = typeof daGrowth === "string" ? 0 : daGrowth;
+
     let salary = currentSalary;
     let activeSip = monthlySip;
     let npsBalance = 0; // Accumulated NPS estimate
@@ -26,7 +31,7 @@ export default function GovtEmployeeSipCalculator({ language = "en" }: GovtEmplo
     // We assume 10% employee NPS + 14% Employer NPS = 24% of Basic + DA (approx 16% of gross salary)
     // with 9% moderate NPS compounding return (mostly bonds & some equity)
     const npsMonthlyRate = 9 / 12 / 100;
-    const sipMonthlyRate = sipReturnRate / 12 / 100;
+    const sipMonthlyRate = activeSipReturnRate / 12 / 100;
 
     const yearlyDataPoints: Array<{
       year: number;
@@ -60,11 +65,11 @@ export default function GovtEmployeeSipCalculator({ language = "en" }: GovtEmplo
       });
 
       // Annual increments take place at the end of every year
-      const totalHike = annualIncrement + daGrowth;
+      const totalHike = activeAnnualIncrement + activeDaGrowth;
       salary = Math.round(salary * (1 + totalHike / 100));
       
       // Step Up monthly SIP matching stepUpPercent
-      activeSip = Math.round(activeSip * (1 + stepUpPercent / 100));
+      activeSip = Math.round(activeSip * (1 + activeStepUpPercent / 100));
     }
 
     // Annuity projections for combined Pension + SIP
@@ -210,10 +215,14 @@ export default function GovtEmployeeSipCalculator({ language = "en" }: GovtEmplo
               <input
                 type="number"
                 value={sipReturnRate}
-                min={8}
-                max={22}
-                onChange={(e) => setSipReturnRate(parseFloat(e.target.value) || 12)}
+                min={0}
+                max={30}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setSipReturnRate(val === "" ? "" : parseFloat(val) || 0);
+                }}
                 className="w-full bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-750 p-2 text-xs font-bold text-slate-800 dark:text-white"
+                placeholder="12"
               />
             </div>
 
@@ -223,10 +232,13 @@ export default function GovtEmployeeSipCalculator({ language = "en" }: GovtEmplo
                 type="number"
                 value={stepUpPercent}
                 min={0}
-                max={20}
-                onChange={(e) => setStepUpPercent(parseInt(e.target.value) || 0)}
+                max={100}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setStepUpPercent(val === "" ? "" : parseInt(val) || 0);
+                }}
                 className="w-full bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-750 p-2 text-xs font-bold text-slate-800 dark:text-white"
-                placeholder="Increments hike matching"
+                placeholder="8"
               />
             </div>
 
@@ -235,10 +247,14 @@ export default function GovtEmployeeSipCalculator({ language = "en" }: GovtEmplo
               <input
                 type="number"
                 value={annualIncrement}
-                min={1}
-                max={10}
-                onChange={(e) => setAnnualIncrement(parseInt(e.target.value) || 3)}
+                min={0}
+                max={50}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setAnnualIncrement(val === "" ? "" : parseInt(val) || 0);
+                }}
                 className="w-full bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-750 p-2 text-xs font-bold text-slate-800 dark:text-white"
+                placeholder="3"
               />
             </div>
 
@@ -247,10 +263,14 @@ export default function GovtEmployeeSipCalculator({ language = "en" }: GovtEmplo
               <input
                 type="number"
                 value={daGrowth}
-                min={2}
-                max={12}
-                onChange={(e) => setDaGrowth(parseInt(e.target.value) || 4)}
+                min={0}
+                max={50}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setDaGrowth(val === "" ? "" : parseInt(val) || 0);
+                }}
                 className="w-full bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-750 p-2 text-xs font-bold text-slate-800 dark:text-white"
+                placeholder="4"
               />
             </div>
 
