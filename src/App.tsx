@@ -401,7 +401,7 @@ export default function App() {
       if (cleanPath === "/8th-pay-commission-salary-chart") return "eight_pay_chart";
       if (cleanPath === "/8th-pay-commission-date") return "eight_pay_date";
       if (cleanPath === "/8th-pay-commission-for-teachers") return "eight_pay_teachers";
-      return "profiles";
+      return "salary";
     };
 
     if (typeof window !== "undefined") {
@@ -439,7 +439,7 @@ export default function App() {
       // 2. Fall back to pathname patterns
       return getWidgetFromPath(window.location.pathname);
     }
-    return "profiles";
+    return "salary";
   });
 
   const [language, setLanguage] = useState<"en" | "hi">(() => {
@@ -957,13 +957,6 @@ export default function App() {
       color: "text-emerald-600 bg-emerald-50 border-emerald-100",
     },
     {
-      id: "profiles" as ActiveWidget,
-      label: language === "hi" ? "प्रोफ़ाइल और खाते" : "Profiles & Accounts",
-      desc: language === "hi" ? "एकाधिक पारिवारिक फाइलें संभालें" : "Manage multiple family files",
-      icon: <Users className="w-5 h-5" />,
-      color: "text-orange-600 bg-orange-50 border-orange-100",
-    },
-    {
       id: "salary" as ActiveWidget,
       label: language === "hi" ? "वेतन कैलकुलेटर" : "Salary Calculator",
       desc: language === "hi" ? "महंगाई भत्ता (DA) व वेतनमान सटीक अनुमान" : "DA, HRA & scale estimator",
@@ -990,13 +983,6 @@ export default function App() {
       desc: language === "hi" ? "₹5,050 SIP, तुलनात्मक FD, ₹1 करोड़ रोडमैप, बजट और FIRE नियम" : "₹5k SIP, FD v/s SIP battles, ₹1Cr targets, 50-30-20 rule, retirement calculations",
       icon: <Sparkles className="w-5 h-5" />,
       color: "text-emerald-650 bg-emerald-50 border-emerald-100",
-    },
-    {
-      id: "health" as ActiveWidget,
-      label: language === "hi" ? "स्वास्थ्य स्कोरकार्ड" : "Health Scorecard",
-      desc: language === "hi" ? "समग्र वित्तीय स्वास्थ्य मूल्यांकन" : "Overall wellness assessment",
-      icon: <HeartPulse className="w-5 h-5" />,
-      color: "text-bhagwa-600 bg-bhagwa-50 border-bhagwa-100",
     },
     {
       id: "retirement" as ActiveWidget,
@@ -1172,102 +1158,6 @@ export default function App() {
           {/* Right Area: Stats Bar + Premium Upper Right Sign-In Area */}
           <div className="flex flex-wrap items-center justify-between sm:justify-end gap-3 w-full sm:w-auto ml-auto">
             
-            {/* Quick Stats & Profile parameters bar */}
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4 bg-slate-50 border border-slate-100/80 px-3.5 py-2 rounded-xl text-xs">
-              <button 
-                onClick={() => setActiveWidget("profiles")}
-                title="Click to manage all family accounts"
-                className="flex items-center gap-1.5 hover:text-bhagwa-600 transition-colors text-left cursor-pointer font-bold text-slate-700 focus:outline-none"
-              >
-                <Users className="w-3.5 h-3.5 text-bhagwa-500" />
-                <span
-                  contentEditable
-                  suppressContentEditableWarning
-                  onBlur={(e) => {
-                    const newName = e.currentTarget.textContent?.trim();
-                    if (newName && newName !== profile.name) {
-                      handleUpdateProfile({
-                        ...profile,
-                        name: newName
-                      });
-                    }
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      e.currentTarget.blur();
-                    }
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
-                  title="Click to edit profile name directly inline"
-                  className="px-1 py-0.5 rounded hover:bg-slate-200/60 dark:hover:bg-slate-800 focus:bg-white dark:focus:bg-slate-905 focus:outline-none focus:ring-1 focus:ring-bhagwa-500 min-w-[50px] inline-block transition-all cursor-text border-b border-dashed border-slate-300"
-                >
-                  {profile.name || "Default user"}
-                </span>
-                <span className="text-[9px] uppercase tracking-wider bg-bhagwa-100 text-bhagwa-700 font-extrabold px-1 rounded-sm ml-0.5 animate-pulse">
-                  {language === "hi" ? "बदलें" : "Switch"}
-                </span>
-              </button>
-              <div className="h-4 w-px bg-slate-200"></div>
-              <div>
-                <span className="text-slate-400">{language === "hi" ? "मासिक ग्रॉस:" : "Monthly Gross:"}</span>
-                <span 
-                  contentEditable
-                  suppressContentEditableWarning
-                  onBlur={(e) => {
-                    const newSalary = parseInt(e.currentTarget.textContent?.replace(/\D/g, "") || "", 10);
-                    if (!isNaN(newSalary) && newSalary !== profile.salary) {
-                      handleUpdateProfile({
-                        ...profile,
-                        salary: newSalary,
-                        monthlyExpenses: Math.round(newSalary * 0.4)
-                      });
-                    }
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      e.currentTarget.blur();
-                    }
-                  }}
-                  title="Click to edit salary"
-                  className="font-bold text-bhagwa-600 ml-1 px-1 py-0.5 rounded hover:bg-slate-200/60 dark:hover:bg-slate-800 focus:bg-white dark:focus:bg-slate-905 focus:outline-none focus:ring-1 focus:ring-bhagwa-500 cursor-text border-b border-dashed border-slate-300 font-mono"
-                >
-                  {profile.salary}
-                </span>
-              </div>
-              <div className="h-4 w-px bg-slate-200"></div>
-              <div>
-                <span className="text-slate-400">{language === "hi" ? "उम्र:" : "Age:"}</span>
-                <span 
-                  contentEditable
-                  suppressContentEditableWarning
-                  onBlur={(e) => {
-                    const newAge = parseInt(e.currentTarget.textContent?.replace(/\D/g, "") || "", 10);
-                    if (!isNaN(newAge) && newAge >= 18 && newAge <= 100 && newAge !== profile.age) {
-                      handleUpdateProfile({
-                        ...profile,
-                        age: newAge
-                      });
-                    }
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      e.currentTarget.blur();
-                    }
-                  }}
-                  title="Click to edit age"
-                  className="font-bold text-slate-700 ml-1 px-1 py-0.5 rounded hover:bg-slate-200/60 dark:hover:bg-slate-800 focus:bg-white dark:focus:bg-slate-905 focus:outline-none focus:ring-1 focus:ring-bhagwa-500 cursor-text border-b border-dashed border-slate-300 font-mono"
-                >
-                  {profile.age}
-                </span>
-                <span className="text-slate-500 ml-0.5 text-[10px]">{language === "hi" ? " वर्ष" : " yrs"}</span>
-              </div>
-            </div>
-
             {/* Global Language Toggle Selector */}
             <div className="flex items-center gap-1 bg-slate-50 dark:bg-slate-800 p-1 rounded-xl shadow-3xs border border-slate-150 dark:border-slate-700 shrink-0">
               <button
