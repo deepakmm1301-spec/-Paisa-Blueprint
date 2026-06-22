@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Landmark, Sparkles, HelpCircle, AlertTriangle, ArrowRight, ShieldAlert } from "lucide-react";
+import { Landmark, Sparkles, HelpCircle, AlertTriangle, ArrowRight, ShieldAlert, Share2 } from "lucide-react";
+import { getShareableLink } from "../types";
 
 export default function RetirementPlanner() {
   const [currentAge, setCurrentAge] = useState<number>(30);
@@ -49,14 +50,38 @@ export default function RetirementPlanner() {
   const compoundFactor = ((Math.pow(1 + rMonthly, nMonths) - 1) / rMonthly) * (1 + rMonthly);
   const monthlySipRequired = Math.round(targetCorpus / (compoundFactor || 1));
 
+  const shareToWhatsApp = () => {
+    const currentUrl = getShareableLink("retirement", "/retirement-roadmap");
+    
+    const text = `🌴 *Retirement Roadmap & Pension Projections*
+Current Age: ${currentAge} | Retirement Age: ${retirementAge}
+Monthly Expense (Current value): ₹${monthlyExpense.toLocaleString("en-IN")}/mo
+Inflated Monthly Expense (at Retirement): ₹${inflatedMonthlyExpense.toLocaleString("en-IN")}/mo
+-----------------------------------
+*Required Retirement Corpus: ₹${targetCorpus.toLocaleString("en-IN")}*
+*Required Monthly SIP for Goal: ₹${monthlySipRequired.toLocaleString("en-IN")}/mo*
+
+Chart your complete retirement roadmap instantly: ${currentUrl}`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
   return (
-    <div id="retirement-planner-module" className="bg-white rounded-2xl border border-slate-100 p-6 md:p-8 shadow-xs">
-      <div className="border-b border-slate-100 pb-5 mb-6">
-        <span className="text-xs font-semibold uppercase tracking-wider text-bhagwa-600 bg-bhagwa-50 px-2.5 py-1 rounded-full">Longevity Blueprint</span>
-        <h2 className="text-2xl font-bold text-slate-800 mt-2 font-display">Salaried Retirement Planner</h2>
-        <p className="text-slate-500 text-sm mt-1">
-          Simulate inflation erosion, longevity cashflow requirements, and calculate the exact monthly SIP index needed to reach your target corpus.
-        </p>
+    <div id="retirement-planner-module" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 md:p-8 shadow-xs">
+      <div className="border-b border-slate-100 dark:border-slate-800 pb-5 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span className="text-xs font-semibold uppercase tracking-wider text-bhagwa-600 bg-bhagwa-50 dark:bg-bhagwa-950/30 px-2.5 py-1 rounded-full">Longevity Blueprint</span>
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-white mt-2 font-display">Salaried Retirement Planner</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+            Simulate inflation erosion, longevity cashflow requirements, and calculate the exact monthly SIP index needed to reach your target corpus.
+          </p>
+        </div>
+        <button
+          onClick={shareToWhatsApp}
+          className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 self-start sm:self-center shadow-md transition-all border-0 cursor-pointer"
+        >
+          <Share2 className="w-4 h-4" />
+          <span>Share on WhatsApp</span>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

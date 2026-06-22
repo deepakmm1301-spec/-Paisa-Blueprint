@@ -11,8 +11,10 @@ import {
   FileSpreadsheet,
   PieChart,
   Grid,
-  Info
+  Info,
+  Share2
 } from "lucide-react";
+import { getShareableLink } from "../types";
 
 export default function PensionCalculator() {
   // Subscriber Details
@@ -165,24 +167,51 @@ export default function PensionCalculator() {
     expectedGrowthRate
   ]);
 
+  const shareToWhatsApp = () => {
+    const currentUrl = getShareableLink("pension", "/pension-calculator");
+    if (!results) return;
+    
+    const text = `👵 *NPS Retirement Pension Calculator Projections*
+Subscriber Sector: ${subscriberSector}
+Monthly Contribution: ₹${monthlyContribution.toLocaleString("en-IN")}/mo (Step-Up: ${annualIncrease}%)
+Investment Period: ${results.accumulationYears} years
+-----------------------------------
+*Total Contribution: ₹${results.totalContribution.toLocaleString("en-IN")}*
+*NPS Accumulated Corpus: ₹${results.totalAccumulatedCorpus.toLocaleString("en-IN")}*
+*Tax-free Lump-sum: ₹${results.lumpSumWithdrawn.toLocaleString("en-IN")}*
+*Monthly Lifetime Pension: ₹${results.expectedMonthlyPension.toLocaleString("en-IN")}/month*
+
+Map your exact NPS pension blueprint here: ${currentUrl}`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
   return (
     <div id="pension-calculator-section" className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start w-full">
       {/* Input controls form (8 cols) */}
       <div className="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm dark:shadow-xl dark:shadow-slate-950/40 space-y-6">
-        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4 gap-4">
           <div>
             <h3 className="text-lg font-black text-slate-900 dark:text-slate-100 font-display">
               NPS Pension Parameters
             </h3>
             <p className="text-xs text-slate-500 mt-1">Based on the National Pension System Trust guidelines</p>
           </div>
-          <button 
-            onClick={handleReset}
-            className="inline-flex items-center gap-1 text-[11px] font-bold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/30 px-2.5 py-1.5 rounded-lg border border-purple-200/50 dark:border-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors"
-          >
-            <Undo2 className="w-3.5 h-3.5" />
-            Reset Inputs
-          </button>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={handleReset}
+              className="inline-flex items-center gap-1 text-[11px] font-bold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/30 px-2.5 py-1.5 rounded-lg border border-purple-200/50 dark:border-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors cursor-pointer"
+            >
+              <Undo2 className="w-3.5 h-3.5" />
+              Reset
+            </button>
+            <button
+              onClick={shareToWhatsApp}
+              className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-[11px] px-3 py-1.5 rounded-lg flex items-center justify-center gap-1.5 shadow-sm transition-all border-0 cursor-pointer"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+              <span>Share</span>
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

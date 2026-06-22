@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { UserProfile } from "../types";
-import { ShieldCheck, HeartPulse, Sparkles, TrendingUp, DollarSign, Wallet, Percent, Users, Landmark, AlertTriangle } from "lucide-react";
+import { UserProfile, getShareableLink } from "../types";
+import { ShieldCheck, HeartPulse, Sparkles, TrendingUp, DollarSign, Wallet, Percent, Users, Landmark, AlertTriangle, Share2 } from "lucide-react";
 
 interface Props {
   profile: UserProfile;
@@ -179,33 +179,58 @@ export default function FinancialHealthCheck({ profile, onUpdateProfile }: Props
     return list;
   };
 
+  const shareToWhatsApp = () => {
+    const currentUrl = getShareableLink("health", "/health-scorecard");
+    const scoreLabel = getScoreLabel(financialScore);
+    
+    const text = `🎯 *My Paisa Financial Health Scorecard*
+Overall Score: *${financialScore}/100* (${scoreLabel})
+-----------------------------------
+🚨 Liquid Emergency Fund Score: ${emergencyScore}/100
+🛡️ Protection & Insurance Score: ${insuranceScore}/100
+👵 Retirement Readiness Score: ${retirementScore}/100
+📑 Debt Burden Index Score: ${debtScore}/100
+💰 Capital Wealth Accumulation: ${wealthScore}/100
+
+Measure your instant financial health scorecard here: ${currentUrl}`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
   return (
-    <div id="financial-health-check" className="bg-white rounded-2xl border border-slate-100 p-6 md:p-8 shadow-xs">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-100 pb-5 mb-6">
+    <div id="financial-health-check" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 md:p-8 shadow-xs">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-100 dark:border-slate-800 pb-5 mb-6 gap-4">
         <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-bhagwa-600 bg-bhagwa-50 px-2.5 py-1 rounded-full">Scorecard</span>
-          <h2 className="text-2xl font-bold text-slate-800 mt-2 font-display">Financial Health & Readiness</h2>
-          <p className="text-slate-500 text-sm mt-1">
+          <span className="text-xs font-semibold uppercase tracking-wider text-bhagwa-600 bg-bhagwa-50 dark:bg-bhagwa-950/30 px-2.5 py-1 rounded-full">Scorecard</span>
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-white mt-2 font-display">Financial Health & Readiness</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
             Standard wealth & risk scoring calibrated for salaried employees in India.
           </p>
         </div>
-        <button
-          id="btn-edit-profile"
-          onClick={() => {
-            if (editMode) handleSave();
-            else {
-              setFormData({ ...profile });
-              setEditMode(true);
-            }
-          }}
-          className={`mt-4 md:mt-0 px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
-            editMode 
-              ? "bg-bhagwa-600 hover:bg-bhagwa-700 text-white shadow-xs" 
-              : "bg-slate-100 hover:bg-slate-200 text-slate-700"
-          }`}
-        >
-          {editMode ? "Save Changes" : "Update Financial Inputs"}
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={shareToWhatsApp}
+            className="flex items-center gap-1.5 bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-xs transition-all border-0 cursor-pointer"
+          >
+            <Share2 className="w-4 h-4" /> Share on WhatsApp
+          </button>
+          <button
+            id="btn-edit-profile"
+            onClick={() => {
+              if (editMode) handleSave();
+              else {
+                setFormData({ ...profile });
+                setEditMode(true);
+              }
+            }}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
+              editMode 
+                ? "bg-bhagwa-600 hover:bg-bhagwa-700 text-white shadow-xs" 
+                : "bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-750"
+            }`}
+          >
+            {editMode ? "Save Changes" : "Update Financial Inputs"}
+          </button>
+        </div>
       </div>
 
       {editMode ? (

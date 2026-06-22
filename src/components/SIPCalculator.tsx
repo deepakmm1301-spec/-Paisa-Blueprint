@@ -11,8 +11,10 @@ import {
   Info, 
   Calendar, 
   Percent,
-  TrendingDown
+  TrendingDown,
+  Share2
 } from "lucide-react";
+import { getShareableLink } from "../types";
 
 export default function SIPCalculator() {
   const [monthlySip, setMonthlySip] = useState<number>(10000);
@@ -156,17 +158,41 @@ export default function SIPCalculator() {
   // Specific selected year ratios for hover display
   const hoverRecord = hoveredYear !== null ? yearRecords[hoveredYear] : null;
 
+  const shareToWhatsApp = () => {
+    const currentUrl = getShareableLink("sip", "/sip-calculator.html");
+    const text = `📈 *Systematic Investment Plan (SIP) Projections*
+Monthly SIP: ₹${monthlySip.toLocaleString("en-IN")}/mo
+Step-Up SIP (with ${annualStepUp}% annual hike)
+Tenure: ${years} Years @ ${expectedReturn}% p.a.
+-----------------------------------
+*Total Invested: ₹${investedAmount.toLocaleString("en-IN")}*
+*Est. Future Value: ₹${futureValue.toLocaleString("en-IN")}*
+*Wealth Created: ₹${wealthCreated.toLocaleString("en-IN")}*
+
+Calculate your compounding potential instantly: ${currentUrl}`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
   return (
     <div id="sip-calculator-module" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 md:p-8 shadow-xs">
       {/* Header Banner */}
-      <div className="border-b border-slate-100 dark:border-slate-800 pb-5 mb-6">
-        <span className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-2.5 py-1 rounded-full">
-          Step-Up SIP Planner
-        </span>
-        <h2 className="text-2xl font-bold text-slate-800 dark:text-white mt-2 font-display">Systematic Investment Plan (SIP) Calculator</h2>
-        <p className="text-slate-500 dark:text-slate-405 text-sm mt-1">
-          Compare flat traditional SIPs with compounding Step-Up SIPs to trace pure capital gains over time.
-        </p>
+      <div className="border-b border-slate-100 dark:border-slate-800 pb-5 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-2.5 py-1 rounded-full">
+            Step-Up SIP Planner
+          </span>
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-white mt-2 font-display">Systematic Investment Plan (SIP) Calculator</h2>
+          <p className="text-slate-500 dark:text-slate-405 text-sm mt-1">
+            Compare flat traditional SIPs with compounding Step-Up SIPs to trace pure capital gains over time.
+          </p>
+        </div>
+        <button
+          onClick={shareToWhatsApp}
+          className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 self-start sm:self-center shadow-md transition-all border-0 cursor-pointer"
+        >
+          <Share2 className="w-4 h-4" />
+          <span>Share on WhatsApp</span>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

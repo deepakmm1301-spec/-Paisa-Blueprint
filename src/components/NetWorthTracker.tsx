@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { UserProfile } from "../types";
-import { Wallet, Landmark, TrendingUp, Sparkles, Scale, Percent, ShieldCheck } from "lucide-react";
+import { UserProfile, getShareableLink } from "../types";
+import { Wallet, Landmark, TrendingUp, Sparkles, Scale, Percent, ShieldCheck, Share2 } from "lucide-react";
 
 interface Props {
   profile: UserProfile;
@@ -63,27 +63,49 @@ export default function NetWorthTracker({ profile }: Props) {
   const netWorth = totalAssets - totalLiabilities;
   const debtToAssetRatio = totalAssets > 0 ? (totalLiabilities / totalAssets) : 0;
 
+  const shareToWhatsApp = () => {
+    const currentUrl = getShareableLink("profiles", "/profiles");
+    
+    const text = `💰 *My Paisa Balancesheet & Wealth Projections*
+*Total Assets:* ₹${totalAssets.toLocaleString("en-IN")}
+*Total Loans/Debt:* ₹${totalLiabilities.toLocaleString("en-IN")}
+-----------------------------------
+*My Net Worth:* 🎉 ₹${netWorth.toLocaleString("en-IN")}
+Debt to Asset Ratio: ${(debtToAssetRatio * 100).toFixed(1)}%
+
+Track your wealth balance sheets and compounding growth: ${currentUrl}`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
   return (
-    <div id="networth-tracker-module" className="bg-white rounded-2xl border border-slate-100 p-6 md:p-8 shadow-xs text-sm">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-100 pb-5 mb-6">
+    <div id="networth-tracker-module" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 md:p-8 shadow-xs text-sm">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-100 dark:border-slate-800 pb-5 mb-6 gap-4">
         <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-bhagwa-600 bg-bhagwa-50 px-2.5 py-1 rounded-full">Balance Sheet</span>
-          <h2 className="text-2xl font-bold text-slate-800 mt-2 font-display">My Wealth Tracker</h2>
-          <p className="text-slate-500 text-sm mt-1">
+          <span className="text-xs font-semibold uppercase tracking-wider text-bhagwa-600 bg-bhagwa-50 dark:bg-bhagwa-950/30 px-2.5 py-1 rounded-full">Balance Sheet</span>
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-white mt-2 font-display">My Wealth Tracker</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
             Track total accumulated assets (safe investments, liquidity schemes) against active loan liabilities.
           </p>
         </div>
-        <div className="flex items-center gap-2 mt-3 md:mt-0 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-lg">
-          <label className="text-xs font-semibold text-slate-500 mr-2 cursor-pointer" htmlFor="toggle-profile-sync">
-            Sync with profile setup:
-          </label>
-          <input
-            id="toggle-profile-sync"
-            type="checkbox"
-            checked={useProfileValues}
-            onChange={(e) => setUseProfileValues(e.target.checked)}
-            className="w-4 h-4 cursor-pointer accent-bhagwa-600"
-          />
+        <div className="flex flex-wrap items-center gap-3 mt-3 md:mt-0">
+          <button
+            onClick={shareToWhatsApp}
+            className="flex items-center gap-1.5 bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-xs transition-all border-0 cursor-pointer"
+          >
+            <Share2 className="w-4 h-4" /> Share on WhatsApp
+          </button>
+          <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 dark:text-slate-400">
+            <label className="cursor-pointer" htmlFor="toggle-profile-sync">
+              Sync with profile setup:
+            </label>
+            <input
+              id="toggle-profile-sync"
+              type="checkbox"
+              checked={useProfileValues}
+              onChange={(e) => setUseProfileValues(e.target.checked)}
+              className="w-4 h-4 cursor-pointer accent-bhagwa-600"
+            />
+          </div>
         </div>
       </div>
 

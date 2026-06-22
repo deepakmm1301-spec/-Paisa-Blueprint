@@ -14,9 +14,10 @@ import {
   Lightbulb,
   Sparkles,
   RefreshCw,
-  Gauge
+  Gauge,
+  Share2
 } from "lucide-react";
-import { UserProfile, LoanDetails } from "../types";
+import { UserProfile, LoanDetails, getShareableLink } from "../types";
 
 interface DebtItem {
   id: string;
@@ -537,6 +538,23 @@ export default function DebtPlanner({ profile }: DebtPlannerProps) {
 
   const foirMeta = getFoirBadge(foirRatio);
 
+  const shareToWhatsApp = () => {
+    const currentUrl = getShareableLink("debt_planner", "/debt");
+    const totalDebtAmount = debts.reduce((sum, d) => sum + d.balance, 0);
+    
+    const text = `💸 *Debt Freedom Projections*
+Total Active Loans/Card Debts: ${debts.length}
+Total Debt Balance: ₹${totalDebtAmount.toLocaleString("en-IN")}
+Current FOIR EMI Ratio: ${foirRatio.toFixed(1)}% (${foirMeta.text})
+-----------------------------------
+*Accelerated Repayment Strategy:* ${selectedStrategy === "avalanche" ? "Avalanche (High Interest rate first)" : "Snowball (Lowest Balance first)"}
+*Time Saved to Debt-Free:* ${monthsSaved} Months
+*Total Interest Saved:* ₹${interestSaved.toLocaleString("en-IN")}
+
+Design your custom debt-prepayment roadmap instantly: ${currentUrl}`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
   return (
     <div id="debt-repayment-planner-app" className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-xl overflow-hidden transition-all duration-300">
       
@@ -558,13 +576,23 @@ export default function DebtPlanner({ profile }: DebtPlannerProps) {
               Accelerate your debt payoff schedules. Compare the <strong className="text-purple-600 dark:text-purple-400">Avalanche</strong> and <strong className="text-purple-600 dark:text-purple-400">Snowball</strong> techniques to wipe out EMIs with smart prepayments.
             </p>
           </div>
-          <button
-            onClick={handleResetToProfile}
-            className="self-start sm:self-center bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-750 border border-slate-200 dark:border-slate-700 px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 flex items-center gap-1.5 transition-all cursor-pointer shadow-3xs"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-            Reload from Profile
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={shareToWhatsApp}
+              disabled={debts.length === 0}
+              className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl flex items-center justify-center gap-2 transition-all border-0 cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+            >
+              <Share2 className="w-4 h-4" />
+              <span>Share on WhatsApp</span>
+            </button>
+            <button
+              onClick={handleResetToProfile}
+              className="bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-750 border border-slate-200 dark:border-slate-700 px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 flex items-center gap-1.5 transition-all cursor-pointer shadow-3xs"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              Reload from Profile
+            </button>
+          </div>
         </div>
       </div>
 

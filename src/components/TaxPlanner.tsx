@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Receipt, Landmark, ShieldCheck, Scale, Award, HelpCircle, FileText, Sparkles } from "lucide-react";
-import { UserProfile } from "../types";
+import { Receipt, Landmark, ShieldCheck, Scale, Award, HelpCircle, FileText, Sparkles, Share2 } from "lucide-react";
+import { UserProfile, getShareableLink } from "../types";
 
 interface Props {
   profile?: UserProfile;
@@ -126,14 +126,37 @@ export default function TaxPlanner({ profile }: Props) {
   const standardTaxSavings = Math.abs(totalTaxOld - totalTaxNew);
   const betterRegime = totalTaxOld < totalTaxNew ? "Old Regime" : "New Regime";
 
+  const shareToWhatsApp = () => {
+    const currentUrl = getShareableLink("tax", "/tax-calculator"); // or dynamic
+    
+    const text = `⚖️ *Indian Income Tax Optimizer Projections (FY 24-25)*
+Annual GrossCTC: ₹${annualGross.toLocaleString("en-IN")}
+-----------------------------------
+*Old Regime Tax:* ₹${totalTaxOld.toLocaleString("en-IN")}
+*New Regime Tax:* ₹${totalTaxNew.toLocaleString("en-IN")}
+*Tax Saved with ${betterRegime === "Old Regime" ? "Old Reg" : "New Reg"}:* ₹${standardTaxSavings.toLocaleString("en-IN")}
+
+Optimize your salary and deductions instantly: ${currentUrl}`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
   return (
-    <div id="tax-planner-module" className="bg-white rounded-2xl border border-slate-100 p-6 md:p-8 shadow-xs text-sm">
-      <div className="border-b border-slate-100 pb-5 mb-6">
-        <span className="text-xs font-semibold uppercase tracking-wider text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">FY 24-25 Budget</span>
-        <h2 className="text-2xl font-bold text-slate-800 mt-2 font-display">Tax Optimizer: Old vs. New Regime</h2>
-        <p className="text-slate-500 text-sm mt-1">
-          Input your annual income and potential exemptions to optimize your Indian tax liability under both financial schemes.
-        </p>
+    <div id="tax-planner-module" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 md:p-8 shadow-xs text-sm">
+      <div className="border-b border-slate-100 dark:border-slate-800 pb-5 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span className="text-xs font-semibold uppercase tracking-wider text-amber-600 bg-amber-50 dark:bg-amber-950/30 px-2.5 py-1 rounded-full">FY 24-25 Budget</span>
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-white mt-2 font-display">Tax Optimizer: Old vs. New Regime</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+            Input your annual income and potential exemptions to optimize your Indian tax liability under both financial schemes.
+          </p>
+        </div>
+        <button
+          onClick={shareToWhatsApp}
+          className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 self-start sm:self-center shadow-md transition-all border-0 cursor-pointer"
+        >
+          <Share2 className="w-4 h-4" />
+          <span>Share on WhatsApp</span>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

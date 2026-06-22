@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Sparkles, Calendar, Plus, Trash2, HelpCircle, GraduationCap, Home, Car, Heart, Palmtree, Compass, AlertCircle, Pencil, Check, X } from "lucide-react";
-import { Goal } from "../types";
+import { Sparkles, Calendar, Plus, Trash2, HelpCircle, GraduationCap, Home, Car, Heart, Palmtree, Compass, AlertCircle, Pencil, Check, X, Share2 } from "lucide-react";
+import { Goal, getShareableLink } from "../types";
 
 export default function GoalPlanner() {
   const [goals, setGoals] = useState<Goal[]>(() => {
@@ -167,23 +167,59 @@ export default function GoalPlanner() {
     }
   };
 
+  const shareToWhatsApp = () => {
+    const currentUrl = getShareableLink("goal_planner", "/goals");
+    if (goals.length === 0) return;
+    
+    let text = `🎯 *My Milestones & Goal Planner* (Paisa Blueprint)\n\n`;
+    goals.slice(0, 3).forEach((g, idx) => {
+      const inflatedTarget = Math.round(g.targetAmount * Math.pow(1 + g.inflationRate / 100, g.yearsLeft));
+      const rMonthly = (g.expectedReturn / 100) / 12;
+      const nMonths = g.yearsLeft * 12;
+      const compoundFactor = ((Math.pow(1 + rMonthly, nMonths) - 1) / rMonthly) * (1 + rMonthly);
+      const sipNeeded = Math.round(inflatedTarget / (compoundFactor || 1));
+      
+      text += `${idx + 1}. *${g.name}*\n`;
+      text += `⏱️ Years Left: ${g.yearsLeft} Yr | Expected Return: ${g.expectedReturn}%\n`;
+      text += `💰 Target: ₹${g.targetAmount.toLocaleString("en-IN")}\n`;
+      text += `📈 Inflated Target: ₹${inflatedTarget.toLocaleString("en-IN")}\n`;
+      text += `📝 Required Monthly SIP: *₹${sipNeeded.toLocaleString("en-IN")}/mo*\n\n`;
+    });
+    
+    if (goals.length > 3) {
+      text += `And ${goals.length - 3} more goals trackable on my dashboard...\n\n`;
+    }
+    
+    text += `Calculate your inflation-protected milestone targets instantly: ${currentUrl}`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
   return (
-    <div id="goal-planner-module" className="bg-white rounded-2xl border border-slate-100 p-6 md:p-8 shadow-xs">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-100 pb-5 mb-6">
+    <div id="goal-planner-module" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 md:p-8 shadow-xs">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-100 dark:border-slate-800 pb-5 mb-6 gap-4">
         <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-bhagwa-600 bg-bhagwa-50 px-2.5 py-1 rounded-full">Target Based Investing</span>
-          <h2 className="text-2xl font-bold text-slate-800 mt-2 font-display">My Goal Planner</h2>
-          <p className="text-slate-500 text-sm mt-1">
+          <span className="text-xs font-semibold uppercase tracking-wider text-bhagwa-600 bg-bhagwa-50 dark:bg-bhagwa-950/30 px-2.5 py-1 rounded-full">Target Based Investing</span>
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-white mt-2 font-display">My Goal Planner</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
             Map out life's biggest milestones. Enter targets today, and calculate exact inflation-protected SIP requirements.
           </p>
         </div>
-        <button
-          id="btn-add-goal"
-          onClick={() => setShowAddForm(!showAddForm)}
-          className="mt-4 md:mt-0 flex items-center gap-1.5 bg-bhagwa-600 hover:bg-bhagwa-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-xs cursor-pointer"
-        >
-          <Plus className="w-4 h-4" /> Add Goal Target
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={shareToWhatsApp}
+            disabled={goals.length === 0}
+            className="flex items-center gap-1.5 bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-xs transition-all border-0 cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+          >
+            <Share2 className="w-4 h-4" /> Share on WhatsApp
+          </button>
+          <button
+            id="btn-add-goal"
+            onClick={() => setShowAddForm(!showAddForm)}
+            className="flex items-center gap-1.5 bg-bhagwa-600 hover:bg-bhagwa-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-xs cursor-pointer"
+          >
+            <Plus className="w-4 h-4" /> Add Goal Target
+          </button>
+        </div>
       </div>
 
       {showAddForm && (
