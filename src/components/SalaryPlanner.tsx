@@ -410,6 +410,78 @@ export default function SalaryPlanner({ profile }: Props) {
             </div>
           </div>
         </div>
+
+        {/* Salary, Pension and Allowances Explanation Section */}
+        <div className="mt-10 pt-8 border-t border-slate-100 dark:border-slate-800 space-y-8 text-left bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-100 dark:border-slate-850">
+          {/* Explanation Section */}
+          <div className="space-y-3">
+            <h3 className="text-lg font-extrabold text-slate-805 font-display">
+              How is Government &amp; Salaried Income Computed in India?
+            </h3>
+            <p className="text-xs leading-relaxed text-slate-650 dark:text-slate-400">
+              Understanding your salaried package (or Gross Salary) involves dividing the various compensation allowances mandated by the Government or corporate HR policy. In India, salaried earnings are divided into a core Basic Pay, upon which other dynamic allowances like Dearness Allowance (DA), House Rent Allowance (HRA), and Medical/Transport buffers are scaled.
+            </p>
+            <p className="text-xs leading-relaxed text-slate-655 dark:text-slate-400">
+              During retirement or voluntary resignation, permanent salaried employees are also legally entitled to specialized payouts such as **Gratuity** (under the Payment of Gratuity Act, computed as 15 days of basic salary for each completed year of service) and **Leave Encashment** (reimbursing unavailed earned leaves up to a statutory 300-day cumulative ceiling).
+            </p>
+          </div>
+
+          {/* FAQ Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-extrabold text-slate-800 font-display">
+              Salaried &amp; Pension Allowance FAQs
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="bg-slate-50/50 dark:bg-slate-950 p-4 rounded-xl border border-slate-100 dark:border-slate-800 space-y-1">
+                <span className="block font-bold text-xs text-indigo-950 dark:text-indigo-300">
+                  Q1: What is the rule for tax-free Gratuity?
+                </span>
+                <p className="text-[11px] leading-relaxed text-slate-550 dark:text-slate-405">
+                  Under current Union Budget adjustments, the maximum tax-free Gratuity exemption limit for qualified non-government employees has been increased to ₹25 Lakhs, matching Central Government rules.
+                </p>
+              </div>
+
+              <div className="bg-slate-50/50 dark:bg-slate-950 p-4 rounded-xl border border-slate-100 dark:border-slate-800 space-y-1">
+                <span className="block font-bold text-xs text-indigo-950 dark:text-indigo-300">
+                  Q2: How is HRA calculated under tax exemptions?
+                </span>
+                <p className="text-[11px] leading-relaxed text-slate-550 dark:text-slate-405">
+                  House Rent Allowance (HRA) is tax-exempted under Section 10(13A) to the minimum of: Actual HRA received, Rent paid minus 10% of basic pay, or 50% (metros) / 40% (non-metros) of basic pay.
+                </p>
+              </div>
+
+              <div className="bg-slate-50/50 dark:bg-slate-950 p-4 rounded-xl border border-slate-100 dark:border-slate-800 space-y-1">
+                <span className="block font-bold text-xs text-indigo-950 dark:text-indigo-300">
+                  Q3: Is Leave Encashment taxable?
+                </span>
+                <p className="text-[11px] leading-relaxed text-slate-550 dark:text-slate-405">
+                  During active service, leave encashment is fully taxable. At retirement, the tax-free limit for leave encashment for non-government employees stands at ₹25 Lakhs.
+                </p>
+              </div>
+
+              <div className="bg-slate-50/50 dark:bg-slate-950 p-4 rounded-xl border border-slate-100 dark:border-slate-800 space-y-1">
+                <span className="block font-bold text-xs text-indigo-950 dark:text-indigo-300">
+                  Q4: Does basic pay scale increase every year?
+                </span>
+                <p className="text-[11px] leading-relaxed text-slate-550 dark:text-slate-405">
+                  Yes, central and state government employees see a regular annual increment (typically 3%) on either July 1st or January 1st under 7th Pay Commission recommendations.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Related Calculators */}
+          <div className="bg-violet-50/45 dark:bg-violet-950/10 border border-violet-100/60 dark:border-violet-900/30 rounded-2xl p-5 space-y-3">
+            <span className="text-[10px] font-black uppercase text-violet-600 dark:text-violet-400 tracking-wider font-mono block">Related Utilities</span>
+            <p className="text-xs font-bold text-slate-805 dark:text-slate-350">Optimize your future-proof ledger with central related Paisa planners:</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <a href="/sip-calculator.html" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-2.5 rounded-xl hover:border-violet-450 text-center font-bold text-slate-705 dark:text-slate-300 block">SIP Calculator</a>
+              <a href="/nps-calculator.html" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-2.5 rounded-xl hover:border-violet-450 text-center font-bold text-slate-705 dark:text-slate-300 block">NPS Tax Planner</a>
+              <a href="/pension-calculator.html" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-2.5 rounded-xl hover:border-violet-450 text-center font-bold text-slate-705 dark:text-slate-300 block">Pension Retirement</a>
+              <a href="/da-calculator.html" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-2.5 rounded-xl hover:border-violet-450 text-center font-bold text-slate-705 dark:text-slate-300 block">DA Allowance</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

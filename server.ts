@@ -125,136 +125,19 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Paisa Blueprint server is fully operational.", totalAccounts: accountsMemory.length });
 });
 
-// Authentication API: Check if email is already registered
+// Authentication API: Check if email is already registered (Disabled)
 app.get("/api/auth/check-email", (req, res) => {
-  try {
-    const { email } = req.query;
-    if (!email) {
-      res.status(400).json({ error: "Missing email parameter" });
-      return;
-    }
-    const emailNorm = (email as string).trim().toLowerCase();
-    const found = accountsMemory.some(
-      acc => acc.email.toLowerCase() === emailNorm || (acc.phone && acc.phone.toLowerCase() === emailNorm)
-    );
-    res.json({ registered: found });
-  } catch (err: any) {
-    console.error("Check email error:", err);
-    res.status(500).json({ error: "Internal server error checking account email." });
-  }
+  res.status(403).json({ error: "Direct registration and check-email endpoints are disabled. Bypassed layout in use." });
 });
 
-// Authentication API: Register
+// Authentication API: Register (Disabled)
 app.post("/api/auth/register", (req, res) => {
-  try {
-    const { email, name, password, defaultProfile, phone } = req.body;
-    if ((!email && !phone) || !name || !password) {
-      res.status(400).json({ error: "Missing required fields: email/phone, name, or password" });
-      return;
-    }
-
-    const emailNorm = (email || "").trim().toLowerCase();
-    const phoneNorm = (phone || "").trim().toLowerCase();
-    const identifier = emailNorm || phoneNorm;
-    
-    // Check duplication centrally across ALL devices connected
-    const existing = accountsMemory.find(
-      acc => acc.email.toLowerCase() === identifier || 
-             (acc.phone && acc.phone.toLowerCase() === identifier) || 
-             (phoneNorm && (acc.email.toLowerCase() === phoneNorm || (acc.phone && acc.phone.toLowerCase() === phoneNorm)))
-    );
-    if (existing) {
-      res.status(409).json({ error: "This email address or phone number is already registered in the Paisa Network. Please use a unique login." });
-      return;
-    }
-
-    const initialProfile = {
-      ...(defaultProfile || {
-        age: 30,
-        salary: 120000,
-        monthlyExpenses: 45000,
-        investments: {
-          epfMonthly: 5000,
-          ppfAnnual: 50000,
-          npsMonthly: 5000,
-          elssAnnual: 30000,
-          healthPremium: 15000,
-          rentMonthly: 18000,
-          homeLoanInterestAnnual: 0,
-          otherDeductions: 0,
-          directEquitySIP: 15000,
-          goldMonthly: 2000
-        },
-        dependentsCount: 2,
-        cityTier: "Metropolitan",
-        insurance: {
-          termCover: 15000000,
-          healthCover: 500000
-        }
-      }),
-      id: "profile-main",
-      name: name.trim() // Instantly seed name
-    };
-
-    const newAccount: ServerUserAccount = {
-      email: emailNorm || phoneNorm,
-      phone: phoneNorm || undefined,
-      name: name.trim(),
-      passwordHash: password,
-      profilesList: [initialProfile],
-      activeProfileId: "profile-main",
-      createdAt: new Date().toISOString()
-    };
-
-    accountsMemory.push(newAccount);
-    saveAccounts();
-
-    res.status(201).json({ 
-      success: true, 
-      message: "Locker successfully registered in the Paisa network.",
-      user: {
-        name: newAccount.name,
-        email: newAccount.email,
-        phone: newAccount.phone,
-        profilesList: newAccount.profilesList,
-        activeProfileId: newAccount.activeProfileId
-      }
-    });
-  } catch (err: any) {
-    console.error("Register Error:", err);
-    res.status(500).json({ error: "Internal server error registering account." });
-  }
+  res.status(403).json({ error: "Sign up registration is disabled on this platform. Single continuous session active." });
 });
 
-// Authentication API: Login
+// Authentication API: Login (Disabled)
 app.post("/api/auth/login", (req, res) => {
-  try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      res.status(400).json({ error: "Missing email or password credentials" });
-      return;
-    }
-
-    const emailNorm = email.trim().toLowerCase();
-    const found = accountsMemory.find(
-      acc => acc.email.toLowerCase() === emailNorm || (acc.phone && acc.phone.toLowerCase() === emailNorm)
-    );
-
-    if (!found || found.passwordHash !== password) {
-      res.status(401).json({ error: "Invalid Email address / Phone number or Password. Try checking credentials or register a new account if you are new." });
-      return;
-    }
-
-    res.json({
-      name: found.name,
-      email: found.email,
-      profilesList: found.profilesList,
-      activeProfileId: found.activeProfileId
-    });
-  } catch (err: any) {
-    console.error("Login Error:", err);
-    res.status(500).json({ error: "Internal server error authenticating" });
-  }
+  res.status(403).json({ error: "Sign in authentication is disabled on this platform. Single continuous session active." });
 });
 
 // Authentication API: Sync profiles/ledgers across devices

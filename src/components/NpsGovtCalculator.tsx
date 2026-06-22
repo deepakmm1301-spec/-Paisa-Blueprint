@@ -718,6 +718,42 @@ Calculate your exact lifetime pension blueprint: ${currentUrl}`;
           </div>
         </section>
 
+        {/* Related Calculators */}
+        <section className="bg-violet-50/30 border border-violet-100/50 dark:border-violet-900/15 rounded-3xl p-6 space-y-4">
+          <span className="text-[9px] font-black uppercase text-violet-600 dark:text-violet-400 tracking-widest font-mono block">
+            Related Salaried Planners &amp; Checklists
+          </span>
+          <h4 className="text-xs font-black text-slate-800 dark:text-white leading-tight">
+            Continue planning your retired passive vectors with these secondary calculators:
+          </h4>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs leading-none">
+            <a 
+              href="/sip-calculator.html" 
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-950 text-center font-bold text-slate-705 dark:text-slate-300 transition-all block"
+            >
+              SIP Growth
+            </a>
+            <a 
+              href="/pension-calculator.html" 
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-950 text-center font-bold text-slate-705 dark:text-slate-300 transition-all block"
+            >
+              NPS Retirement
+            </a>
+            <a 
+              href="/salary-calculator.html" 
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-950 text-center font-bold text-slate-705 dark:text-slate-300 transition-all block"
+            >
+              Salary Planner
+            </a>
+            <a 
+              href="/da-calculator.html" 
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-950 text-center font-bold text-slate-705 dark:text-slate-300 transition-all block"
+            >
+              DA Allowance
+            </a>
+          </div>
+        </section>
+
       </div>
     </div>
   );

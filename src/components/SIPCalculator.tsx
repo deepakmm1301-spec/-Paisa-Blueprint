@@ -740,7 +740,7 @@ export default function SIPCalculator() {
                         <td className="px-4 py-2.5 font-bold font-sans text-slate-700 dark:text-slate-350">Yr {rec.year}</td>
                         <td className="px-4 py-2.5 text-right font-bold text-emerald-600 dark:text-emerald-400">₹{rec.futureValueStepUp.toLocaleString("en-IN")}</td>
                         <td className="px-4 py-2.5 text-right text-slate-600 dark:text-slate-400">₹{rec.futureValueNormal.toLocaleString("en-IN")}</td>
-                        <td className="px-4 py-2.5 text-right text-slate-405 dark:text-slate-500">₹{rec.investedStepUp.toLocaleString("en-IN")}</td>
+                        <td className="px-4 py-2.5 text-right text-slate-455 dark:text-slate-500">₹{rec.investedStepUp.toLocaleString("en-IN")}</td>
                         <td className="px-4 py-2.5 text-right font-extrabold text-amber-650 dark:text-amber-500">
                           {diff > 0 ? `+₹${diff.toLocaleString("en-IN")}` : "₹0"}
                         </td>
@@ -749,6 +749,113 @@ export default function SIPCalculator() {
                   })}
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          {/* SEO Explanation, FAQs, and Internal Links Section */}
+          <div className="mt-12 pt-10 border-t border-slate-100 dark:border-slate-850 space-y-10">
+            {/* Explanation Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-extrabold text-slate-800 font-display">
+                How Does Compounding Work in a Systematic Investment Plan (SIP)?
+              </h3>
+              <p className="text-xs leading-relaxed text-slate-650">
+                A Systematic Investment Plan (SIP) is a disciplined method of investing a fixed sum of money at regular intervals (typically monthly) into mutual funds. Rather than attempting to time the volatile market, SIP allows you to accumulate units over time, averaging your purchase costs (Rupee Cost Averaging).
+              </p>
+              <p className="text-xs leading-relaxed text-slate-655">
+                The absolute cornerstone of long-term SIP success is the **Power of Compounding**. As your mutual fund investments generate returns, those returns are reinvested to purchase more units, which then earn further returns. Over a 15 to 30-year horizon, the compound interest generated begins to exponentially surpass the out-of-pocket principal you contributed.
+              </p>
+              
+              {/* Dynamic Step-Up SIP formula callout */}
+              <div className="bg-emerald-50/50 border border-emerald-100 rounded-2xl p-5 space-y-2 mt-4">
+                <span className="text-[10px] font-black tracking-widest text-emerald-700 font-mono block uppercase">Compound Interest Math formula</span>
+                <span className="block text-sm font-bold text-slate-800">
+                  FV = P &times; [ ( (1 + i)^n - 1 ) / i ] &times; (1 + i)
+                </span>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  Where <strong className="text-slate-700">P</strong> represents your periodic contribution, <strong className="text-slate-700">i</strong> represents the periodic rate of return, and <strong className="text-slate-700">n</strong> represents the total number of periods. For a **Step-Up SIP**, your contributor variable <strong className="text-emerald-700">P</strong> increases by a defined percentage (e.g. 5% or 10%) every 12 months, allowing your portfolio compounding to multiply at dual speeds.
+                </p>
+              </div>
+            </div>
+
+            {/* Structured FAQ Section */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-extrabold text-slate-800 font-display">
+                Frequently Asked Key Questions (FAQs)
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-slate-55/40 hover:bg-slate-50 border border-slate-100 rounded-2xl p-5 space-y-2 transition-all">
+                  <span className="block font-bold text-xs text-indigo-950 font-sans">
+                    Q1: What is a Step-Up SIP and why should I use it?
+                  </span>
+                  <p className="text-[11px] leading-relaxed text-slate-600">
+                    A Step-Up SIP allows you to automatically increase your monthly investment amount by a fixed percentage or absolute rupee amount every year (e.g., in line with salary hikes). This small annual increment dramatically accelerates your path to a ₹1 Crore corpus by future-proofing your wealth.
+                  </p>
+                </div>
+
+                <div className="bg-slate-55/40 hover:bg-slate-50 border border-slate-100 rounded-2xl p-5 space-y-2 transition-all">
+                  <span className="block font-bold text-xs text-indigo-950 font-sans">
+                    Q2: How accurate are mutual fund SIP projections?
+                  </span>
+                  <p className="text-[11px] leading-relaxed text-slate-600">
+                    Calculations are based on fixed compounding models matching selected interest rates. Real mutual funds generate variable daily returns depending on market conditions, but a historical 10-15 year scale has safely averaged 12% in major diversified equity indices in India.
+                  </p>
+                </div>
+
+                <div className="bg-slate-55/40 hover:bg-slate-50 border border-slate-100 rounded-2xl p-5 space-y-2 transition-all">
+                  <span className="block font-bold text-xs text-indigo-950 font-sans">
+                    Q3: Does Paisa Blueprint charge any fees?
+                  </span>
+                  <p className="text-[11px] leading-relaxed text-slate-600">
+                    No. Paisa Blueprint is an independent, 100% free-to-use software suite designed strictly for educational calculations. We do not store or sell your financial data.
+                  </p>
+                </div>
+
+                <div className="bg-slate-55/40 hover:bg-slate-50 border border-slate-100 rounded-2xl p-5 space-y-2 transition-all">
+                  <span className="block font-bold text-xs text-indigo-950 font-sans">
+                    Q4: Can government employees invest in Equity SIPs?
+                  </span>
+                  <p className="text-[11px] leading-relaxed text-slate-600">
+                    Yes. Under CCS (Conduct) rules, government employees and public school teachers are permitted to invest regular savings into mutual funds or direct equity portfolios, provided they avoid active, high-frequency day-trading or speculation.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Internal Links/Related Calculators Area */}
+            <div className="bg-indigo-50/30 border border-indigo-100 rounded-3xl p-6 space-y-4">
+              <span className="text-[9px] font-black uppercase text-indigo-600 tracking-widest font-mono block">
+                Related Salaried Planners &amp; Checklists
+              </span>
+              <h4 className="text-xs font-extrabold text-slate-800">
+                Continue organizing your portfolio blueprint with these related calculators:
+              </h4>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs leading-none">
+                <a 
+                  href="/salary-calculator.html" 
+                  className="bg-white border border-slate-150 p-3 rounded-xl hover:bg-slate-50 hover:border-indigo-400 text-center font-bold text-slate-700 transition-all block"
+                >
+                  Salary Calculator
+                </a>
+                <a 
+                  href="/nps-calculator.html" 
+                  className="bg-white border border-slate-150 p-3 rounded-xl hover:bg-slate-50 hover:border-indigo-400 text-center font-bold text-slate-700 transition-all block"
+                >
+                  NPS Tax Saver
+                </a>
+                <a 
+                  href="/pension-calculator.html" 
+                  className="bg-white border border-slate-150 p-3 rounded-xl hover:bg-slate-50 hover:border-indigo-400 text-center font-bold text-slate-700 transition-all block"
+                >
+                  Pension Retirement
+                </a>
+                <a 
+                  href="/da-calculator.html" 
+                  className="bg-white border border-slate-150 p-3 rounded-xl hover:bg-slate-50 hover:border-indigo-400 text-center font-bold text-slate-700 transition-all block"
+                >
+                  DA Allowance
+                </a>
+              </div>
             </div>
           </div>
         </div>

@@ -15,6 +15,13 @@ export default defineConfig(() => {
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
+          sip_calculator: path.resolve(__dirname, 'sip-calculator.html'),
+          nps_calculator: path.resolve(__dirname, 'nps-calculator.html'),
+          pension_calculator: path.resolve(__dirname, 'pension-calculator.html'),
+          salary_calculator: path.resolve(__dirname, 'salary-calculator.html'),
+          da_calculator: path.resolve(__dirname, 'da-calculator.html'),
+          about: path.resolve(__dirname, 'about.html'),
+          contact: path.resolve(__dirname, 'contact.html'),
           bpsc_salary: path.resolve(__dirname, 'bpsc-teacher-salary-calculator/index.html'),
           bihar_da: path.resolve(__dirname, 'bihar-da-calculator/index.html'),
           govt_sip: path.resolve(__dirname, 'government-employee-sip-calculator/index.html'),

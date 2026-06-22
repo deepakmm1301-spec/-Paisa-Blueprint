@@ -311,6 +311,42 @@ export default function BiharDaCalculator({ language = "en" }: BiharDaCalculator
           </div>
         </section>
 
+        {/* Related Calculators */}
+        <section className="bg-bhagwa-50/20 border border-bhagwa-100/40 dark:border-bhagwa-900/15 rounded-3xl p-6 space-y-4 text-left">
+          <span className="text-[9px] font-black uppercase text-bhagwa-700 dark:text-bhagwa-300 tracking-widest font-mono block">
+            Related Salaried Planners &amp; Checklists
+          </span>
+          <h4 className="text-xs font-black text-slate-800 dark:text-white leading-tight">
+            Continue matching your allowances with these complementary calculators:
+          </h4>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs leading-none">
+            <a 
+              href="/sip-calculator.html" 
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-950 text-center font-bold text-slate-705 dark:text-slate-300 transition-all block"
+            >
+              SIP Growth
+            </a>
+            <a 
+              href="/nps-calculator.html" 
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-950 text-center font-bold text-slate-705 dark:text-slate-300 transition-all block"
+            >
+              NPS Tax Saver
+            </a>
+            <a 
+              href="/pension-calculator.html" 
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-950 text-center font-bold text-slate-705 dark:text-slate-300 transition-all block"
+            >
+              NPS Retirement
+            </a>
+            <a 
+              href="/salary-calculator.html" 
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-950 text-center font-bold text-slate-705 dark:text-slate-300 transition-all block"
+            >
+              Salary Planner
+            </a>
+          </div>
+        </section>
+
       </div>
     </div>
   );

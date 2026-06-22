@@ -18,6 +18,8 @@ import BiharDaCalculator from "./components/BiharDaCalculator";
 import GovtEmployeeSipCalculator from "./components/GovtEmployeeSipCalculator";
 import NpsGovtCalculator from "./components/NpsGovtCalculator";
 import EightPayCommissionHub from "./components/EightPayCommissionHub";
+import AboutCard from "./components/AboutCard";
+import ContactCard from "./components/ContactCard";
 // @ts-ignore
 import paisaLogo from "./assets/images/deep_paisa_logo_1780484307855.png";
 
@@ -39,7 +41,6 @@ import {
   Award,
   BookOpen,
   Users,
-  LogOut,
   UserCheck,
   RefreshCw,
   User,
@@ -57,7 +58,8 @@ import {
   Trash2,
   Share2,
   TrendingDown,
-  IndianRupee
+  IndianRupee,
+  HelpCircle
 } from "lucide-react";
 
 // Default profile setup
@@ -121,7 +123,9 @@ type ActiveWidget =
   | "eight_pay_fitment_info"
   | "eight_pay_chart"
   | "eight_pay_date"
-  | "eight_pay_teachers";
+  | "eight_pay_teachers"
+  | "about"
+  | "contact";
 
 export default function App() {
   const [showWelcomePopup, setShowWelcomePopup] = useState(true);
@@ -191,7 +195,7 @@ export default function App() {
   const [isLoadingProfiles, setIsLoadingProfiles] = useState(false);
 
   // Session authentication state (Auto-bypassed/Preloaded)
-  const [sessionUser, setSessionUser] = useState<{ name: string; email: string } | null>(() => {
+  const [sessionUser, setSessionUser] = useState<{ name: string; email: string }>(() => {
     const saved = localStorage.getItem("paisa_active_session");
     if (saved) {
       try {
@@ -333,14 +337,14 @@ export default function App() {
 
   const [activeWidget, setActiveWidget] = useState<ActiveWidget>(() => {
     const getWidgetFromPath = (pathName: string): ActiveWidget => {
-      const cleanPath = pathName.replace(/\/$/, "").toLowerCase();
+      const cleanPath = pathName.replace(/\/$/, "").replace(/\.html$/, "").toLowerCase();
       if (cleanPath === "/bpsc-teacher-salary-calculator" || cleanPath === "/bihar-teacher-salary-calculator") return "bpsc_salary";
-      if (cleanPath === "/bihar-da-calculator") return "bihar_da";
+      if (cleanPath === "/bihar-da-calculator" || cleanPath === "/da-calculator") return "bihar_da";
       if (cleanPath === "/government-employee-sip-calculator") return "govt_sip";
-      if (cleanPath === "/nps-calculator-for-government-employees") return "nps_govt";
+      if (cleanPath === "/nps-calculator-for-government-employees" || cleanPath === "/nps-calculator") return "nps_govt";
       if (cleanPath === "/salary-calculator") return "salary";
       if (cleanPath === "/pension-calculator") return "pension";
-      if (cleanPath === "/plan-sip" || cleanPath === "/sip-planner") return "sip";
+      if (cleanPath === "/plan-sip" || cleanPath === "/sip-planner" || cleanPath === "/sip-calculator") return "sip";
       if (cleanPath === "/paise-to-rupee-wisdom") return "learning";
       if (cleanPath === "/health-scorecard") return "health";
       if (cleanPath === "/retirement-roadmap") return "retirement";
@@ -360,7 +364,9 @@ export default function App() {
       if (cleanPath === "/8th-pay-commission-salary-chart") return "eight_pay_chart";
       if (cleanPath === "/8th-pay-commission-date") return "eight_pay_date";
       if (cleanPath === "/8th-pay-commission-for-teachers") return "eight_pay_teachers";
-      return "salary";
+      if (cleanPath === "/about") return "about";
+      if (cleanPath === "/contact") return "contact";
+      return "profiles";
     };
 
     if (typeof window !== "undefined") {
@@ -388,7 +394,8 @@ export default function App() {
           "profiles", "salary", "pension", "health", "sip", "retirement",
           "goals", "tax", "networth", "cibil", "debt", "coach", "seohub", "learning",
           "eight_pay_calc", "eight_pay_fitment", "eight_pay_hike", "eight_pay_pension",
-          "eight_pay_news", "eight_pay_fitment_info", "eight_pay_chart", "eight_pay_date", "eight_pay_teachers"
+          "eight_pay_news", "eight_pay_fitment_info", "eight_pay_chart", "eight_pay_date", "eight_pay_teachers",
+          "about", "contact"
         ];
         if (validWidgets.includes(queryWidget)) {
           return queryWidget as ActiveWidget;
@@ -398,7 +405,7 @@ export default function App() {
       // 2. Fall back to pathname patterns
       return getWidgetFromPath(window.location.pathname);
     }
-    return "salary";
+    return "profiles";
   });
 
   const [language, setLanguage] = useState<"en" | "hi">(() => {
@@ -411,12 +418,12 @@ export default function App() {
   const getPathFromWidget = useCallback((widget: ActiveWidget): string => {
     if (widget === "profiles") return "/";
     if (widget === "bpsc_salary") return "/bpsc-teacher-salary-calculator";
-    if (widget === "bihar_da") return "/bihar-da-calculator";
+    if (widget === "bihar_da") return "/da-calculator.html";
     if (widget === "govt_sip") return "/government-employee-sip-calculator";
-    if (widget === "nps_govt") return "/nps-calculator-for-government-employees";
-    if (widget === "salary") return "/salary-calculator";
-    if (widget === "pension") return "/pension-calculator";
-    if (widget === "sip") return "/plan-sip";
+    if (widget === "nps_govt") return "/nps-calculator.html";
+    if (widget === "salary") return "/salary-calculator.html";
+    if (widget === "pension") return "/pension-calculator.html";
+    if (widget === "sip") return "/sip-calculator.html";
     if (widget === "learning") return "/paise-to-rupee-wisdom";
     if (widget === "health") return "/health-scorecard";
     if (widget === "retirement") return "/retirement-roadmap";
@@ -436,6 +443,8 @@ export default function App() {
     if (widget === "eight_pay_chart") return "/8th-pay-commission-salary-chart";
     if (widget === "eight_pay_date") return "/8th-pay-commission-date";
     if (widget === "eight_pay_teachers") return "/8th-pay-commission-for-teachers";
+    if (widget === "about") return "/about.html";
+    if (widget === "contact") return "/contact.html";
     return "/";
   }, []);
 
@@ -444,16 +453,36 @@ export default function App() {
     if (typeof window === "undefined") return;
 
     let targetTitle = "Salary Calculator • NPS Calculator Pension Calculator SIP Calculator";
+    let targetDesc = "Visit India's Own Salaried Personal Calculator Suite with advanced compounding projection models.";
     let targetPath = getPathFromWidget(activeWidget);
 
     if (activeWidget === "bpsc_salary") {
       targetTitle = "BPSC Teacher Salary Calculator 2026 | Paisa Blueprint";
+      targetDesc = "Calculate Bihar BPSC Teacher salary scale, allowances, base HRA, and final hand-home salary scales after the latest revisions.";
     } else if (activeWidget === "bihar_da") {
       targetTitle = "Bihar Dearness Allowance (DA) Calculator 2026 | Paisa Blueprint";
+      targetDesc = "Estimate state government dearness allowance (DA), pay increments, and fitment structures for state employees and teachers.";
     } else if (activeWidget === "govt_sip") {
       targetTitle = "Government Employee SIP Calculator & Retirement Planner | Paisa Blueprint";
+      targetDesc = "Project the compounding returns of systematic investment plans (SIP) specifically tailored to the salary milestones of state employees.";
     } else if (activeWidget === "nps_govt") {
-      targetTitle = "BPSC Teacher NPS & Pension Calculator 2026 | Paisa Blueprint";
+      targetTitle = "NPS Calculator - National Pension System Calculator | Paisa Blueprint";
+      targetDesc = "Calculate National Pension System (NPS) maturity corpus, monthly pension annuity, and tax-free lump sum values.";
+    } else if (activeWidget === "sip") {
+      targetTitle = "SIP Calculator - Compounding & Step-Up SIP Calculator | Paisa Blueprint";
+      targetDesc = "Determine your future mutual fund wealth with standard monthly SIP or dynamic annual step-up systematic investment parameters.";
+    } else if (activeWidget === "pension") {
+      targetTitle = "Pension Calculator - Retirement Pension & SIP Forecaster | Paisa Blueprint";
+      targetDesc = "Model your monthly pension annuity options and lump sum payouts at retirement using the high-accuracy Pension Calculator.";
+    } else if (activeWidget === "salary") {
+      targetTitle = "Salary Calculator - Gross, Net, HRA & Allowance Estimator | Paisa Blueprint";
+      targetDesc = "Analyze monthly salary deductions, Basic Pay structures, allowances, PF, and direct net pay under different regimes.";
+    } else if (activeWidget === "about") {
+      targetTitle = "About Us - Indian Salaried Financial Blueprint | Paisa Blueprint";
+      targetDesc = "Learn about the mission of Paisa Blueprint: providing clean, local, highly-calibrated financial suite calculators for Indian employees.";
+    } else if (activeWidget === "contact") {
+      targetTitle = "Contact Us - Connect with Capital Advisors | Paisa Blueprint";
+      targetDesc = "Get in touch with Paisa Blueprint advisers, share your calculations feedback, or report bug tickets instantly.";
     } else if (activeWidget === "eight_pay_calc") {
       targetTitle = "8th Pay Commission Salary Calculator 2026 | Paisa Blueprint";
     } else if (activeWidget === "eight_pay_fitment") {
@@ -486,7 +515,7 @@ export default function App() {
       metaDesc.setAttribute('name', 'description');
       document.head.appendChild(metaDesc);
     }
-    metaDesc.setAttribute('content', "Visit India's Own Salaried Personal Calculator");
+    metaDesc.setAttribute('content', targetDesc);
 
     const currentFull = window.location.pathname;
     if (currentFull.replace(/\/$/, "") !== targetPath.replace(/\/$/, "")) {
@@ -965,16 +994,21 @@ export default function App() {
       icon: <Bot className="w-5 h-5" />,
       color: "text-bhagwa-600 bg-bhagwa-50 border-bhagwa-100",
     },
+    {
+      id: "about" as ActiveWidget,
+      label: language === "hi" ? "हमारे बारे में" : "About Us",
+      desc: language === "hi" ? "पैसा ब्लूप्रिंट का मिशन एवं विज़न" : "Our mission and team statement",
+      icon: <Award className="w-5 h-5" />,
+      color: "text-indigo-600 bg-indigo-50 border-indigo-100",
+    },
+    {
+      id: "contact" as ActiveWidget,
+      label: language === "hi" ? "संपर्क करें" : "Contact Us",
+      desc: language === "hi" ? "सलाहकार टीम और सहायता केंद्र" : "Connect with our support team",
+      icon: <HelpCircle className="w-5 h-5 text-orange-500 fill-orange-500/10" />,
+      color: "text-orange-650 bg-orange-50 border-orange-100",
+    },
   ];
-
-  if (!sessionUser) {
-    return (
-      <AuthScreen 
-        onLoginSuccess={handleLoginSuccess} 
-        defaultProfile={defaultProfile} 
-      />
-    );
-  }
 
   const isDefaultUser = sessionUser.email === "paisa.mm1301@gmail.com";
 
@@ -1165,22 +1199,7 @@ export default function App() {
               <span>Share on WhatsApp</span>
             </button>
 
-            {/* Sign Out Button */}
-            {sessionUser && (
-              <button
-                onClick={() => {
-                  if (window.confirm("Do you want to sign out?")) {
-                    setSessionUser(null);
-                    localStorage.removeItem("paisa_active_session");
-                  }
-                }}
-                className="px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100 border border-slate-200 text-rose-700 font-extrabold rounded-full text-xs flex items-center gap-1.5 transition-all cursor-pointer focus:outline-none"
-                title="Sign out of the current ledger session"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>Sign Out</span>
-              </button>
-            )}
+
 
           </div>
 
@@ -1403,6 +1422,14 @@ export default function App() {
 
                 {activeWidget === "nps_govt" && (
                   <NpsGovtCalculator language={language} />
+                )}
+
+                {activeWidget === "about" && (
+                  <AboutCard />
+                )}
+
+                {activeWidget === "contact" && (
+                  <ContactCard />
                 )}
 
                 {(activeWidget === "eight_pay_calc" ||

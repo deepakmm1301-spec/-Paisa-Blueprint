@@ -736,6 +736,78 @@ export default function PensionCalculator() {
             </div>
           </div>
         </div>
+
+        {/* Explanation, FAQs, and Related Links Section */}
+        <div className="mt-10 pt-8 border-t border-slate-100 dark:border-slate-800 space-y-8 text-left bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-100 dark:border-slate-800">
+          {/* Explanation Section */}
+          <div className="space-y-3">
+            <h3 className="text-lg font-extrabold text-slate-800 font-display">
+              Understanding NPS &amp; Retirement Pension Accumulation
+            </h3>
+            <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+              Retirement planning in India involves building a resilient corpus that can counter the eroding effects of long-term retail inflation. The **National Pension System (NPS)** is a government-regulated retirement accumulation scheme structured around dual goals: building a high-growth capital asset via market-linked funds, and securing an uninterrupted monthly pension via specialized Annuity Service Providers (ASPs).
+            </p>
+            <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+              When you deposit funds into NPS, your capital is distributed across Equity (E), Corporate Bonds (C), and Government Securities (G) depending on your selected risk profile (Active vs Auto Choice). Upon reaching 60 years of age, you are legally permitted to withdraw up to **60%** of your accumulated corpus tax-free, while the remaining **40%** (minimum requirement) is mandatorily utilized to buy an annuity policy that releases a lifelong monthly pension.
+            </p>
+          </div>
+
+          {/* FAQ Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-extrabold text-slate-800 font-display">
+              Retirement &amp; Pension FAQs
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-100/80 dark:border-slate-800 space-y-1">
+                <span className="block font-bold text-xs text-indigo-950 dark:text-indigo-300">
+                  Q1: Is the lump-sum withdrawal from NPS tax-free?
+                </span>
+                <p className="text-[11px] leading-relaxed text-slate-550 dark:text-slate-405">
+                  Yes, under current Income Tax laws in India, the lump-sum withdrawal of up to 60% of your accumulated corpus at age 60/retirement is entirely tax-exempt under Section 10(12A).
+                </p>
+              </div>
+
+              <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-100/80 dark:border-slate-800 space-y-1">
+                <span className="block font-bold text-xs text-indigo-950 dark:text-indigo-300">
+                  Q2: Can I choose to purchase more than 40% annuity?
+                </span>
+                <p className="text-[11px] leading-relaxed text-slate-550 dark:text-slate-405">
+                  Definitely. The regulations mandate that a *minimum* of 40% must be allocated for buying a pension annuity. You can freely choose to allocate up to 100% of the corpus to increase your safe lifelong monthly pension.
+                </p>
+              </div>
+
+              <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-100/80 dark:border-slate-800 space-y-1">
+                <span className="block font-bold text-xs text-indigo-950 dark:text-indigo-300">
+                  Q3: Who manages the assets in a National Pension account?
+                </span>
+                <p className="text-[11px] leading-relaxed text-slate-550 dark:text-slate-405">
+                  Your funds are managed by PFRDA-registered Pension Fund Managers (PFMs) such as SBI Pension Funds, LIC Pension Fund, and HDFC Pension Fund with exceptionally low fund management fees.
+                </p>
+              </div>
+
+              <div className="bg-slate-50 dark:bg-slate-950 p-4 rounded-xl border border-slate-100/80 dark:border-slate-800 space-y-1">
+                <span className="block font-bold text-xs text-indigo-950 dark:text-indigo-300">
+                  Q4: How does inflation affect my pension's purchasing power?
+                </span>
+                <p className="text-[11px] leading-relaxed text-slate-550 dark:text-slate-405">
+                  As prices rise, a flat monthly pension will buy fewer goods over time. It is highly recommended to plan for an index-linked or inflation-adjusted supplement using Step-up SIPs alongside your standard NPS core pension.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Related Calculators */}
+          <div className="bg-purple-50/45 dark:bg-purple-950/10 border border-purple-100/60 dark:border-purple-900/30 rounded-2xl p-5 space-y-3">
+            <span className="text-[10px] font-black uppercase text-purple-600 dark:text-purple-400 tracking-wider font-mono block">Related Utilities</span>
+            <p className="text-xs font-bold text-slate-800 dark:text-slate-350">Optimize your future-proof ledger with related Paisa planners:</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <a href="/sip-calculator.html" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-2.5 rounded-xl hover:border-purple-400 text-center font-bold text-slate-700 dark:text-slate-300 block">SIP Calculator</a>
+              <a href="/nps-calculator.html" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-2.5 rounded-xl hover:border-purple-400 text-center font-bold text-slate-700 dark:text-slate-300 block">NPS Tax Planner</a>
+              <a href="/salary-calculator.html" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-2.5 rounded-xl hover:border-purple-400 text-center font-bold text-slate-700 dark:text-slate-300 block">Salary Calculator</a>
+              <a href="/da-calculator.html" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-2.5 rounded-xl hover:border-purple-400 text-center font-bold text-slate-700 dark:text-slate-300 block">DA Allowance</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
