@@ -79,8 +79,8 @@ const initialInvestments: InvestmentDetails = {
 };
 
 const defaultProfile: UserProfile = {
-  name: "Deepak Kumar (Scenario Model)",
-  age: 32,
+  name: "Anchal Priya",
+  age: 26,
   retirementAge: 60,
   salary: 75000, // Monthly general base
   city: "tier2", // e.g. Patna
@@ -133,7 +133,7 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Automatic client-side cache migration to ensure "Scenario Model" label changes are rendered instantly
+  // Automatic client-side cache migration to ensure default modifications are rendered instantly
   useEffect(() => {
     try {
       const activeSess = localStorage.getItem("paisa_active_session");
@@ -141,11 +141,8 @@ export default function App() {
         const parsed = JSON.parse(activeSess);
         if (parsed && parsed.email) {
           let updated = false;
-          if (parsed.name === "Deepak Kumar" || parsed.name === "Scenario Model") {
-            parsed.name = "Deepak Kumar (Scenario Model)";
-            updated = true;
-          } else if (parsed.name === "DEEPAK KUMAR" || parsed.name === "SCENARIO MODEL") {
-            parsed.name = "DEEPAK KUMAR (SCENARIO MODEL)";
+          if (parsed.name === "Deepak Kumar" || parsed.name === "Deepak Kumar (Scenario Model)" || parsed.name === "Scenario Model") {
+            parsed.name = "Anchal Priya";
             updated = true;
           }
           if (updated) {
@@ -158,13 +155,19 @@ export default function App() {
       setProfiles(prevProfiles => {
         let changed = false;
         const updated = prevProfiles.map(p => {
-          if (p.name === "Deepak Kumar" || p.name === "Scenario Model") {
+          if (p.name === "Deepak Kumar" || p.name === "Deepak Kumar (Scenario Model)" || p.name === "Scenario Model" || p.id === "profile-main") {
             changed = true;
-            return { ...p, name: "Deepak Kumar (Scenario Model)" };
-          }
-          if (p.name === "DEEPAK KUMAR" || p.name === "SCENARIO MODEL") {
-            changed = true;
-            return { ...p, name: "DEEPAK KUMAR (SCENARIO MODEL)" };
+            const updatedProfile = { 
+              ...p, 
+              name: (p.name === "Deepak Kumar" || p.name === "Deepak Kumar (Scenario Model)" || p.name === "Scenario Model") ? "Anchal Priya" : p.name 
+            };
+            if (p.id === "profile-main") {
+              updatedProfile.name = "Anchal Priya";
+              if (p.age === 32) {
+                updatedProfile.age = 26;
+              }
+            }
+            return updatedProfile;
           }
           return p;
         });
@@ -198,7 +201,7 @@ export default function App() {
         console.error("Failed to parse active session", err);
       }
     }
-    return { name: "Deepak Kumar (Scenario Model)", email: "paisa.mm1301@gmail.com" };
+    return { name: "Anchal Priya", email: "paisa.mm1301@gmail.com" };
   });
 
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -1210,12 +1213,58 @@ export default function App() {
               <div className="h-4 w-px bg-slate-200"></div>
               <div>
                 <span className="text-slate-400">{language === "hi" ? "मासिक ग्रॉस:" : "Monthly Gross:"}</span>
-                <span className="font-bold text-bhagwa-600 ml-1">₹{profile.salary.toLocaleString("en-IN")}</span>
+                <span 
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={(e) => {
+                    const newSalary = parseInt(e.currentTarget.textContent?.replace(/\D/g, "") || "", 10);
+                    if (!isNaN(newSalary) && newSalary !== profile.salary) {
+                      handleUpdateProfile({
+                        ...profile,
+                        salary: newSalary,
+                        monthlyExpenses: Math.round(newSalary * 0.4)
+                      });
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      e.currentTarget.blur();
+                    }
+                  }}
+                  title="Click to edit salary"
+                  className="font-bold text-bhagwa-600 ml-1 px-1 py-0.5 rounded hover:bg-slate-200/60 dark:hover:bg-slate-800 focus:bg-white dark:focus:bg-slate-905 focus:outline-none focus:ring-1 focus:ring-bhagwa-500 cursor-text border-b border-dashed border-slate-300 font-mono"
+                >
+                  {profile.salary}
+                </span>
               </div>
               <div className="h-4 w-px bg-slate-200"></div>
               <div>
                 <span className="text-slate-400">{language === "hi" ? "उम्र:" : "Age:"}</span>
-                <span className="font-bold text-slate-700 ml-1">{profile.age} {language === "hi" ? "वर्ष" : "yrs"}</span>
+                <span 
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={(e) => {
+                    const newAge = parseInt(e.currentTarget.textContent?.replace(/\D/g, "") || "", 10);
+                    if (!isNaN(newAge) && newAge >= 18 && newAge <= 100 && newAge !== profile.age) {
+                      handleUpdateProfile({
+                        ...profile,
+                        age: newAge
+                      });
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      e.currentTarget.blur();
+                    }
+                  }}
+                  title="Click to edit age"
+                  className="font-bold text-slate-700 ml-1 px-1 py-0.5 rounded hover:bg-slate-200/60 dark:hover:bg-slate-800 focus:bg-white dark:focus:bg-slate-905 focus:outline-none focus:ring-1 focus:ring-bhagwa-500 cursor-text border-b border-dashed border-slate-300 font-mono"
+                >
+                  {profile.age}
+                </span>
+                <span className="text-slate-500 ml-0.5 text-[10px]">{language === "hi" ? " वर्ष" : " yrs"}</span>
               </div>
             </div>
 
@@ -1397,7 +1446,7 @@ export default function App() {
                             onClick={() => {
                               setIsProfileDropdownOpen(false);
                               if (window.confirm("Do you want to sign out of your cloud session? Your active profiles will remain in this browser cache.")) {
-                                setSessionUser({ name: "Deepak Kumar (Scenario Model)", email: "paisa.mm1301@gmail.com" });
+                                setSessionUser({ name: "Anchal Priya", email: "paisa.mm1301@gmail.com" });
                               }
                             }}
                             className="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 border border-rose-100 text-rose-700 font-extrabold text-[11px] rounded-lg transition-all flex items-center gap-1 hover:text-rose-800 cursor-pointer"
