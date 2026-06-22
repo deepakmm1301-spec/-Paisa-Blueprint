@@ -88,11 +88,13 @@ export function getShareableLink(widget?: string, pathName?: string): string {
       if (!isDevDomain) {
         base = window.location.origin;
       } else {
-        // If we list preview run.app pages, extract that hostname from the URL context
         try {
           const urlObj = new URL(href);
-          if (urlObj.hostname.includes("run.app")) {
+          if (urlObj.hostname.includes("run.app") || urlObj.hostname.includes("localhost") || urlObj.hostname.includes("127.0.0.1")) {
             base = `${urlObj.protocol}//${urlObj.hostname}`;
+            if (urlObj.port) {
+              base += `:${urlObj.port}`;
+            }
           }
         } catch (_) {}
       }
@@ -100,13 +102,16 @@ export function getShareableLink(widget?: string, pathName?: string): string {
 
     if (pathName) {
       const cleanPath = pathName.startsWith("/") ? pathName : `/${pathName}`;
-      return `${base}${cleanPath}`;
+      const targetQuery = widget ? `?widget=${widget}` : "";
+      return `${base}${cleanPath}${targetQuery}`;
     } else if (widget) {
       return `${base}/?widget=${widget}`;
     }
     
-    if (href && !href.includes("localhost") && !href.includes("127.0.0.1") && !href.includes("googleusercontent.com")) {
-      return href;
+    if (typeof window !== "undefined") {
+      const currentPath = window.location.pathname;
+      const currentSearch = window.location.search || "";
+      return `${base}${currentPath}${currentSearch}`;
     }
     
     return base;

@@ -337,7 +337,12 @@ export default function App() {
 
   const [activeWidget, setActiveWidget] = useState<ActiveWidget>(() => {
     const getWidgetFromPath = (pathName: string): ActiveWidget => {
-      const cleanPath = pathName.replace(/\/$/, "").replace(/\.html$/, "").toLowerCase();
+      const cleanPath = pathName
+        .replace(/\/$/, "")
+        .replace(/\/index\.html$/, "")
+        .replace(/\/index$/, "")
+        .replace(/\.html$/, "")
+        .toLowerCase();
       if (cleanPath === "/bpsc-teacher-salary-calculator" || cleanPath === "/bihar-teacher-salary-calculator") return "bpsc_salary";
       if (cleanPath === "/bihar-da-calculator" || cleanPath === "/da-calculator") return "bihar_da";
       if (cleanPath === "/government-employee-sip-calculator") return "govt_sip";
@@ -574,14 +579,19 @@ export default function App() {
 
       // 2. Pathname compatibility fallback
       const getWidgetFromPath = (pathName: string): ActiveWidget => {
-        const cleanPath = pathName.replace(/\/$/, "").toLowerCase();
+        const cleanPath = pathName
+          .replace(/\/$/, "")
+          .replace(/\/index\.html$/, "")
+          .replace(/\/index$/, "")
+          .replace(/\.html$/, "")
+          .toLowerCase();
         if (cleanPath === "/bpsc-teacher-salary-calculator" || cleanPath === "/bihar-teacher-salary-calculator") return "bpsc_salary";
-        if (cleanPath === "/bihar-da-calculator") return "bihar_da";
+        if (cleanPath === "/bihar-da-calculator" || cleanPath === "/da-calculator") return "bihar_da";
         if (cleanPath === "/government-employee-sip-calculator") return "govt_sip";
-        if (cleanPath === "/nps-calculator-for-government-employees") return "nps_govt";
+        if (cleanPath === "/nps-calculator-for-government-employees" || cleanPath === "/nps-calculator") return "nps_govt";
         if (cleanPath === "/salary-calculator") return "salary";
         if (cleanPath === "/pension-calculator") return "pension";
-        if (cleanPath === "/plan-sip" || cleanPath === "/sip-planner") return "sip";
+        if (cleanPath === "/plan-sip" || cleanPath === "/sip-planner" || cleanPath === "/sip-calculator") return "sip";
         if (cleanPath === "/paise-to-rupee-wisdom") return "learning";
         if (cleanPath === "/health-scorecard") return "health";
         if (cleanPath === "/retirement-roadmap") return "retirement";
@@ -616,10 +626,17 @@ export default function App() {
   const widgetShareText = useMemo(() => {
     let currentUrl = "https://paisablueprint.in/";
     if (typeof window !== "undefined") {
-      const base = window.location.origin;
       const widgetPath = getPathFromWidget(activeWidget);
+      currentUrl = getShareableLink(activeWidget, widgetPath);
       const search = window.location.search || "";
-      currentUrl = widgetPath === "/" ? `${base}/${search}` : `${base}${widgetPath}${search}`;
+      if (search) {
+        const cleanSearch = search.replace(/[?&]widget=[^&]*/gi, "").replace(/[?&]calc=[^&]*/gi, "");
+        if (cleanSearch && cleanSearch !== "?" && cleanSearch !== "&") {
+          const sep = currentUrl.includes("?") ? "&" : "?";
+          const queryStr = cleanSearch.startsWith("?") || cleanSearch.startsWith("&") ? cleanSearch.substring(1) : cleanSearch;
+          currentUrl = `${currentUrl}${sep}${queryStr}`;
+        }
+      }
     }
     let title = "";
     if (activeWidget === "profiles") {
