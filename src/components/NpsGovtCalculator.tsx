@@ -37,7 +37,7 @@ export default function NpsGovtCalculator({ language: propLanguage }: NpsGovtCal
   const [employeeRate, setEmployeeRate] = useState<number>(10); // Standard 10%
   const [employerRate, setEmployerRate] = useState<number>(14); // Standard 14%
   const [yearsToRetire, setYearsToRetire] = useState<number>(25); // Tenure
-  const [expectedReturn, setExpectedReturn] = useState<number>(9.5); // Expected compound return
+  const [expectedReturn, setExpectedReturn] = useState<number | "">(9.5); // Expected compound return
   const [annuityPurchasePercent, setAnnuityPurchasePercent] = useState<number>(40); 
   const [expectedAnnuityRate, setExpectedAnnuityRate] = useState<number>(6); 
 
@@ -48,7 +48,7 @@ export default function NpsGovtCalculator({ language: propLanguage }: NpsGovtCal
   const [customRetirementAge, setCustomRetirementAge] = useState<number>(60);
   const [customDeferAge, setCustomDeferAge] = useState<number>(60);
   const [customContributionIncrease, setCustomContributionIncrease] = useState<number>(5);
-  const [customExpectedReturn, setCustomExpectedReturn] = useState<number>(10);
+  const [customExpectedReturn, setCustomExpectedReturn] = useState<number | "">(10);
   const [customAnnuityPurchasePercent, setCustomAnnuityPurchasePercent] = useState<number>(40);
   const [customExpectedAnnuityRate, setCustomExpectedAnnuityRate] = useState<number>(6.75);
 
@@ -72,9 +72,14 @@ export default function NpsGovtCalculator({ language: propLanguage }: NpsGovtCal
     const employerShare = Math.round((basicPayDa * employerRate) / 100);
 
     const n = yearsToRetire * 12;
-    const r = (expectedReturn / 100) / 12;
+    const activeReturn = expectedReturn === "" ? 0 : expectedReturn;
+    const r = (activeReturn / 100) / 12;
     
-    const totalAccumulatedCorpus = Math.round(monthlyContribution * ((Math.pow(1 + r, n) - 1) / r) * (1 + r));
+    const totalAccumulatedCorpus = Math.round(
+      r > 0 
+        ? monthlyContribution * ((Math.pow(1 + r, n) - 1) / r) * (1 + r)
+        : monthlyContribution * n
+    );
     const totalInvestedAmount = monthlyContribution * n;
 
     const annuityCorpus = Math.round((totalAccumulatedCorpus * annuityPurchasePercent) / 100);
@@ -112,7 +117,8 @@ export default function NpsGovtCalculator({ language: propLanguage }: NpsGovtCal
     let balance = customExistingCorpus;
     let totalInvested = customExistingCorpus;
     let currentMonthly = customMonthlyContribution;
-    const r = (customExpectedReturn / 100) / 12;
+    const activeCustomReturn = customExpectedReturn === "" ? 0 : customExpectedReturn;
+    const r = (activeCustomReturn / 100) / 12;
 
     // Monthly-based step-up compounding loop
     for (let year = 1; year <= yearsToInvest; year++) {
@@ -336,11 +342,18 @@ Calculate your exact lifetime pension blueprint: ${currentUrl}`;
                   <label className="block text-[10px] font-black text-slate-400 mb-1 uppercase tracking-wider">Expected Return %</label>
                   <input
                     type="number"
-                    value={expectedReturn}
+                    value={expectedReturn === "" ? "" : expectedReturn}
                     step={0.1}
                     min={1}
                     max={25}
-                    onChange={(e) => setExpectedReturn(parseFloat(e.target.value) || 0)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === "") {
+                        setExpectedReturn("");
+                      } else {
+                        setExpectedReturn(parseFloat(val) || 0);
+                      }
+                    }}
                     className="w-full bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-2 text-xs font-bold text-slate-800 dark:text-white focus:ring-1 focus:ring-violet-500 focus:outline-none"
                   />
                   <span className="text-[9px] text-slate-400 font-medium">Avg Class Return: ~9-10%</span>
@@ -468,11 +481,18 @@ Calculate your exact lifetime pension blueprint: ${currentUrl}`;
                   <label className="block text-[9px] font-black text-slate-400 mb-1 uppercase tracking-wider">Expected Return (%)</label>
                   <input
                     type="number"
-                    value={customExpectedReturn}
+                    value={customExpectedReturn === "" ? "" : customExpectedReturn}
                     step={0.1}
                     min={1}
                     max={25}
-                    onChange={(e) => setCustomExpectedReturn(parseFloat(e.target.value) || 10)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === "") {
+                        setCustomExpectedReturn("");
+                      } else {
+                        setCustomExpectedReturn(parseFloat(val) || 0);
+                      }
+                    }}
                     className="w-full bg-slate-50 dark:bg-slate-800 rounded-md border border-slate-200 dark:border-slate-700 p-1.5 text-xs font-bold text-slate-800 dark:text-white focus:outline-none"
                   />
                 </div>

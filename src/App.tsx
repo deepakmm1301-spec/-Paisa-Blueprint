@@ -204,7 +204,6 @@ export default function App() {
     return { name: "Anchal Priya", email: "paisa.mm1301@gmail.com" };
   });
 
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const isDarkMode = false;
 
   // Custom dashboard fields active state
@@ -234,47 +233,7 @@ export default function App() {
     localStorage.setItem("paisa_theme", "light");
   }, []);
 
-  const [isEditingAccountName, setIsEditingAccountName] = useState(false);
-  const [newAccountName, setNewAccountName] = useState("");
 
-  const handleSaveAccountName = async () => {
-    if (!newAccountName.trim() || !sessionUser) return;
-    
-    const updatedUser = { ...sessionUser, name: newAccountName.trim() };
-    setSessionUser(updatedUser);
-    localStorage.setItem("paisa_active_session", JSON.stringify(updatedUser));
-    
-    // Update local accounts cache structure
-    try {
-      const savedAccounts = localStorage.getItem("paisa_user_accounts");
-      if (savedAccounts) {
-        const accounts = JSON.parse(savedAccounts);
-        const index = accounts.findIndex((a: any) => a.email.toLowerCase() === sessionUser.email.toLowerCase());
-        if (index > -1) {
-          accounts[index].name = newAccountName.trim();
-          localStorage.setItem("paisa_user_accounts", JSON.stringify(accounts));
-        }
-      }
-    } catch (err) {
-      console.error("Failed to update user accounts renaming cache:", err);
-    }
-
-    // Call dynamic backend rename endpoint
-    try {
-      await fetch("/api/auth/update-account-name", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: sessionUser.email,
-          name: newAccountName.trim()
-        })
-      });
-    } catch (err) {
-      console.warn("Cloud account renaming failed, synced changes remain local", err);
-    }
-    
-    setIsEditingAccountName(false);
-  };
 
   // Ensure standard session is stored for continuous sync under the hood
   useEffect(() => {
@@ -447,6 +406,7 @@ export default function App() {
   });
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
   const getPathFromWidget = useCallback((widget: ActiveWidget): string => {
     if (widget === "profiles") return "/";
@@ -926,7 +886,7 @@ export default function App() {
       label: language === "hi" ? "8वां वेतन आयोग हब" : "8th Pay Commission Hub",
       desc: language === "hi" ? "वेतन वृद्धि, फिटमेंट फैक्टर और 8वें वेतन आकलन 2026" : "Calculators & guides structure of 8th CPC",
       icon: <Sparkles className="w-5 h-5 text-amber-500 fill-amber-500/20" />,
-      color: "text-violet-650 bg-violet-50 border-violet-100",
+      color: "text-purple-600 bg-purple-50 border-purple-100",
     },
     {
       id: "bpsc_salary" as ActiveWidget,
@@ -937,7 +897,7 @@ export default function App() {
     },
     {
       id: "nps_govt" as ActiveWidget,
-      label: language === "hi" ? "BPSC शिक्षक NPS और पेंशन कैलकुलेटर" : "BPSC Teacher NPS And Pension Calculator",
+      label: language === "hi" ? "BPSC शिक्षक NPS और पेंशन" : "BPSC Teacher NPS & Pension",
       desc: language === "hi" ? "नियमित शिक्षक पेंशन एवं राष्ट्रीय पेंशन प्रणाली लेखाचित्र" : "National pension scheme & teacher retirement pension ledger",
       icon: <Landmark className="w-5 h-5" />,
       color: "text-violet-650 bg-violet-50 border-violet-100",
@@ -982,7 +942,7 @@ export default function App() {
       label: language === "hi" ? "पैसे से पैसा बनाना सीखो" : "Paise to Rupee Wisdom",
       desc: language === "hi" ? "₹5,050 SIP, तुलनात्मक FD, ₹1 करोड़ रोडमैप, बजट और FIRE नियम" : "₹5k SIP, FD v/s SIP battles, ₹1Cr targets, 50-30-20 rule, retirement calculations",
       icon: <Sparkles className="w-5 h-5" />,
-      color: "text-emerald-650 bg-emerald-50 border-emerald-100",
+      color: "text-emerald-655 bg-emerald-50 border-emerald-100",
     },
     {
       id: "retirement" as ActiveWidget,
@@ -1104,7 +1064,7 @@ export default function App() {
                   </p>
                 </div>
 
-                {/* 2-Second Linear Animation Progress Indicator bar */}
+                {/* 2-Second Progress indicator */}
                 <div className="w-full space-y-1.5 mt-2">
                   <div className="flex justify-between items-center text-[9px] uppercase font-bold tracking-wider text-purple-400/80">
                     <span>Configuring modules</span>
@@ -1155,7 +1115,7 @@ export default function App() {
             </div>
           </div>
 
-          {/* Right Area: Stats Bar + Premium Upper Right Sign-In Area */}
+          {/* Right Area: Language Toggle + Share */}
           <div className="flex flex-wrap items-center justify-between sm:justify-end gap-3 w-full sm:w-auto ml-auto">
             
             {/* Global Language Toggle Selector */}
@@ -1205,156 +1165,98 @@ export default function App() {
               <span>Share on WhatsApp</span>
             </button>
 
+          </div>
 
+          {/* User Profile Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+              className="flex items-center gap-2 p-1 bg-slate-50 hover:bg-slate-100 rounded-xl transition-all border border-slate-200/50 cursor-pointer focus:outline-none"
+              title="View active user profile ledger settings"
+            >
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white font-black text-xs uppercase shadow-3xs">
+                {sessionUser.name ? sessionUser.name.charAt(0).toUpperCase() : "P"}
+              </div>
+              <div className="hidden md:flex flex-col items-start text-left pr-2">
+                <span className="text-xs font-black text-slate-800 leading-none">
+                  {sessionUser.name}
+                </span>
+                <span className="text-[9px] font-mono text-slate-400 mt-0.5 leading-none">
+                  🇮🇳 Portfolios
+                </span>
+              </div>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 pr-0.5 shrink-0" />
+            </button>
 
-            {/* Paisabazar style Top-Right Sign In / User Profile Dropdown Menu */}
-            <div className="relative">
-              {isDefaultUser ? (
-                <button
-                  onClick={() => setSessionUser(null)}
-                  className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white font-extrabold px-4 py-2 rounded-full text-xs shadow-xs hover:shadow-md transition-all cursor-pointer select-none focus:outline-none border-0"
-                  title="Sign In or Register your custom cloud locker"
-                >
-                  <div className="h-5 w-5 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-                    <User className="w-3" />
+            {isProfileDropdownOpen && (
+              <div className="absolute right-0 mt-3 w-72 bg-white rounded-3xl p-5 shadow-lg border border-slate-100 z-50 flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white font-black text-base uppercase">
+                    {sessionUser.name ? sessionUser.name.charAt(0).toUpperCase() : "P"}
                   </div>
-                  <span>Sign In</span>
-                </button>
-              ) : (
-                <div className="relative">
-                  <button
-                    onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                    className="flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-slate-200 pr-2.5 pl-1 py-1 rounded-full cursor-pointer select-none focus:outline-none transition-all text-xs shadow-3xs"
-                    title="Account Options"
-                  >
-                    <div className="h-7 w-7 rounded-full bg-emerald-500 text-white flex items-center justify-center font-black text-xs shrink-0 select-none shadow-xs">
-                      {sessionUser.name.charAt(0).toUpperCase()}
-                    </div>
-                    <span className="font-bold text-slate-700 max-w-[80px] truncate hidden sm:inline">
-                      {sessionUser.name.split(" ")[0]}
+                  <div className="overflow-hidden">
+                    <span className="block font-black text-slate-800 text-sm leading-tight truncate">
+                      {sessionUser.name}
                     </span>
-                    <ChevronDown className={`w-3 h-3 text-slate-450 transition-transform duration-200 ${isProfileDropdownOpen ? "rotate-180" : ""}`} />
+                    <span className="block font-mono text-[10px] text-slate-500 truncate mt-0.5">
+                      {sessionUser.email}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-[11px] text-slate-500 bg-slate-50 border border-slate-100 rounded-lg p-2">
+                    <span className="font-semibold">Data Storage:</span>
+                    <span className="font-extrabold text-emerald-600 flex items-center gap-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                      Cloud Sync Active
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setIsProfileDropdownOpen(false);
+                      setActiveWidget("profiles");
+                    }}
+                    className="w-full text-left py-2 px-3 hover:bg-slate-50 rounded-xl font-bold text-slate-700 hover:text-slate-900 border border-transparent hover:border-slate-100 transition-all flex items-center gap-2 cursor-pointer"
+                  >
+                    <Users className="w-3.5 h-3.5 text-bhagwa-500" />
+                    <span>Family & Portfolio Profiles</span>
+                  </button>
+                </div>
+
+                <div className="border-t border-slate-100 pt-2.5 flex items-center justify-between gap-2">
+                  <button
+                    onClick={() => {
+                      setIsProfileDropdownOpen(false);
+                      handleResetData();
+                    }}
+                    className="text-[11px] text-slate-400 hover:text-rose-600 flex items-center gap-1 font-bold transition-colors cursor-pointer"
+                    title="Reset all settings and data back to defaults"
+                  >
+                    <RefreshCw className="w-3 h-3" />
+                    <span>Reset App Data</span>
                   </button>
 
-                  {/* Dropdown Menu Overlay */}
-                  {isProfileDropdownOpen && (
-                    <>
-                      <div 
-                        className="fixed inset-0 z-40" 
-                        onClick={() => setIsProfileDropdownOpen(false)}
-                      />
-                      <div className="absolute right-0 mt-2 w-72 bg-white border border-slate-150 rounded-2xl shadow-xl z-50 py-3.5 px-4 space-y-3 text-xs text-left">
-                        <div className="border-b border-slate-100 pb-2.5">
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider block">
-                              LOGGED IN ACCOUNT
-                            </span>
-                            {!isEditingAccountName && (
-                              <button
-                                onClick={() => {
-                                  setIsEditingAccountName(true);
-                                  setNewAccountName(sessionUser.name);
-                                }}
-                                className="text-bhagwa-600 hover:text-bhagwa-700 font-bold text-[10px] flex items-center gap-1 cursor-pointer transition-colors"
-                              >
-                                <Edit2 className="w-2.5 h-2.5" /> Rename
-                              </button>
-                            )}
-                          </div>
-
-                          {isEditingAccountName ? (
-                            <div className="flex items-center gap-1.5 mt-1.5">
-                              <input
-                                type="text"
-                                value={newAccountName}
-                                onChange={(e) => setNewAccountName(e.target.value)}
-                                className="border border-slate-200 rounded-lg px-2 py-1 text-xs focus:ring-1 focus:ring-bhagwa-500 focus:outline-none font-bold text-slate-800 flex-1"
-                                placeholder="Customize Name"
-                                autoFocus
-                              />
-                              <button
-                                onClick={handleSaveAccountName}
-                                className="p-1.5 bg-bhagwa-100 hover:bg-bhagwa-200 text-bhagwa-800 rounded-lg cursor-pointer"
-                                title="Save Profile Name"
-                              >
-                                <Check className="w-3.5 h-3.5" />
-                              </button>
-                              <button
-                                onClick={() => setIsEditingAccountName(false)}
-                                className="text-slate-450 hover:text-slate-600 font-bold px-1.5 py-1 text-xs"
-                              >
-                                ✕
-                              </button>
-                            </div>
-                          ) : (
-                            <>
-                              <span className="block font-black text-slate-800 text-sm leading-tight">
-                                {sessionUser.name}
-                              </span>
-                              <span className="block font-mono text-[10px] text-slate-500 truncate mt-0.5">
-                                {sessionUser.email}
-                              </span>
-                            </>
-                          )}
-                        </div>
-
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between text-[11px] text-slate-500 bg-slate-50 border border-slate-100 rounded-lg p-2">
-                            <span className="font-semibold">Data Storage:</span>
-                            <span className="font-extrabold text-emerald-600 flex items-center gap-1">
-                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping"></span>
-                              Cloud Sync Active
-                            </span>
-                          </div>
-
-                          <button
-                            onClick={() => {
-                              setIsProfileDropdownOpen(false);
-                              setActiveWidget("profiles");
-                            }}
-                            className="w-full text-left py-2 px-3 hover:bg-slate-50 rounded-xl font-bold text-slate-700 hover:text-slate-900 border border-transparent hover:border-slate-100 transition-all flex items-center gap-2 cursor-pointer"
-                          >
-                            <Users className="w-3.5 h-3.5 text-bhagwa-500" />
-                            <span>Family & Portfolio Profiles</span>
-                          </button>
-                        </div>
-
-                        <div className="border-t border-slate-100 pt-2.5 flex items-center justify-between gap-2">
-                          <button
-                            onClick={() => {
-                              setIsProfileDropdownOpen(false);
-                              handleResetData();
-                            }}
-                            className="text-[11px] text-slate-400 hover:text-rose-600 flex items-center gap-1 font-bold transition-colors cursor-pointer"
-                            title="Reset all settings and data back to defaults"
-                          >
-                            <RefreshCw className="w-3 h-3" />
-                            <span>Reset App Data</span>
-                          </button>
-
-                          <button
-                            onClick={() => {
-                              setIsProfileDropdownOpen(false);
-                              if (window.confirm("Do you want to sign out of your cloud session? Your active profiles will remain in this browser cache.")) {
-                                setSessionUser({ name: "Anchal Priya", email: "paisa.mm1301@gmail.com" });
-                              }
-                            }}
-                            className="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 border border-rose-100 text-rose-700 font-extrabold text-[11px] rounded-lg transition-all flex items-center gap-1 hover:text-rose-800 cursor-pointer"
-                          >
-                            <LogOut className="w-3.5 h-3.5 text-rose-500" />
-                            <span>Sign Out</span>
-                          </button>
-                        </div>
-                      </div>
-                    </>
-                  )}
+                  <button
+                    onClick={() => {
+                      setIsProfileDropdownOpen(false);
+                      if (window.confirm("Do you want to sign out of your cloud session? Your active profiles will remain in this browser cache.")) {
+                        setSessionUser({ name: "Anchal Priya", email: "paisa.mm1301@gmail.com" });
+                      }
+                    }}
+                    className="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 border border-rose-100 text-rose-700 font-extrabold text-[11px] rounded-lg transition-all flex items-center gap-1 hover:text-rose-800 cursor-pointer"
+                  >
+                    <LogOut className="w-3.5 h-3.5 text-rose-500" />
+                    <span>Sign Out</span>
+                  </button>
                 </div>
-              )}
-            </div>
-
+              </div>
+            )}
           </div>
 
         </div>
+
       </header>
 
       {/* Main Container Layout */}

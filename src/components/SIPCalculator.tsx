@@ -18,7 +18,7 @@ export default function SIPCalculator() {
   const [monthlySip, setMonthlySip] = useState<number>(10000);
   const [annualStepUp, setAnnualStepUp] = useState<number>(10); // Standard recommended 10% annual increase
   const [expectedReturn, setExpectedReturn] = useState<number>(12); // Standard equity mutual fund returns
-  const [years, setYears] = useState<number>(15);
+  const [years, setYears] = useState<number | "">(15);
   const [inflationRate, setInflationRate] = useState<number>(6); // 6% average Indian inflation
   
   // Dashboard tab states
@@ -36,7 +36,8 @@ export default function SIPCalculator() {
   const yearRecords = [];
   const monthlyReturnRate = (expectedReturn / 100) / 12;
 
-  for (let year = 1; year <= years; year++) {
+  const activeYears = years === "" ? 0 : years;
+  for (let year = 1; year <= activeYears; year++) {
     let yearInvestedNormal = 0;
     let yearInvestedStepUp = 0;
 
@@ -272,7 +273,15 @@ export default function SIPCalculator() {
                 min="1"
                 max="40"
                 value={years}
-                onChange={(e) => setYears(Math.min(40, Math.max(1, Number(e.target.value))))}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === "") {
+                    setYears("");
+                  } else {
+                    const parsed = parseInt(val, 10);
+                    setYears(isNaN(parsed) ? "" : Math.min(40, Math.max(1, parsed)));
+                  }
+                }}
                 className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-slate-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 font-mono"
               />
             </div>
@@ -362,7 +371,7 @@ export default function SIPCalculator() {
 
               <div className="text-[10px] text-slate-400 dark:text-slate-505 font-bold uppercase tracking-wider flex items-center gap-1 bg-slate-50 dark:bg-slate-950/60 px-2.5 py-1 rounded-md self-start">
                 <Calendar className="w-3 h-3 text-slate-400" />
-                <span>{years} Yr Timeline</span>
+                <span>{years || 0} Yr Timeline</span>
               </div>
             </div>
 
