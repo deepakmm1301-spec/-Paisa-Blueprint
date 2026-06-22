@@ -1165,94 +1165,23 @@ export default function App() {
               <span>Share on WhatsApp</span>
             </button>
 
-          </div>
-
-          {/* User Profile Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-              className="flex items-center gap-2 p-1 bg-slate-50 hover:bg-slate-100 rounded-xl transition-all border border-slate-200/50 cursor-pointer focus:outline-none"
-              title="View active user profile ledger settings"
-            >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white font-black text-xs uppercase shadow-3xs">
-                {sessionUser.name ? sessionUser.name.charAt(0).toUpperCase() : "P"}
-              </div>
-              <div className="hidden md:flex flex-col items-start text-left pr-2">
-                <span className="text-xs font-black text-slate-800 leading-none">
-                  {sessionUser.name}
-                </span>
-                <span className="text-[9px] font-mono text-slate-400 mt-0.5 leading-none">
-                  🇮🇳 Portfolios
-                </span>
-              </div>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400 pr-0.5 shrink-0" />
-            </button>
-
-            {isProfileDropdownOpen && (
-              <div className="absolute right-0 mt-3 w-72 bg-white rounded-3xl p-5 shadow-lg border border-slate-100 z-50 flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white font-black text-base uppercase">
-                    {sessionUser.name ? sessionUser.name.charAt(0).toUpperCase() : "P"}
-                  </div>
-                  <div className="overflow-hidden">
-                    <span className="block font-black text-slate-800 text-sm leading-tight truncate">
-                      {sessionUser.name}
-                    </span>
-                    <span className="block font-mono text-[10px] text-slate-500 truncate mt-0.5">
-                      {sessionUser.email}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-[11px] text-slate-500 bg-slate-50 border border-slate-100 rounded-lg p-2">
-                    <span className="font-semibold">Data Storage:</span>
-                    <span className="font-extrabold text-emerald-600 flex items-center gap-1">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-ping"></span>
-                      Cloud Sync Active
-                    </span>
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      setIsProfileDropdownOpen(false);
-                      setActiveWidget("profiles");
-                    }}
-                    className="w-full text-left py-2 px-3 hover:bg-slate-50 rounded-xl font-bold text-slate-700 hover:text-slate-900 border border-transparent hover:border-slate-100 transition-all flex items-center gap-2 cursor-pointer"
-                  >
-                    <Users className="w-3.5 h-3.5 text-bhagwa-500" />
-                    <span>Family & Portfolio Profiles</span>
-                  </button>
-                </div>
-
-                <div className="border-t border-slate-100 pt-2.5 flex items-center justify-between gap-2">
-                  <button
-                    onClick={() => {
-                      setIsProfileDropdownOpen(false);
-                      handleResetData();
-                    }}
-                    className="text-[11px] text-slate-400 hover:text-rose-600 flex items-center gap-1 font-bold transition-colors cursor-pointer"
-                    title="Reset all settings and data back to defaults"
-                  >
-                    <RefreshCw className="w-3 h-3" />
-                    <span>Reset App Data</span>
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setIsProfileDropdownOpen(false);
-                      if (window.confirm("Do you want to sign out of your cloud session? Your active profiles will remain in this browser cache.")) {
-                        setSessionUser({ name: "Anchal Priya", email: "paisa.mm1301@gmail.com" });
-                      }
-                    }}
-                    className="py-1.5 px-3 bg-rose-50 hover:bg-rose-100 border border-rose-100 text-rose-700 font-extrabold text-[11px] rounded-lg transition-all flex items-center gap-1 hover:text-rose-800 cursor-pointer"
-                  >
-                    <LogOut className="w-3.5 h-3.5 text-rose-500" />
-                    <span>Sign Out</span>
-                  </button>
-                </div>
-              </div>
+            {/* Sign Out Button */}
+            {sessionUser && (
+              <button
+                onClick={() => {
+                  if (window.confirm("Do you want to sign out?")) {
+                    setSessionUser(null);
+                    localStorage.removeItem("paisa_active_session");
+                  }
+                }}
+                className="px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100 border border-slate-200 text-rose-700 font-extrabold rounded-full text-xs flex items-center gap-1.5 transition-all cursor-pointer focus:outline-none"
+                title="Sign out of the current ledger session"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Sign Out</span>
+              </button>
             )}
+
           </div>
 
         </div>

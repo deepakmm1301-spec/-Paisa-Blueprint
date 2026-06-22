@@ -260,46 +260,16 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
         {/* Right Aspect: Authentication Interactive Dynamic Panel */}
         <div className="md:col-span-7 p-8 md:p-12 flex flex-col justify-center space-y-6 bg-slate-900/20">
           
-          {/* Main Toggle Tab Switcher (Sign In vs Sign Up) */}
           <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
             <div>
               <h2 className="text-2xl font-bold text-white tracking-tight">
-                {activeTab === "signin" ? "Unlock Portfolio Locker" : "Create Modern Account"}
+                Unlock Portfolio Locker
               </h2>
               <p className="text-slate-400 text-xs mt-1">
-                {activeTab === "signin" 
-                  ? "Access your sandbox budgets, profiles and financial advisors"
-                  : "Register your own insulated and encrypted ledger folder"
-                }
+                Access your sandbox budgets, profiles and financial advisors
               </p>
             </div>
           </div>
-
-          {/* Symmetrical Dual Page Toggle Tabs */}
-          <nav className="flex space-x-2 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800/90" aria-label="Tabs">
-            <button
-              onClick={() => handleTabChange("signin")}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                activeTab === "signin"
-                  ? "bg-bhagwa-600 text-white shadow-md shadow-bhagwa-600/10"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/40"
-              }`}
-            >
-              <LogIn className="w-4 h-4" />
-              Sign In
-            </button>
-            <button
-              onClick={() => handleTabChange("signup")}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                activeTab === "signup"
-                  ? "bg-bhagwa-600 text-white shadow-md shadow-bhagwa-600/10"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/40"
-              }`}
-            >
-              <UserPlus className="w-4 h-4" />
-              Sign Up
-            </button>
-          </nav>
 
           {/* Messages info box */}
           {error && (
@@ -507,19 +477,7 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
               )}
             </button>
 
-            {/* Alternative hooks inside/below form */}
-            <div className="text-center pt-2">
-              <button
-                type="button"
-                onClick={() => handleTabChange(activeTab === "signin" ? "signup" : "signin")}
-                className="text-[11px] text-slate-400 hover:text-white underline transition-colors cursor-pointer"
-              >
-                {activeTab === "signin" 
-                  ? "New user? Create a secure credentials locker" 
-                  : "Already registered? Unlock ledger card via sign in"
-                }
-              </button>
-            </div>
+
 
             <div className="flex items-center py-2">
               <hr className="flex-1 border-slate-800" />
@@ -557,13 +515,12 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
             </div>
           )}
 
-          {/* Individual Space & Privacy Guarantee Note */}
           <div className="bg-slate-950/20 border border-slate-800/60 p-4 rounded-xl flex gap-3 text-xs text-slate-400">
             <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5 animate-pulse" />
             <div className="space-y-1">
               <span className="text-white font-bold block">Individual Space & Privacy Guarantee</span>
               <p className="leading-relaxed text-[11px] text-slate-400">
-                Each phone number or email creates a strictly sandboxed, private cloud ledger folder on our server database. Your budgets, SIP compounders, family profiles, and calculators are encrypted and entirely isolated to your personal credentials.
+                Your sandbox budgets, SIP compounders, family profiles, and calculators are encrypted and entirely isolated to your credentials. Guest data remains locally cached in your browser.
               </p>
             </div>
           </div>
