@@ -290,7 +290,7 @@ Here are some helpful presets you can ask me, or type your own question below:`,
       )}
 
       {/* Embedded API key instructions when missing both on server and locally */}
-      {serverHasKey === false && !customApiKey && (
+      {chatMode === "gemini" && serverHasKey === false && !customApiKey && (
         <div className="bg-amber-50 border-b border-amber-200 p-4 text-xs text-amber-800 animate-fade-in shrink-0">
           <div className="flex items-start gap-2.5">
             <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
@@ -323,6 +323,23 @@ Here are some helpful presets you can ask me, or type your own question below:`,
                   Save Key
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Instant Local Mode Indicator Banner */}
+      {chatMode === "local" && (
+        <div className="bg-emerald-50 border-b border-emerald-100 p-3 text-xs text-emerald-800 animate-fade-in shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="p-1.5 bg-emerald-100 rounded-lg text-emerald-600 shrink-0">
+              <Bot className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="font-bold text-emerald-950 block">⚡ Instant Local Advisor Active</span>
+              <p className="text-slate-600 mt-0.5 leading-relaxed">
+                Running in safe visitor-friendly offline mode. No API key or cloud connection required. Enjoy continuous personal financial coaching!
+              </p>
             </div>
           </div>
         </div>
