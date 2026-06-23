@@ -9,6 +9,7 @@ import AICoach from "./components/AICoach";
 import ProfileManager from "./components/ProfileManager";
 import AuthScreen from "./components/AuthScreen";
 import ArticlesColumn from "./components/ArticlesColumn";
+import MarketInsights from "./components/MarketInsights";
 import PensionCalculator from "./components/PensionCalculator";
 import { FooterSections } from "./components/FooterSections";
 import SeoHub from "./components/SeoHub";
@@ -1528,6 +1529,8 @@ export default function App() {
 
         {/* Right Sidebar: Articles Guidance cabinet */}
         <section className="lg:col-span-3 space-y-6">
+          <MarketInsights language={language} />
+          
           <ArticlesColumn 
             onNavigateToWidget={(widgetId) => {
               setActiveWidget(widgetId);

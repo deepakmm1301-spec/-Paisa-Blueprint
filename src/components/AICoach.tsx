@@ -23,6 +23,7 @@ Here are some helpful presets you can ask me, or type your own question below:`,
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorStatus, setErrorStatus] = useState<string | null>(null);
+  const [chatMode, setChatMode] = useState<"gemini" | "local">("gemini");
 
   const [customApiKey, setCustomApiKey] = useState(() => localStorage.getItem("paisa_user_gemini_key") || "");
   const [showKeyInput, setShowKeyInput] = useState(false);
@@ -43,12 +44,15 @@ Here are some helpful presets you can ask me, or type your own question below:`,
       .then((data) => {
         if (typeof data.hasApiKey === "boolean") {
           setServerHasKey(data.hasApiKey);
+          if (!data.hasApiKey && !customApiKey) {
+            setChatMode("local");
+          }
         }
       })
       .catch((err) => {
         console.error("Error checking assistant server status:", err);
       });
-  }, []);
+  }, [customApiKey]);
 
   const handleSend = async (textToSend: string) => {
     if (!textToSend.trim() || loading) return;
@@ -73,6 +77,7 @@ Here are some helpful presets you can ask me, or type your own question below:`,
           messages: [...messages, userMsg].map((m) => ({ role: m.role, content: m.content })),
           userProfile: profile,
           customApiKey: customApiKey || undefined,
+          forceLocal: chatMode === "local",
         }),
       });
 
@@ -147,19 +152,51 @@ Here are some helpful presets you can ask me, or type your own question below:`,
   return (
     <div id="ai-coach-module" className="bg-white rounded-2xl border border-slate-100 shadow-xs flex flex-col h-[650px] overflow-hidden text-sm">
       {/* Head */}
-      <div className="bg-slate-950 text-white p-5 flex items-center justify-between">
+      <div className="bg-slate-950 text-white p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-bhagwa-500/20 rounded-xl border border-bhagwa-500/30">
             <Bot className="w-5 h-5 text-bhagwa-400" />
           </div>
           <div>
-            <h3 className="font-bold text-slate-100 font-display text-sm leading-tight">AI Financial Coach</h3>
-            <span className="text-[10px] text-bhagwa-300 font-semibold tracking-wider flex items-center gap-1 mt-0.5">
-              <Sparkles className="w-3 h-3" /> ONLINE • CALIBRATED FOR INDIA
+            <div className="flex items-center gap-2">
+              <h3 className="font-bold text-slate-100 font-display text-sm leading-tight">AI Finance Specialist</h3>
+              <span className="text-[9px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded font-mono font-bold tracking-tight">Active</span>
+            </div>
+            <span className="text-[10px] text-slate-400 font-medium tracking-wide flex items-center gap-1 mt-0.5">
+              Powered by Google Gemini Models • Local Rules
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+
+        {/* Dynamic Model Switch - Beautiful Purple/Bhagwa selector tag mirroring user reference pic */}
+        <div className="flex bg-slate-900 border border-slate-800 p-1 rounded-xl shrink-0 self-start md:self-center gap-1 items-center">
+          <button
+            type="button"
+            onClick={() => setChatMode("gemini")}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer select-none ${
+              chatMode === "gemini" 
+                ? "bg-bhagwa-600 text-white shadow-md scale-[1.02]" 
+                : "text-slate-400 hover:text-white"
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            Gemini AI
+          </button>
+          <button
+            type="button"
+            onClick={() => setChatMode("local")}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer select-none ${
+              chatMode === "local" 
+                ? "bg-bhagwa-600 text-white shadow-md scale-[1.02]" 
+                : "text-slate-400 hover:text-white"
+            }`}
+          >
+            <Bot className="w-3.5 h-3.5" />
+            Instant Local
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2 self-end md:self-center">
           <button
             onClick={() => {
               setShowKeyInput(!showKeyInput);
