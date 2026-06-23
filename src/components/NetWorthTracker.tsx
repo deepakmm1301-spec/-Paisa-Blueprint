@@ -64,7 +64,7 @@ export default function NetWorthTracker({ profile }: Props) {
   const debtToAssetRatio = totalAssets > 0 ? (totalLiabilities / totalAssets) : 0;
 
   const shareToWhatsApp = () => {
-    const currentUrl = getShareableLink("profiles", "/profiles");
+    const currentUrl = getShareableLink("networth", "/my-wealth-tracker");
     
     const text = `💰 *My Paisa Balancesheet & Wealth Projections*
 *Total Assets:* ₹${totalAssets.toLocaleString("en-IN")}

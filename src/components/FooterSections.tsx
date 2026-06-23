@@ -121,7 +121,7 @@ export function FooterSections({ language = "en" }: { language?: "en" | "hi" } =
             </p>
             <ul className="list-disc pl-5 space-y-2 mt-2">
               <li>
-                <strong>No Server Storage:</strong> Any financial profiles, salary parameters, savings, credit logs, and tax numbers entered into the simulator reside exclusively inside your device's web browser storage (<code className="bg-slate-900 px-1 py-0.5 rounded text-rose-450 text-xs font-mono">localStorage</code>).
+                <strong>No Server Storage:</strong> Any financial assets, salary parameters, savings, credit logs, and tax numbers entered into the simulator reside exclusively inside your device's web browser storage (<code className="bg-slate-900 px-1 py-0.5 rounded text-rose-450 text-xs font-mono">localStorage</code>).
               </li>
               <li>
                 <strong>Local Persistence:</strong> No network payloads transmit your personal wealth metrics to any third-party clouds. Click <code className="bg-slate-900 px-1 py-0.5 rounded text-xs text-white">Config Folders</code> to clear or export custom portfolios at any time.

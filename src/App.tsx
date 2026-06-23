@@ -6,7 +6,6 @@ import SalaryPlanner from "./components/SalaryPlanner";
 import SIPCalculator from "./components/SIPCalculator";
 import RetirementPlanner from "./components/RetirementPlanner";
 import AICoach from "./components/AICoach";
-import ProfileManager from "./components/ProfileManager";
 import AuthScreen from "./components/AuthScreen";
 import ArticlesColumn from "./components/ArticlesColumn";
 import MarketInsights from "./components/MarketInsights";
@@ -372,7 +371,7 @@ export default function App() {
       if (cleanPath === "/8th-pay-commission-for-teachers") return "eight_pay_teachers";
       if (cleanPath === "/about") return "about";
       if (cleanPath === "/contact") return "contact";
-      return "profiles";
+      return "eight_pay_calc";
     };
 
     if (typeof window !== "undefined") {
@@ -411,7 +410,7 @@ export default function App() {
       // 2. Fall back to pathname patterns
       return getWidgetFromPath(window.location.pathname);
     }
-    return "profiles";
+    return "eight_pay_calc";
   });
 
   const [language, setLanguage] = useState<"en" | "hi">(() => {
@@ -422,7 +421,8 @@ export default function App() {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
   const getPathFromWidget = useCallback((widget: ActiveWidget): string => {
-    if (widget === "profiles") return "/";
+    if (widget === "eight_pay_calc") return "/";
+    if (widget === "profiles") return "/profiles";
     if (widget === "bpsc_salary") return "/bpsc-teacher-salary-calculator";
     if (widget === "bihar_da") return "/da-calculator.html";
     if (widget === "govt_sip") return "/government-employee-sip-calculator";
@@ -440,7 +440,6 @@ export default function App() {
     if (widget === "cibil") return "/cibil-credit-card";
     if (widget === "debt") return "/debt-freedom-planner";
     if (widget === "coach") return "/paisa-ai-coach";
-    if (widget === "eight_pay_calc") return "/8th-pay-commission-calculator";
     if (widget === "eight_pay_fitment") return "/8th-pay-fitment-factor-calculator";
     if (widget === "eight_pay_hike") return "/8th-pay-salary-hike-calculator";
     if (widget === "eight_pay_pension") return "/8th-pay-pension-calculator";
@@ -884,7 +883,7 @@ export default function App() {
 
     setProfiles(profilesList);
     setActiveProfileId(activeId);
-    setActiveWidget("profiles");
+    setActiveWidget("eight_pay_calc");
   };
 
   const handleResetData = () => {
@@ -1382,18 +1381,6 @@ export default function App() {
                 transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                 className="w-full"
               >
-                {activeWidget === "profiles" && (
-                  <ProfileManager 
-                    currentProfile={profile}
-                    profiles={profiles}
-                    onSelectProfile={setActiveProfileId}
-                    onCreateProfile={handleCreateProfile}
-                    onDeleteProfile={handleDeleteProfile}
-                    onDuplicateProfile={handleDuplicateProfile}
-                    onUpdateProfile={handleUpdateProfile}
-                  />
-                )}
-
                 {activeWidget === "salary" && (
                   <SalaryPlanner profile={profile} />
                 )}

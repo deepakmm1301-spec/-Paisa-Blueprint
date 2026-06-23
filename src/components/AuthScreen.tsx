@@ -266,7 +266,7 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
                 Unlock Portfolio Locker
               </h2>
               <p className="text-slate-400 text-xs mt-1">
-                Access your sandbox budgets, profiles and financial advisors
+                Access your sandbox budgets and financial advisors
               </p>
             </div>
           </div>
@@ -520,7 +520,7 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
             <div className="space-y-1">
               <span className="text-white font-bold block">Individual Space & Privacy Guarantee</span>
               <p className="leading-relaxed text-[11px] text-slate-400">
-                Your sandbox budgets, SIP compounders, family profiles, and calculators are encrypted and entirely isolated to your credentials. Guest data remains locally cached in your browser.
+                Your sandbox budgets, SIP compounders, and calculators are encrypted and entirely isolated to your credentials. Guest data remains locally cached in your browser.
               </p>
             </div>
           </div>
