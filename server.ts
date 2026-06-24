@@ -2,7 +2,7 @@ import express from "express";
 import path from "path";
 import fs from "fs";
 import { createServer as createViteServer } from "vite";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -717,32 +717,52 @@ app.get("/api/market-insights", async (req, res) => {
   if (serverKey && serverKey.trim() !== "") {
     try {
       const ai = getAIClient();
-      const prompt = `Generate a JSON array of exactly 4 fresh, highly informative and realistic market insights targeting:
+      const prompt = `Generate exactly 4 fresh, highly informative and realistic market insights targeting:
 1. Bihar Teacher Transfer policies (rules, district reallocation dates, e-Shikshakosh online requests, guidelines)
 2. Bihar Teacher Salary (BPSC salaries, 7th Pay DA updates at 50-53%, pension structures, actual numbers)
 3. Teachers news of neighbouring states (UP recruitment board, Jharkhand DA at 50-53% raises, West Bengal scaling)
-4. State & Central government employees (8th Pay Commission fitment factor memorandum, Unified Pension Scheme UPS vs NPS options)
+4. State & Central government employees (8th Pay Commission fitment factor memorandum, Unified Pension Scheme UPS vs NPS options)`;
 
-Return ONLY a premium, valid JSON array. Do not wrap in markdown "json" blocks, do not write backticks, do not write 'json', just raw JSON text. Use this exact schema:
-[
-  {
-    "id": "string",
-    "category": "string (one of: Bihar Teacher Transfer, Bihar Teacher Salary, Neighbouring States, State & Central Employees)",
-    "title": "string",
-    "summary": "string (detailed, informative, professional analysis paragraph of the policy development)",
-    "status": "string (e.g. 'Portal Live', 'Approved', 'Sovereign Slabs')",
-    "statusColor": "string (emerald, blue, purple, amber, or rose)",
-    "date": "string (e.g. June 2026)",
-    "impact": "string (exact financial/workplace impact statement)"
-  }
-]`;
-      const result = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        config: {
-          temperature: 0.7,
-        }
+      // 4.5 second timeout promise to avoid hanging connections or Gateway/Nginx timeouts
+      let timeoutId: NodeJS.Timeout | undefined;
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error("Gemini API call timed out after 4500ms")), 4500);
       });
+
+      // Race the actual Gemini API call against the timeout promise
+      const result = await Promise.race([
+        ai.models.generateContent({
+          model: "gemini-3.5-flash",
+          contents: prompt,
+          config: {
+            temperature: 0.7,
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  id: { type: Type.STRING },
+                  category: { type: Type.STRING },
+                  title: { type: Type.STRING },
+                  summary: { type: Type.STRING },
+                  status: { type: Type.STRING },
+                  statusColor: { type: Type.STRING },
+                  date: { type: Type.STRING },
+                  impact: { type: Type.STRING }
+                },
+                required: ["id", "category", "title", "summary", "status", "statusColor", "date", "impact"]
+              }
+            }
+          }
+        }),
+        timeoutPromise
+      ]);
+
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+
       const responseText = result.text || "";
       const cleanJson = responseText.replace(/```json/g, "").replace(/```/g, "").trim();
       const parsed = JSON.parse(cleanJson);
