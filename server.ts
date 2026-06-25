@@ -677,12 +677,12 @@ app.get("/api/market-insights", async (req, res) => {
     {
       id: "bihar-transfer-1",
       category: "Bihar Teacher Transfer",
-      title: "e-Shikshakosh Inter-District & Mutual Transfer Updates",
-      summary: "The Education Department of Bihar has finalized the policy for mutual and inter-district teacher transfers. Registered teachers can check criteria and request windows on the online e-Shikshakosh portal.",
-      status: "Guidelines Released",
+      title: "Official Notification: Bihar State Teacher Transfer Rules, 2026 Released",
+      summary: "The Education Department of Bihar has officially notified the 'Bihar State Teacher Transfer Rules, 2026' (Memo 11/Vi-33/2026) dated June 25, 2026. It introduces a highly structured Point-Based Seniority System (अंक-आधारित वरीयता प्रणाली) for primary, middle, secondary, and higher secondary government school teachers, with transparent rules for mutual and general transfers.",
+      status: "Policy Notified",
       statusColor: "emerald",
-      date: "June 2026",
-      impact: "Simplifies school-level reallocation for over 1.5 Lakh secondary & primary BPSC teachers."
+      date: "June 25, 2026",
+      impact: "Establishes transparent point scores (up to 20 pts for medical/disability, 15 pts for spouse posting, 10 pts for single parent, plus service-linked points) for over 1.5 Lakh teachers."
     },
     {
       id: "bihar-salary-1",
@@ -720,12 +720,12 @@ app.get("/api/market-insights", async (req, res) => {
     {
       id: "bihar-transfer-1",
       category: "Bihar Teacher Transfer",
-      title: "ई-शिक्षाकोष अंतर-जिला और पारस्परिक स्थानांतरण नियम",
-      summary: "बिहार के शिक्षा विभाग ने पारस्परिक और अंतर-जिला शिक्षक स्थानांतरण नीति को अंतिम रूप दे दिया है। पंजीकृत शिक्षक ई-शिक्षाकोष ऑनलाइन पोर्टल पर अपनी पात्रता और आवेदन करने की समयावधि की जांच कर सकते हैं।",
-      status: "दिशानिर्देश जारी",
+      title: "आधिकारिक अधिसूचना: 'बिहार राज्य शिक्षक स्थानान्तरण नियमावली, 2026' जारी",
+      summary: "बिहार शिक्षा विभाग ने 25 जून 2026 को 'बिहार राज्य शिक्षक स्थानान्तरण नियमावली, 2026' (संचिका संख्या 11/वि०-33/2026) की आधिकारिक अधिसूचना जारी कर दी है। इसके तहत प्राथमिक, मध्य, माध्यमिक और उच्चतर माध्यमिक शिक्षकों के स्थानांतरण के लिए एक पारदर्शी 'अंक-आधारित वरीयता प्रणाली' (Point-Based Seniority System) लागू की गई है।",
+      status: "नियमावली अधिसूचित",
       statusColor: "emerald",
-      date: "जून 2026",
-      impact: "1.5 लाख से अधिक प्राथमिक और माध्यमिक बीपीएससी शिक्षकों के लिए स्थानांतरण प्रक्रिया को बेहद सरल बनाता है।"
+      date: "25 जून 2026",
+      impact: "तबादलों में पूर्ण पारदर्शिता आएगी; शिक्षक अपनी सेवा अवधि (1 अंक प्रति शैक्षणिक वर्ष), स्कूल श्रेणी (1-5 अंक) और विशेष श्रेणियों जैसे गंभीर बीमारी/दिव्यांगता (20 अंक), पति-पत्नी पदस्थापन (15 अंक) के आधार पर वरीयता स्कोर की गणना कर सकेंगे।"
     },
     {
       id: "bihar-salary-1",
@@ -766,7 +766,7 @@ app.get("/api/market-insights", async (req, res) => {
     try {
       const ai = getAIClient();
       let prompt = `Generate exactly 4 fresh, highly informative and realistic market insights targeting:
-1. Bihar Teacher Transfer policies (rules, district reallocation dates, e-Shikshakosh online requests, guidelines)
+1. Bihar Teacher Transfer policies (specifically the new 'Bihar State Teacher Transfer Rules, 2026' notified on June 25, 2026, implementing a Point-Based Seniority System with max 20 pts for medical/disability, 15 pts for spouse posting, and service tenure points)
 2. Bihar Teacher Salary (BPSC salaries, 7th Pay DA updates at 50-53%, pension structures, actual numbers)
 3. Teachers news of neighbouring states (UP recruitment board, Jharkhand DA at 50-53% raises, West Bengal scaling)
 4. State & Central government employees (8th Pay Commission fitment factor memorandum, Unified Pension Scheme UPS vs NPS options)`;
