@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Newspaper, RefreshCw, AlertCircle, ArrowRight, Sparkles, Send, MapPin, Landmark, Award } from "lucide-react";
+import { Newspaper, RefreshCw, AlertCircle, ArrowRight, Sparkles, Send, MapPin, Landmark, Award, Copy, Check } from "lucide-react";
 
 interface InsightItem {
   id: string;
@@ -12,7 +12,7 @@ interface InsightItem {
   impact: string;
 }
 
-const LOCAL_FALLBACK_INSIGHTS: InsightItem[] = [
+const LOCAL_FALLBACK_INSIGHTS_EN: InsightItem[] = [
   {
     id: "bihar-transfer-1",
     category: "Bihar Teacher Transfer",
@@ -55,21 +55,66 @@ const LOCAL_FALLBACK_INSIGHTS: InsightItem[] = [
   }
 ];
 
+const LOCAL_FALLBACK_INSIGHTS_HI: InsightItem[] = [
+  {
+    id: "bihar-transfer-1",
+    category: "Bihar Teacher Transfer",
+    title: "ई-शिक्षाकोष अंतर-जिला और पारस्परिक स्थानांतरण नियम",
+    summary: "बिहार के शिक्षा विभाग ने पारस्परिक और अंतर-जिला शिक्षक स्थानांतरण नीति को अंतिम रूप दे दिया है। पंजीकृत शिक्षक ई-शिक्षाकोष ऑनलाइन पोर्टल पर अपनी पात्रता और आवेदन करने की समयावधि की जांच कर सकते हैं।",
+    status: "दिशानिर्देश जारी",
+    statusColor: "emerald",
+    date: "जून 2026",
+    impact: "1.5 लाख से अधिक प्राथमिक और माध्यमिक बीपीएससी शिक्षकों के लिए स्थानांतरण प्रक्रिया को बेहद सरल बनाता है।"
+  },
+  {
+    id: "bihar-salary-1",
+    category: "Bihar Teacher Salary",
+    title: "बीपीएससी शिक्षक महंगाई भत्ता (DA) 50% स्वीकृत और वितरित",
+    summary: "सातवें वेतन आयोग की सिफारिशों के आधार पर तय किए गए मूल वेतन पर 50% की दर से महंगाई भत्ता (DA) बीपीएससी प्राथमिक, माध्यमिक और उच्चतर माध्यमिक शिक्षक संवर्गों के लिए सफलतापूर्वक जारी कर दिया गया है।",
+    status: "डीए वितरित",
+    statusColor: "blue",
+    date: "मई 2026",
+    impact: "वेतन स्तर के आधार पर मासिक इन-हैंड सैलरी में ₹3,800 से ₹6,000 तक की सीधी और तत्काल बढ़ोतरी।"
+  },
+  {
+    id: "neighbour-states-1",
+    category: "Neighbouring States",
+    title: "झारखंड और उत्तर प्रदेश शिक्षक वेतन संरेखण परियोजनाएं",
+    summary: "झारखंड कैबिनेट ने सरकारी शिक्षकों के महंगाई भत्ते को बढ़ाकर 53% करने की मंजूरी दे दी है। वहीं उत्तर प्रदेश सरकार लंबित वेतनमान विसंगतियों को दूर करने के लिए नए शिक्षा सेवा चयन बोर्ड का गठन कर रही है।",
+    status: "वेतनमान संरेखित",
+    statusColor: "purple",
+    date: "जून 2026",
+    impact: "सीमावर्ती जिलों में कार्यरत शिक्षकों के वेतन में असमानता कम होगी, जिससे शिक्षकों के पलायन पर रोक लगेगी।"
+  },
+  {
+    id: "state-central-1",
+    category: "State & Central Employees",
+    title: "8वें वेतन आयोग का ज्ञापन प्रस्तुत; यूपीएस बनाम एनपीएस बहस तेज",
+    summary: "कर्मचारी महासंघों ने 2.86x या 3.0x फिटमेंट फैक्टर की सिफारिश के साथ 8वें वेतन आयोग के तत्काल गठन के लिए आधिकारिक मांग पत्र सौंपा है। इसके साथ ही यूनियनों द्वारा एकीकृत पेंशन योजना (UPS) के नियमों का भी गहन विश्लेषण किया जा रहा है।",
+    status: "ज्ञापन स्तर",
+    statusColor: "amber",
+    date: "जून 2026",
+    impact: "यदि 2.86x फिटमेंट फैक्टर लागू होता है, तो न्यूनतम प्रारंभिक मूल वेतन ₹18,000 से बढ़कर सीधे ₹51,480 हो जाएगा।"
+  }
+];
+
 interface MarketInsightsProps {
   language: string;
 }
 
 export default function MarketInsights({ language }: MarketInsightsProps) {
-  const [insights, setInsights] = useState<InsightItem[]>(LOCAL_FALLBACK_INSIGHTS);
+  const defaultFallback = language === "hi" ? LOCAL_FALLBACK_INSIGHTS_HI : LOCAL_FALLBACK_INSIGHTS_EN;
+  const [insights, setInsights] = useState<InsightItem[]>(defaultFallback);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("All");
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const fetchInsights = async () => {
     setLoading(true);
     setErrorMsg(null);
     try {
-      const response = await fetch("/api/market-insights");
+      const response = await fetch(`/api/market-insights?lang=${language}`);
       if (!response.ok) {
         throw new Error("Failed to load real-time market insights.");
       }
@@ -82,7 +127,7 @@ export default function MarketInsights({ language }: MarketInsightsProps) {
     } catch (err: any) {
       console.warn("Could not retrieve live insights, using high-fidelity local cache:", err);
       // Quietly fall back to high-fidelity cache instead of locking user into an error box
-      setInsights(LOCAL_FALLBACK_INSIGHTS);
+      setInsights(language === "hi" ? LOCAL_FALLBACK_INSIGHTS_HI : LOCAL_FALLBACK_INSIGHTS_EN);
       setErrorMsg(null);
     } finally {
       setLoading(false);
@@ -91,7 +136,51 @@ export default function MarketInsights({ language }: MarketInsightsProps) {
 
   useEffect(() => {
     fetchInsights();
-  }, []);
+  }, [language]);
+
+  const handleShareWhatsApp = (item: InsightItem) => {
+    const localizedCategory = language === "hi" ? (
+      item.category === "Bihar Teacher Transfer" ? "शिक्षक स्थानांतरण" :
+      item.category === "Bihar Teacher Salary" ? "शिक्षक वेतन" :
+      item.category === "Neighbouring States" ? "पड़ोसी राज्य" :
+      item.category === "State & Central Employees" ? "कर्मचारी संघ" :
+      item.category
+    ) : item.category;
+
+    const text = `📰 *${item.title}*\n\n` +
+      `📌 *${language === 'hi' ? 'श्रेणी' : 'Category'}*: ${localizedCategory}\n` +
+      `🗓️ *${language === 'hi' ? 'दिनांक' : 'Date'}*: ${item.date}\n` +
+      `🏷️ *${language === 'hi' ? 'स्थिति' : 'Status'}*: ${item.status}\n\n` +
+      `📝 ${item.summary}\n\n` +
+      `💡 *${language === 'hi' ? 'वित्तीय और नीतिगत प्रभाव' : 'Financial & Policy Impact'}:*\n${item.impact}\n\n` +
+      `👉 कैलकुलेशन के लिए 'पैसा ब्लूप्रिंट' देखें: ${window.location.origin}`;
+
+    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+    window.open(url, "_blank");
+  };
+
+  const handleCopyText = (item: InsightItem) => {
+    const localizedCategory = language === "hi" ? (
+      item.category === "Bihar Teacher Transfer" ? "शिक्षक स्थानांतरण" :
+      item.category === "Bihar Teacher Salary" ? "शिक्षक वेतन" :
+      item.category === "Neighbouring States" ? "पड़ोसी राज्य" :
+      item.category === "State & Central Employees" ? "कर्मचारी संघ" :
+      item.category
+    ) : item.category;
+
+    const text = `📰 ${item.title}\n\n` +
+      `Category: ${localizedCategory}\n` +
+      `Date: ${item.date}\n` +
+      `Status: ${item.status}\n\n` +
+      `${item.summary}\n\n` +
+      `Impact:\n${item.impact}\n\n` +
+      `Check calculations at: ${window.location.origin}`;
+
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedId(item.id);
+      setTimeout(() => setCopiedId(null), 2000);
+    });
+  };
 
   const categories = ["All", "Bihar Teacher Transfer", "Bihar Teacher Salary", "Neighbouring States", "State & Central Employees"];
 
@@ -127,7 +216,7 @@ export default function MarketInsights({ language }: MarketInsightsProps) {
       loading: "Fetching live policies..."
     },
     hi: {
-      header: "जीएसी और वेतन अपडेट",
+      header: "शासन और बाज़ार अंतर्दृष्टि",
       subHeader: "नवीनतम परिपत्र, शिक्षक स्थानांतरण और वेतन नियम",
       refresh: "अपडेट करें",
       impact: "वित्तीय और नीतिगत प्रभाव",
@@ -211,46 +300,88 @@ export default function MarketInsights({ language }: MarketInsightsProps) {
         ) : filteredInsights.length === 0 ? (
           <p className="text-xs text-center text-slate-400 py-6">{currentLabels.noData}</p>
         ) : (
-          filteredInsights.map((item) => (
-            <div 
-              key={item.id} 
-              className="border-b border-dashed border-slate-100 dark:border-slate-800 last:border-0 pb-3.5 last:pb-0 space-y-2 animate-fadeIn"
-            >
-              {/* Category, Date & Status */}
-              <div className="flex items-center justify-between text-[9px] font-bold">
-                <span className="text-bhagwa-600 bg-bhagwa-500/5 px-2 py-0.5 rounded uppercase tracking-wider">
-                  {item.category}
-                </span>
-                <span className="text-slate-400">{item.date}</span>
-              </div>
+          filteredInsights.map((item) => {
+            const localizedCategory = language === "hi" ? (
+              item.category === "Bihar Teacher Transfer" ? "शिक्षक स्थानांतरण" :
+              item.category === "Bihar Teacher Salary" ? "शिक्षक वेतन" :
+              item.category === "Neighbouring States" ? "पड़ोसी राज्य" :
+              item.category === "State & Central Employees" ? "कर्मचारी संघ" :
+              item.category
+            ) : item.category;
 
-              {/* Title & badge */}
-              <div className="space-y-1">
-                <div className="flex items-start gap-1.5 justify-between">
-                  <h5 className="text-[11px] font-extrabold text-slate-800 dark:text-white leading-tight mt-0.5">
-                    {item.title}
-                  </h5>
-                  <span className={`px-1.5 py-0.5 rounded text-[8px] font-extrabold whitespace-nowrap uppercase tracking-tight shrink-0 select-none ${getStatusClasses(item.statusColor)}`}>
-                    {item.status}
+            return (
+              <div 
+                key={item.id} 
+                className="border-b border-dashed border-slate-100 dark:border-slate-800 last:border-0 pb-3.5 last:pb-0 space-y-2 animate-fadeIn"
+              >
+                {/* Category, Date & Status */}
+                <div className="flex items-center justify-between text-[9px] font-bold">
+                  <span className="text-bhagwa-600 bg-bhagwa-500/5 px-2 py-0.5 rounded uppercase tracking-wider">
+                    {localizedCategory}
                   </span>
+                  <span className="text-slate-400">{item.date}</span>
                 </div>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-                  {item.summary}
-                </p>
-              </div>
 
-              {/* Impact Callout */}
-              <div className="bg-slate-50 dark:bg-slate-950/40 rounded-lg p-2 border border-slate-100/50 dark:border-slate-800 text-[10px] space-y-0.5">
-                <span className="font-extrabold text-[#d25c00] dark:text-bhagwa-400 flex items-center gap-1">
-                  <Sparkles className="w-3 h-3 text-[#d25c00] dark:text-bhagwa-400 shrink-0" />
-                  {currentLabels.impact}
-                </span>
-                <p className="text-slate-600 dark:text-slate-350 leading-normal font-medium">
-                  {item.impact}
-                </p>
+                {/* Title & badge */}
+                <div className="space-y-1">
+                  <div className="flex items-start gap-1.5 justify-between">
+                    <h5 className="text-[11px] font-extrabold text-slate-800 dark:text-white leading-tight mt-0.5">
+                      {item.title}
+                    </h5>
+                    <span className={`px-1.5 py-0.5 rounded text-[8px] font-extrabold whitespace-nowrap uppercase tracking-tight shrink-0 select-none ${getStatusClasses(item.statusColor)}`}>
+                      {item.status}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
+                    {item.summary}
+                  </p>
+                </div>
+
+                {/* Impact Callout */}
+                <div className="bg-slate-50 dark:bg-slate-950/40 rounded-lg p-2 border border-slate-100/50 dark:border-slate-800 text-[10px] space-y-0.5">
+                  <span className="font-extrabold text-[#d25c00] dark:text-bhagwa-400 flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-[#d25c00] dark:text-bhagwa-400 shrink-0" />
+                    {currentLabels.impact}
+                  </span>
+                  <p className="text-slate-600 dark:text-slate-350 leading-normal font-medium">
+                    {item.impact}
+                  </p>
+                </div>
+
+                {/* Share bar */}
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-tight">
+                    {language === "hi" ? "साझा करें:" : "Share update:"}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleShareWhatsApp(item)}
+                      className="flex items-center gap-1 px-2.5 py-1 text-[9px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/10 border border-emerald-100 dark:border-emerald-900/20 hover:bg-emerald-100/40 dark:hover:bg-emerald-950/30 rounded-md transition-all cursor-pointer"
+                    >
+                      <Send className="w-2.5 h-2.5 text-emerald-500" />
+                      WhatsApp
+                    </button>
+                    <button
+                      onClick={() => handleCopyText(item)}
+                      className="flex items-center gap-1 px-2.5 py-1 text-[9px] font-bold text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 border border-slate-100/50 dark:border-slate-700 hover:bg-slate-100/50 dark:hover:bg-slate-700 rounded-md transition-all cursor-pointer"
+                    >
+                      {copiedId === item.id ? (
+                        <>
+                          <Check className="w-2.5 h-2.5 text-emerald-500" />
+                          {language === "hi" ? "कॉपी हुआ!" : "Copied!"}
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-2.5 h-2.5 text-slate-400" />
+                          {language === "hi" ? "कॉपी करें" : "Copy text"}
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>

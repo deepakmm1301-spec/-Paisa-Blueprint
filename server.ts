@@ -670,7 +670,10 @@ app.post("/api/visitors/hit", (req, res) => {
 
 // Real-time Government Employee & Teacher Market Insights API
 app.get("/api/market-insights", async (req, res) => {
-  const offlineInsights = [
+  const langQuery = req.query.lang;
+  const isHindi = langQuery === "hi";
+
+  const offlineInsightsEn = [
     {
       id: "bihar-transfer-1",
       category: "Bihar Teacher Transfer",
@@ -713,15 +716,67 @@ app.get("/api/market-insights", async (req, res) => {
     }
   ];
 
+  const offlineInsightsHi = [
+    {
+      id: "bihar-transfer-1",
+      category: "Bihar Teacher Transfer",
+      title: "ई-शिक्षाकोष अंतर-जिला और पारस्परिक स्थानांतरण नियम",
+      summary: "बिहार के शिक्षा विभाग ने पारस्परिक और अंतर-जिला शिक्षक स्थानांतरण नीति को अंतिम रूप दे दिया है। पंजीकृत शिक्षक ई-शिक्षाकोष ऑनलाइन पोर्टल पर अपनी पात्रता और आवेदन करने की समयावधि की जांच कर सकते हैं।",
+      status: "दिशानिर्देश जारी",
+      statusColor: "emerald",
+      date: "जून 2026",
+      impact: "1.5 लाख से अधिक प्राथमिक और माध्यमिक बीपीएससी शिक्षकों के लिए स्थानांतरण प्रक्रिया को बेहद सरल बनाता है।"
+    },
+    {
+      id: "bihar-salary-1",
+      category: "Bihar Teacher Salary",
+      title: "बीपीएससी शिक्षक महंगाई भत्ता (DA) 50% स्वीकृत और वितरित",
+      summary: "सातवें वेतन आयोग की सिफारिशों के आधार पर तय किए गए मूल वेतन पर 50% की दर से महंगाई भत्ता (DA) बीपीएससी प्राथमिक, माध्यमिक और उच्चतर माध्यमिक शिक्षक संवर्गों के लिए सफलतापूर्वक जारी कर दिया गया है।",
+      status: "डीए वितरित",
+      statusColor: "blue",
+      date: "मई 2026",
+      impact: "वेतन स्तर के आधार पर मासिक इन-हैंड सैलरी में ₹3,800 से ₹6,000 तक की सीधी और तत्काल बढ़ोतरी।"
+    },
+    {
+      id: "neighbour-states-1",
+      category: "Neighbouring States",
+      title: "झारखंड और उत्तर प्रदेश शिक्षक वेतन संरेखण परियोजनाएं",
+      summary: "झारखंड कैबिनेट ने सरकारी शिक्षकों के महंगाई भत्ते को बढ़ाकर 53% करने की मंजूरी दे दी है। वहीं उत्तर प्रदेश सरकार लंबित वेतनमान विसंगतियों को दूर करने के लिए नए शिक्षा सेवा चयन बोर्ड का गठन कर रही है।",
+      status: "वेतनमान संरेखित",
+      statusColor: "purple",
+      date: "जून 2026",
+      impact: "सीमावर्ती जिलों में कार्यरत शिक्षकों के वेतन में असमानता कम होगी, जिससे शिक्षकों के पलायन पर रोक लगेगी।"
+    },
+    {
+      id: "state-central-1",
+      category: "State & Central Employees",
+      title: "8वें वेतन आयोग का ज्ञापन प्रस्तुत; यूपीएस बनाम एनपीएस बहस तेज",
+      summary: "कर्मचारी महासंघों ने 2.86x या 3.0x फिटमेंट फैक्टर की सिफारिश के साथ 8वें वेतन आयोग के तत्काल गठन के लिए आधिकारिक मांग पत्र सौंपा है। इसके साथ ही यूनियनों द्वारा एकीकृत पेंशन योजना (UPS) के नियमों का भी गहन विश्लेषण किया जा रहा है।",
+      status: "ज्ञापन स्तर",
+      statusColor: "amber",
+      date: "जून 2026",
+      impact: "यदि 2.86x फिटमेंट फैक्टर लागू होता है, तो न्यूनतम प्रारंभिक मूल वेतन ₹18,000 से बढ़कर सीधे ₹51,480 हो जाएगा।"
+    }
+  ];
+
+  const offlineInsights = isHindi ? offlineInsightsHi : offlineInsightsEn;
+
   const serverKey = process.env.GEMINI_API_KEY;
   if (serverKey && serverKey.trim() !== "") {
     try {
       const ai = getAIClient();
-      const prompt = `Generate exactly 4 fresh, highly informative and realistic market insights targeting:
+      let prompt = `Generate exactly 4 fresh, highly informative and realistic market insights targeting:
 1. Bihar Teacher Transfer policies (rules, district reallocation dates, e-Shikshakosh online requests, guidelines)
 2. Bihar Teacher Salary (BPSC salaries, 7th Pay DA updates at 50-53%, pension structures, actual numbers)
 3. Teachers news of neighbouring states (UP recruitment board, Jharkhand DA at 50-53% raises, West Bengal scaling)
 4. State & Central government employees (8th Pay Commission fitment factor memorandum, Unified Pension Scheme UPS vs NPS options)`;
+
+      if (isHindi) {
+        prompt += `\n\nCRITICAL REQUIRED TRANSLATION: You MUST write all textual fields (title, summary, status, date, and impact) in fluent, natural Hindi using the Devanagari script.
+However, the 'category' field MUST remain in English as one of the following exact strings: "Bihar Teacher Transfer", "Bihar Teacher Salary", "Neighbouring States", "State & Central Employees" for programmatic filtering to work on the client side.`;
+      } else {
+        prompt += `\n\nThe 'category' field MUST be exactly one of: "Bihar Teacher Transfer", "Bihar Teacher Salary", "Neighbouring States", "State & Central Employees". All other text fields should be in English.`;
+      }
 
       // 4.5 second timeout promise to avoid hanging connections or Gateway/Nginx timeouts
       let timeoutId: NodeJS.Timeout | undefined;
