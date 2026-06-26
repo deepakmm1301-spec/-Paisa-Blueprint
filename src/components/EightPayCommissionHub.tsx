@@ -159,7 +159,7 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
 
   // Warning Banner component
   const DisclaimerBanner = () => (
-    <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4.5 text-slate-800 text-xs sm:text-sm leading-relaxed mb-6 shadow-3xs flex items-start gap-3">
+    <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4.5 text-slate-800 text-xs sm:text-sm leading-relaxed mb-6 shadow-3xs flex items-start gap-3 print:hidden">
       <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5 animate-pulse" />
       <div>
         <p className="font-extrabold text-amber-800 uppercase tracking-wide text-[10px] mb-1">
@@ -300,7 +300,7 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
   return (
     <div className="bg-slate-50 dark:bg-slate-900 min-h-screen">
       {/* 8th Pay Banner Hub Header */}
-      <div className="bg-gradient-to-r from-violet-600 to-indigo-700 text-white py-10 px-6 rounded-3xl shadow-lg mb-8 text-center relative overflow-hidden">
+      <div className="bg-gradient-to-r from-violet-600 to-indigo-700 text-white py-10 px-6 rounded-3xl shadow-lg mb-8 text-center relative overflow-hidden print:hidden">
         <div className="absolute top-0 right-0 p-8 opacity-10">
           <BookOpen className="w-48 h-48 scroll-smooth" />
         </div>
@@ -323,7 +323,7 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
         <DisclaimerBanner />
 
         {/* Categories Tab bar */}
-        <div className="mb-8">
+        <div className="mb-8 print:hidden">
           <h3 className="text-xs font-black uppercase tracking-wider text-slate-450 dark:text-slate-400 mb-3 flex items-center gap-1.5">
             <Coins className="w-3.5 h-3.5 text-violet-500" />
             {language === "hi" ? "8वें वेतन के 4 स्वतंत्र कैलकुलेटर" : "4 Dedicated 8th Pay Commission Calculators"}
@@ -352,7 +352,7 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
         </div>
 
         {/* Content Tabs bar */}
-        <div className="mb-8">
+        <div className="mb-8 print:hidden">
           <h3 className="text-xs font-black uppercase tracking-wider text-slate-450 dark:text-slate-400 mb-3 flex items-center gap-1.5">
             <BookOpen className="w-3.5 h-3.5 text-indigo-500" />
             {language === "hi" ? "8वां वेतन आयोग - संपूर्ण गाइड और चार्ट" : "8th Pay Commission Guides & Reference Charts"}

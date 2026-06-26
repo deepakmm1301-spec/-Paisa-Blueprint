@@ -1153,7 +1153,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* Top Main Navigation Bar */}
-      <header className="bg-white border-b border-slate-100 sticky top-0 z-40 backdrop-blur-md bg-white/90">
+      <header className="bg-white border-b border-slate-100 sticky top-0 z-40 backdrop-blur-md bg-white/90 print:hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           
           {/* Branded Logo */}
@@ -1243,7 +1243,7 @@ export default function App() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-28 lg:pb-8 flex-1 w-full flex flex-col gap-8">
 
         {/* High-visibility alert banner for Student PDF Toolkit */}
-        <div className="hidden sm:flex relative overflow-hidden bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-purple-500/10 border-2 border-emerald-500/20 rounded-2xl p-4 sm:p-5 flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+        <div className="hidden sm:flex relative overflow-hidden bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-purple-500/10 border-2 border-emerald-500/20 rounded-2xl p-4 sm:p-5 flex-col sm:flex-row items-center justify-between gap-4 shadow-sm print:hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-400/10 rounded-full blur-2xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-purple-400/10 rounded-full blur-xl pointer-events-none" />
           
@@ -1284,7 +1284,7 @@ export default function App() {
         </div>
 
         {/* Dynamic Brand Tagline & Action Banner */}
-        <div id="brand-tagline-hero" className="relative overflow-hidden bg-gradient-to-br from-violet-100 via-white to-emerald-100/85 dark:from-[#24173d] dark:via-slate-900 dark:to-[#052b1e] border-2 border-violet-200/70 dark:border-emerald-500/30 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 shadow-md dark:shadow-xl dark:shadow-violet-950/20 transition-all duration-300">
+        <div id="brand-tagline-hero" className="relative overflow-hidden bg-gradient-to-br from-violet-100 via-white to-emerald-100/85 dark:from-[#24173d] dark:via-slate-900 dark:to-[#052b1e] border-2 border-violet-200/70 dark:border-emerald-500/30 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 shadow-md dark:shadow-xl dark:shadow-violet-950/20 transition-all duration-300 print:hidden">
           {/* Decorative glows & patterns using light purple and light green */}
           <div className="absolute top-0 right-0 w-72 h-72 bg-violet-400/30 dark:bg-violet-500/20 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-12 w-48 h-48 bg-emerald-400/30 dark:bg-emerald-500/20 rounded-full blur-2xl pointer-events-none" />
@@ -1367,7 +1367,7 @@ export default function App() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
           
           {/* Left Side Navigation Rails */}
-          <section className="lg:col-span-3 space-y-6">
+          <section className="lg:col-span-3 space-y-6 print:hidden">
 
           <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-3xs space-y-2">
             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider px-3 block mb-1">
@@ -1425,7 +1425,7 @@ export default function App() {
         </section>
 
         {/* Middle Content Sheet */}
-        <section ref={contentRef} className="lg:col-span-6 scroll-mt-24">
+        <section ref={contentRef} className="lg:col-span-6 print:col-span-12 print:w-full print:max-w-none print:p-0 scroll-mt-24">
           <div className="space-y-6">
             <AnimatePresence mode="wait">
               <motion.div
@@ -1575,7 +1575,7 @@ export default function App() {
         </section>
 
         {/* Right Sidebar: Articles Guidance cabinet */}
-        <section className="lg:col-span-3 space-y-6">
+        <section className="lg:col-span-3 space-y-6 print:hidden">
           <MarketInsights language={language} />
           
           <ArticlesColumn 

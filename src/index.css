@@ -277,4 +277,92 @@ h1, h2, h3, h4, h5, h6 {
   color: #ffffff !important;
 }
 
+/* ==========================================================================
+   Print Styles for Professional Direct-from-Browser Printing
+   ========================================================================== */
+@media print {
+  /* Hide headers, sidebars, buttons, and speculative text warnings during print */
+  header,
+  footer,
+  aside,
+  nav,
+  button,
+  .print\:hidden,
+  .no-print,
+  #brand-tagline-hero,
+  #welcome-overlay {
+    display: none !important;
+  }
+
+  /* Force content container to span full page width */
+  body, html, main {
+    background: #ffffff !important;
+    color: #000000 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Reset main column constraints for full width */
+  section.lg\:col-span-6,
+  main section,
+  .lg\:col-span-6,
+  .lg\:col-span-7,
+  .lg\:col-span-5 {
+    grid-column: span 12 / span 12 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Adjust grid systems to output flat stack items */
+  .grid, .grid-cols-1, .lg\:grid-cols-12 {
+    display: block !important;
+    width: 100% !important;
+  }
+
+  /* Clean up white backgrounds for printed cards */
+  .bg-white, .dark\:bg-slate-850, .bg-slate-50, .dark\:bg-slate-900 {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+    box-shadow: none !important;
+    border-radius: 12px !important;
+    padding: 16px !important;
+    margin-bottom: 20px !important;
+  }
+
+  /* Print safe typography */
+  h1, h2, h3, h4, h5, h6 {
+    color: #000000 !important;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  p, span, li, td, th, label {
+    color: #334155 !important;
+  }
+
+  /* Avoid splitting logical cards mid-page */
+  .rounded-2xl, .rounded-3xl, .shadow-sm, .border {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Render simple table layouts clearly */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  th, td {
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding: 8px !important;
+    text-align: left !important;
+  }
+}
+
 
