@@ -20,7 +20,9 @@ interface PDFReportConfig {
  * Transliterates common Hindi labels to Roman/Latin script 
  * to prevent character rendering failures in standard jsPDF fonts.
  */
-function cleanTextForPDF(text: string): string {
+function cleanTextForPDF(text: any): string {
+  if (text === null || text === undefined) return "";
+  const str = String(text);
   // Simple mapping of common terms for robust printing
   const mappings: { [key: string]: string } = {
     // Headings
@@ -77,7 +79,7 @@ function cleanTextForPDF(text: string): string {
     "डाउनलोड पीडीएफ": "Download PDF Report"
   };
 
-  let cleaned = text;
+  let cleaned = str;
   Object.keys(mappings).forEach((key) => {
     const regex = new RegExp(key, "gi");
     cleaned = cleaned.replace(regex, mappings[key]);
@@ -248,8 +250,8 @@ export function generatePDFReport(config: PDFReportConfig) {
     y += 3.8;
   });
 
-  // Stamp Page Numbers
-  const pageCount = (doc.internal as any).getNumberOfPages();
+  // Stamp Page Numbers using standard public API
+  const pageCount = doc.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
     doc.setFont("Helvetica", "normal");
@@ -270,7 +272,27 @@ export function generatePDFReport(config: PDFReportConfig) {
     );
   }
   
-  // Trigger download with normalized filename
+  // Trigger download with normalized filename and robust compatibility fallbacks
   const filename = `${cleanTitle.replace(/[^a-zA-Z0-9]/g, "_").toLowerCase()}_summary.pdf`;
-  doc.save(filename);
+  
+  try {
+    const blob = doc.output("blob");
+    const blobUrl = URL.createObjectURL(blob);
+    
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = filename;
+    link.target = "_blank"; // compatibility fallback
+    
+    document.body.appendChild(link);
+    link.click();
+    
+    setTimeout(() => {
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    }, 200);
+  } catch (err) {
+    console.warn("High-compatibility blob download failed, trying standard save:", err);
+    doc.save(filename);
+  }
 }
