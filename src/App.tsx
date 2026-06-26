@@ -1541,7 +1541,7 @@ export default function App() {
             </AnimatePresence>
 
             {/* Global Widget WhatsApp Share Action */}
-            <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-4.5 rounded-3xl shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="hidden sm:flex bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-4.5 rounded-3xl shadow-md flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-2xl bg-emerald-100/50 dark:bg-emerald-500/10 text-[#25D366] flex items-center justify-center">
                   <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
