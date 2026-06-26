@@ -19,6 +19,7 @@ import {
   Share2
 } from "lucide-react";
 import { getShareableLink } from "../types";
+import { generatePDFReport } from "../utils/pdfGenerator";
 
 interface EightPayCommissionHubProps {
   activeSubPage: string;
@@ -242,6 +243,60 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
+  const downloadPDFReport = () => {
+    generatePDFReport({
+      title: language === "hi" ? "8वां वेतन आयोग अनुमान रिपोर्ट 2026" : "8th Pay Commission Projections Report 2026",
+      subtitle: language === "hi" ? "8वें वेतन आयोग के तहत संभावित वेतन वृद्धि एवं पेंशन विश्लेषण" : "Indicative salary hike & pension estimations under 8th CPC",
+      language,
+      sections: [
+        {
+          title: language === "hi" ? "वेतन आयोग मूल मानक" : "Salary Commission Parameters",
+          items: [
+            { label: language === "hi" ? "वर्तमान मूल वेतन (7th CPC)" : "Current Basic Pay (7th CPC)", value: `INR ${basicPay.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "प्रस्तावित फिटमेंट फैक्टर" : "Assumed Fitment Factor", value: `${fitmentFactor}x` },
+            { label: language === "hi" ? "नया संशोधित मूल वेतन (8th CPC)" : "Revised Basic Pay (8th CPC)", value: `INR ${calculatedRevisedBasic.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: language === "hi" ? "भत्ते और तुलनात्मक सकल वेतन" : "Allowances & Gross Salary Comparison",
+          items: [
+            { label: language === "hi" ? "महंगाई भत्ता (7th CPC)" : "Dearness Allowance (7th CPC)", value: `INR ${daOld.toLocaleString("en-IN")} (${currentDaPercent}%)` },
+            { label: language === "hi" ? "महंगाई भत्ता (8th CPC)" : "Dearness Allowance (8th CPC)", value: `INR ${daNew.toLocaleString("en-IN")} (${expectedDa8th}%)` },
+            { label: language === "hi" ? "मकान किराया भत्ता (7th CPC)" : "HRA (7th CPC)", value: `INR ${hraOld.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "मकान किराया भत्ता (8th CPC)" : "HRA (8th CPC)", value: `INR ${hraNew.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "सकल मासिक वेतन (7th CPC)" : "Gross Monthly Salary (7th CPC)", value: `INR ${grossOld.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "सकल मासिक वेतन (8th CPC)" : "Gross Monthly Salary (8th CPC)", value: `INR ${grossNew.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: language === "hi" ? "शुद्ध इन-हैंड वेतन तुलना (कटौती के बाद)" : "Net Take-Home Salary Comparison",
+          items: [
+            { label: language === "hi" ? "एनपीएस कटौती (7th CPC)" : "NPS Deduction (7th CPC)", value: `INR ${npsOld.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "एनपीएस कटौती (8th CPC)" : "NPS Deduction (8th CPC)", value: `INR ${npsNew.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "शुद्ध इन-हैंड वेतन (7th CPC)" : "In-Hand Salary (7th CPC)", value: `INR ${inHandOld.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "शुद्ध इन-हैंड वेतन (8th CPC)" : "In-Hand Salary (8th CPC)", value: `INR ${inHandNew.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: language === "hi" ? "वेतन वृद्धि एवं सेवानिवृत्ति योगदान" : "Salary Growth & Pension Benefits",
+          items: [
+            { label: language === "hi" ? "मासिक सकल वेतन वृद्धि" : "Monthly Gross Hike", value: `INR ${(grossNew - grossOld).toLocaleString("en-IN")} (+${((grossNew - grossOld) / grossOld * 100).toFixed(1)}%)` },
+            { label: language === "hi" ? "सरकार का एनपीएस योगदान (8th CPC)" : "Govt NPS Contribution (8th CPC)", value: `INR ${govtNpsNew.toLocaleString("en-IN")}` }
+          ]
+        }
+      ],
+      notes: language === "hi" ? [
+        "यह रिपोर्ट प्रस्तावित/काल्पनिक फिटमेंट फैक्टर पर आधारित सांकेतिक गणना है।",
+        "सरकारी एनपीएस पेंशन योगदान (14%) सीधे आपके नेशनल पेंशन सिस्टम खाते में जमा किया जाता है, यह इन-हैंड वेतन में शामिल नहीं होता है।",
+        "यह रिपोर्ट केवल एक शैक्षणिक अनुमान है।"
+      ] : [
+        "These calculations are indicative estimates based on expected/assumed fitment factors of the 8th Central Pay Commission.",
+        "The 14% Government NPS contribution is directly credited to your pension account and is not part of take-home pay.",
+        "This report is for educational projection purposes only."
+      ]
+    });
+  };
+
   return (
     <div className="bg-slate-50 dark:bg-slate-900 min-h-screen">
       {/* 8th Pay Banner Hub Header */}
@@ -339,7 +394,14 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
                     : "Simulate revised basic pay, revised DA, revised HRA, and final gross salary increase."}
                 </p>
               </div>
-              <div className="self-start sm:self-center shrink-0">
+              <div className="self-start sm:self-center shrink-0 flex flex-wrap gap-2">
+                <button
+                  onClick={downloadPDFReport}
+                  className="bg-violet-600 hover:bg-violet-500 active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"
+                >
+                  <FileText className="w-4 h-4 text-white" />
+                  <span>{language === "hi" ? "डाउनलोड पीडीएफ" : "Download PDF Report"}</span>
+                </button>
                 <button
                   onClick={shareToWhatsApp}
                   className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"
