@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Receipt, Landmark, ShieldCheck, Scale, Award, HelpCircle, FileText, Sparkles, Share2 } from "lucide-react";
+import { Receipt, Landmark, ShieldCheck, Scale, Award, HelpCircle, FileText, Sparkles, Share2, FileDown } from "lucide-react";
 import { UserProfile, getShareableLink } from "../types";
+import { generatePDFReport } from "../utils/pdfGenerator";
 
 interface Props {
   profile?: UserProfile;
@@ -126,6 +127,56 @@ export default function TaxPlanner({ profile }: Props) {
   const standardTaxSavings = Math.abs(totalTaxOld - totalTaxNew);
   const betterRegime = totalTaxOld < totalTaxNew ? "Old Regime" : "New Regime";
 
+  const downloadPDFReport = () => {
+    generatePDFReport({
+      title: "Income Tax Optimization Report",
+      subtitle: "Tax liability projections comparison for FY 2024-25",
+      sections: [
+        {
+          title: "Earnings and Input Matrix",
+          items: [
+            { label: "Annual Gross CTC Salary", value: `INR ${annualGross.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: "Old Regime Calculations",
+          items: [
+            { label: "Standard Deduction (Old)", value: `INR ${standardDeductionOld.toLocaleString("en-IN")}` },
+            { label: "Section 80C (PPF/EPF/ELSS)", value: `INR ${section80C.toLocaleString("en-IN")}` },
+            { label: "Section 80CCD (Additional NPS)", value: `INR ${section80Nps.toLocaleString("en-IN")}` },
+            { label: "HRA Exemption Claim", value: `INR ${hraExempt.toLocaleString("en-IN")}` },
+            { label: "Section 24b Home Loan Interest", value: `INR ${homeloanInterest.toLocaleString("en-IN")}` },
+            { label: "Section 80D (Health Insurance Premium)", value: `INR ${section80D.toLocaleString("en-IN")}` },
+            { label: "Total Deductions Allowed", value: `INR ${totalDeductionsOld.toLocaleString("en-IN")}` },
+            { label: "Taxable Income (Old)", value: `INR ${taxableIncomeOld.toLocaleString("en-IN")}` },
+            { label: "Estimated Annual Tax (Old)", value: `INR ${totalTaxOld.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: "New Regime Calculations",
+          items: [
+            { label: "Standard Deduction (New)", value: `INR ${standardDeductionNew.toLocaleString("en-IN")}` },
+            { label: "Exemptions Allowed", value: "None (as per Union Budget rules)" },
+            { label: "Taxable Income (New)", value: `INR ${taxableIncomeNew.toLocaleString("en-IN")}` },
+            { label: "Estimated Annual Tax (New)", value: `INR ${totalTaxNew.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: "Tax Optimization Summary",
+          items: [
+            { label: "Recommended Scheme", value: betterRegime },
+            { label: "Estimated Annual Savings", value: `INR ${standardTaxSavings.toLocaleString("en-IN")}` }
+          ]
+        }
+      ],
+      notes: [
+        "In the Old Regime, tax rebates under Section 87A apply fully if taxable income is <= 5,00,000 INR.",
+        "In the New Regime, standard deduction has been elevated to 75,000 INR for FY 2024-25, and full rebate under Section 87A applies if taxable income is <= 7,00,000 INR.",
+        "Projections do not constitute formal legal tax advice. Standard surcharges apply above 50,000,000 INR."
+      ]
+    });
+  };
+
   const shareToWhatsApp = () => {
     const currentUrl = getShareableLink("tax", "/tax-calculator"); // or dynamic
     
@@ -150,13 +201,22 @@ Optimize your salary and deductions instantly: ${currentUrl}`;
             Input your annual income and potential exemptions to optimize your Indian tax liability under both financial schemes.
           </p>
         </div>
-        <button
-          onClick={shareToWhatsApp}
-          className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 self-start sm:self-center shadow-md transition-all border-0 cursor-pointer"
-        >
-          <Share2 className="w-4 h-4" />
-          <span>Share on WhatsApp</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
+          <button
+            onClick={downloadPDFReport}
+            className="bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"
+          >
+            <FileDown className="w-4 h-4" />
+            <span>Download PDF Report</span>
+          </button>
+          <button
+            onClick={shareToWhatsApp}
+            className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"
+          >
+            <Share2 className="w-4 h-4" />
+            <span>Share on WhatsApp</span>
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

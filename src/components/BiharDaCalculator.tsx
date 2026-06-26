@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
-import { Sparkles, Share2, Info, Percent, Calculator, ListCollapse, BookOpen, AlertCircle, Coins } from "lucide-react";
+import { Sparkles, Share2, Info, Percent, Calculator, ListCollapse, BookOpen, AlertCircle, Coins, FileDown } from "lucide-react";
 import { getShareableLink } from "../types";
+import { generatePDFReport } from "../utils/pdfGenerator";
 
 interface BiharDaCalculatorProps {
   language?: "en" | "hi";
@@ -54,6 +55,59 @@ export default function BiharDaCalculator({ language = "en" }: BiharDaCalculator
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
+  const downloadPDFReport = () => {
+    generatePDFReport({
+      title: language === "hi" ? "बिहार शिक्षक महंगाई भत्ता (DA) रिपोर्ट" : "BPSC Teacher DA Calculation Report",
+      subtitle: language === "hi" ? "मूल वेतन और महंगाई भत्ता गणना का विस्तृत विवरण" : "Detailed Dearness Allowance (DA) and monthly salary adjustments",
+      language,
+      sections: [
+        {
+          title: language === "hi" ? "इनपुट विवरण" : "Input Parameters",
+          items: [
+            { label: language === "hi" ? "मूल वेतन" : "Basic Pay", value: `INR ${(typeof basicPay === "string" ? 0 : basicPay).toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "महंगाई भत्ता दर" : "Dearness Allowance Rate", value: `${daPercent}%` },
+            { label: language === "hi" ? "गृह किराया भत्ता दर (HRA)" : "HRA Rate Selected", value: `${hraPercent}%` }
+          ]
+        },
+        {
+          title: language === "hi" ? "मासिक भत्ता गणना" : "Allowance Calculations",
+          items: [
+            { label: language === "hi" ? "महंगाई भत्ता राशि" : "Calculated DA Amount", value: `INR ${computedData.daAmount.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "गृह किराया भत्ता राशि" : "Calculated HRA Amount", value: `INR ${computedData.hraAmount.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "चिकित्सा भत्ता" : "Medical Allowance", value: `INR ${computedData.medicalAllowance.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "सकल मासिक वेतन" : "Gross Monthly Salary", value: `INR ${computedData.grossSalary.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: language === "hi" ? "मासिक कटौती विवरण" : "Monthly Deductions",
+          items: [
+            { label: language === "hi" ? "एनपीएस कटौती (10%)" : "NPS Employee Share (10% of Basic+DA)", value: `INR ${computedData.npsDeduction.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "व्यावसायिक कर" : "Professional Tax", value: `INR ${professionalTax.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "कुल कटौती" : "Total Monthly Deductions", value: `INR ${computedData.totalDeductions.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: language === "hi" ? "अंतिम शुद्ध भुगतान" : "Net Take-Home Summary",
+          items: [
+            { label: language === "hi" ? "इन-हैंड वेतन" : "Net In-Hand Salary (Take-home)", value: `INR ${computedData.inHandSalary.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "सरकार का एनपीएस योगदान" : "Govt NPS Contribution (14%)", value: `INR ${computedData.govtNpsContribution.toLocaleString("en-IN")}` }
+          ]
+        }
+      ],
+      notes: language === "hi" ? [
+        "महंगाई भत्ता दरें राज्य सरकार के हालिया प्रस्तावों के अनुरूप हैं।",
+        "कुल कटौती में एनपीएस (10%) और बिहार व्यावसायिक कर शामिल हैं।",
+        "यह गणना एक शैक्षणिक अनुमान मात्र है।"
+      ] : [
+        "Calculated based on Bihar Government finance department norms for teacher DA enhancements.",
+        "NPS employee contribution is exactly 10% of (Basic Pay + Dearness Allowance).",
+        "This report is a mock calculation sheet."
+      ]
+    });
+  };
+
+  const professionalTax = 150;
+
   return (
     <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-slate-50 dark:bg-slate-950 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
       
@@ -71,13 +125,22 @@ export default function BiharDaCalculator({ language = "en" }: BiharDaCalculator
             Quickly calculate your revised Dearness Allowance amount, see how it elevates your basic pay, and view the resultant BPSC teacher salary structure adjustments.
           </p>
         </div>
-        <button
-          onClick={shareToWhatsApp}
-          className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 self-start sm:self-center shadow-md transition-all border-0"
-        >
-          <Share2 className="w-4 h-4" />
-          <span>{language === "hi" ? "व्हाट्सऐप पर साझा करें" : "Share on WhatsApp"}</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
+          <button
+            onClick={downloadPDFReport}
+            className="bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"
+          >
+            <FileDown className="w-4 h-4" />
+            <span>{language === "hi" ? "पीडीएफ रिपोर्ट डाउनलोड" : "Download PDF Report"}</span>
+          </button>
+          <button
+            onClick={shareToWhatsApp}
+            className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"
+          >
+            <Share2 className="w-4 h-4" />
+            <span>{language === "hi" ? "व्हाट्सऐप साझा" : "Share on WhatsApp"}</span>
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

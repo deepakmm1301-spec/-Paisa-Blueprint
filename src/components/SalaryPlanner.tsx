@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { UserProfile, getShareableLink } from "../types";
-import { Landmark, Calculator, Receipt, Shield, Award, HelpCircle, AlertCircle, Share2 } from "lucide-react";
+import { Landmark, Calculator, Receipt, Shield, Award, HelpCircle, AlertCircle, Share2, FileDown } from "lucide-react";
+import { generatePDFReport } from "../utils/pdfGenerator";
 
 interface Props {
   profile: UserProfile;
@@ -123,6 +124,60 @@ Check your exact salary breakdown: ${currentUrl}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
+  const downloadPDFReport = () => {
+    const categoryNames: Record<EmployeeCategory, string> = {
+      bpsc_primary: "BPSC Primary Teacher",
+      bpsc_secondary: "BPSC Secondary Teacher",
+      bpsc_senior_secondary: "BPSC Sr. Secondary Teacher",
+      kvs_teacher: "KVS Teacher",
+      bihar_govt: "Bihar State Govt Employee",
+      central_govt: "Central Govt Employee",
+      private_salaried: "Private Sector Salaried"
+    };
+
+    generatePDFReport({
+      title: "Salary Structure & Pay Scale Report",
+      subtitle: `Pay scale and benefits projections for ${categoryNames[category] || category}`,
+      sections: [
+        {
+          title: "Earnings Breakdown",
+          items: [
+            { label: "Basic Pay / Scale Base", value: `INR ${basicPay.toLocaleString("en-IN")}` },
+            { label: `Dearness Allowance (DA) @ ${daRate}%`, value: `INR ${daAmount.toLocaleString("en-IN")}` },
+            { label: "House Rent Allowance (HRA)", value: `INR ${hraAmount.toLocaleString("en-IN")}` },
+            { label: "Other Allowances / Medical Pay", value: `INR ${otherAllowances.toLocaleString("en-IN")}` },
+            { label: "Total Gross Monthly Salary", value: `INR ${grossSalary.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: "Deductions Matrix",
+          items: [
+            { label: "Employee NPS Contribution (10% of Basic+DA)", value: `INR ${npsEmployeeDeduction.toLocaleString("en-IN")}` },
+            { label: "Provident Fund (EPF/GPF)", value: `INR ${pfDeduction.toLocaleString("en-IN")}` },
+            { label: "Professional Tax (State standard)", value: `INR ${professionalTax.toLocaleString("en-IN")}` },
+            { label: "Total Monthly Deductions", value: `INR ${(npsEmployeeDeduction + pfDeduction + professionalTax).toLocaleString("en-IN")}` },
+            { label: "Net Take-Home Monthly Salary", value: `INR ${inHandSalary.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: "Government Matching Benefits & Supplementary Projections",
+          items: [
+            { label: "Govt Matching NPS Contribution (14%)", value: `INR ${npsGovtMatch.toLocaleString("en-IN")}` },
+            { label: `DA Hike Gain (with +${daHikeRate}% change)`, value: `INR ${daHikeGain.toLocaleString("en-IN")}/mo` },
+            { label: `Future In-Hand Salary (Post DA Hike)`, value: `INR ${futureInHand.toLocaleString("en-IN")}/mo` },
+            { label: `Accumulated Gratuity (${yearsWorked} Ys)`, value: `INR ${estimatedGratuity.toLocaleString("en-IN")}` },
+            { label: `Leave Encashment (${monthsEncash} Months)`, value: `INR ${estimatedLeaveEncashment.toLocaleString("en-IN")}` }
+          ]
+        }
+      ],
+      notes: [
+        "Salary scale is estimated as per 7th Pay Commission rules and regional allowances.",
+        "NPS Employee deduction of 10% is fully matching with a 14% Employer contribution for active Government Employees.",
+        "Leave encashment and Gratuity estimates assume retirement under standard regulatory caps."
+      ]
+    });
+  };
+
   return (
     <div id="salary-planner" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 md:p-8 shadow-xs">
       {/* Header */}
@@ -134,13 +189,22 @@ Check your exact salary breakdown: ${currentUrl}`;
             Detailed pay computation including Dearness Allowances (DA), HRA, National Pension System (NPS), and PF matching rates in Bihar or Central service.
           </p>
         </div>
-        <button
-          onClick={shareToWhatsApp}
-          className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 self-start sm:self-center shadow-md transition-all border-0 cursor-pointer"
-        >
-          <Share2 className="w-4 h-4" />
-          <span>Share on WhatsApp</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
+          <button
+            onClick={downloadPDFReport}
+            className="bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"
+          >
+            <FileDown className="w-4 h-4" />
+            <span>Download PDF Report</span>
+          </button>
+          <button
+            onClick={shareToWhatsApp}
+            className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"
+          >
+            <Share2 className="w-4 h-4" />
+            <span>Share on WhatsApp</span>
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

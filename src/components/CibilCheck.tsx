@@ -16,9 +16,11 @@ import {
   ChevronRight,
   TrendingDown,
   Percent,
-  Calculator
+  Calculator,
+  FileDown
 } from "lucide-react";
 import { UserProfile } from "../types";
+import { generatePDFReport } from "../utils/pdfGenerator";
 
 interface CibilCheckProps {
   profile: UserProfile;
@@ -172,6 +174,51 @@ export default function CibilCheck({ profile }: CibilCheckProps) {
   // Utility to determine credit utilization percentage safely
   const currentUtilizationPct = hasCreditCard && cardLimit > 0 ? Math.round((cardSpend / cardLimit) * 100) : 0;
 
+  const downloadPDFReport = () => {
+    const paymentStatus = latePayments === 0 ? "Excellent (No Delayed EMIs)" : latePayments === 1 ? "1 Delayed EMI" : latePayments === 2 ? "2 Delayed EMIs" : "3+ Delayed EMIs (High Default Risk)";
+    const utilizationText = hasCreditCard ? `${currentUtilizationPct}% Utilization` : "No Credit Card History";
+    const mixStatus = `Secured: ${customSecuredCount + (hasHomeLoan ? 1 : 0) + (hasCarLoan ? 1 : 0)} | Unsecured: ${customUnsecuredCount + (hasCreditCard ? 1 : 0) + (hasPersonalLoan ? 1 : 0)}`;
+
+    generatePDFReport({
+      title: "CIBIL Credit Score Diagnostic Report",
+      subtitle: "Credit health assessment, risk analysis, and score projections",
+      sections: [
+        {
+          title: "Credit Health Score Overview",
+          items: [
+            { label: "Estimated CIBIL Score", value: `${cibilScore} / 900` },
+            { label: "Credit Band Status", value: scoreCategory },
+            { label: "Lending Feasibility Rating", value: cibilScore >= 750 ? "Highly Pre-approved / Premium terms" : cibilScore >= 700 ? "Standard Eligibility / Competitive Rates" : "Surcharged Pricing / Elevated Default Threat" }
+          ]
+        },
+        {
+          title: "Diagnostic Parameters & Credit Behavior",
+          items: [
+            { label: "Payment History Discipline", value: paymentStatus },
+            { label: "Credit Card Limit & Usage", value: hasCreditCard ? `INR ${cardLimit.toLocaleString("en-IN")} Limit | INR ${cardSpend.toLocaleString("en-IN")} Spent` : "N/A" },
+            { label: "Credit Card Utilization Ratio", value: utilizationText },
+            { label: "Credit Profile Maturity (Credit Age)", value: `${creditAge} Years` },
+            { label: "Hard Inquiry Volatility (Last 6 Months)", value: `${hardInquiries} Hard Inquiries` },
+            { label: "Asset Borrowing Mix (Secured/Unsecured)", value: mixStatus }
+          ]
+        },
+        {
+          title: "Simulated Habits & Proactive Improvements",
+          items: [
+            { label: "Enforced Payment Automation (ECS/Auto-Debit)", value: habitAutoPay ? "Active (+15-20 points expected)" : "Inactive" },
+            { label: "Credit Limit Expansion (Lowering CUR)", value: habitIncreaseLimit ? "Active (+10-15 points expected)" : "Inactive" },
+            { label: "Strict Hard Inquiry Curbs (Digital applications cooling)", value: habitLimitInquiries ? "Active (+5-10 points expected)" : "Inactive" }
+          ]
+        }
+      ],
+      notes: [
+        "Payment history represents 35% of your final CIBIL rating. Even a single delayed EMI or credit card due of >30 days severely dampens scores.",
+        "An ideal Credit Utilization Ratio (CUR) should be kept under 30% of total shared credit card limit allocations.",
+        "Projections are simulation-based guidelines mimicking CIBIL TransUnion v3.0 mathematical frameworks. Actual scores can only be fetched via verified credit bureau channels."
+      ]
+    });
+  };
+
   return (
     <div className="bg-white border border-slate-100 rounded-3xl p-6 sm:p-8 shadow-xs animate-fade-in space-y-8" id="cibil-scorecard-section">
       {/* Visual Header */}
@@ -192,6 +239,13 @@ export default function CibilCheck({ profile }: CibilCheckProps) {
           <p className="text-xs text-slate-500 mt-1 max-w-xl">
             Simulate credit score estimates based on payment discipline, card usage structures, active borrowing channels, and standard Indian lenders' requirements.
           </p>
+          <button
+            onClick={downloadPDFReport}
+            className="mt-3 bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-bold text-xs px-3.5 py-2 rounded-xl flex items-center gap-2 transition-all border-0 cursor-pointer shadow-sm"
+          >
+            <FileDown className="w-3.5 h-3.5" />
+            <span>Download CIBIL Diagnostic Report</span>
+          </button>
         </div>
 
         {/* Highlight Score badge */}

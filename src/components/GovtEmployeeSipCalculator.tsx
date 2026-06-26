@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
-import { Sparkles, Share2, HelpCircle, Info, Calculator, Percent, ShieldCheck, ArrowUpRight, TrendingUp } from "lucide-react";
+import { Sparkles, Share2, HelpCircle, Info, Calculator, Percent, ShieldCheck, ArrowUpRight, TrendingUp, FileDown } from "lucide-react";
 import { getShareableLink } from "../types";
+import { generatePDFReport } from "../utils/pdfGenerator";
 
 interface GovtEmployeeSipCalculatorProps {
   language?: "en" | "hi";
@@ -119,6 +120,52 @@ export default function GovtEmployeeSipCalculator({ language = "en" }: GovtEmplo
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
+  const downloadPDFReport = () => {
+    generatePDFReport({
+      title: language === "hi" ? "सरकारी कर्मचारी एसआईपी और सेवानिवृत्ति रिपोर्ट" : "Govt Employee SIP & Retirement Report",
+      subtitle: language === "hi" ? "वेतन वृद्धि, एनपीएस और एसआईपी संयुक्त विश्लेषण" : "Detailed salary progression, step-up SIP and NPS pension simulation",
+      language,
+      sections: [
+        {
+          title: language === "hi" ? "प्रारंभिक वित्तीय विवरण" : "Initial Financial Parameters",
+          items: [
+            { label: language === "hi" ? "प्रारंभिक मासिक सकल वेतन" : "Starting Gross Monthly Salary", value: `INR ${currentSalary.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "प्रारंभिक मासिक निवेश (SIP)" : "Initial Monthly SIP Amount", value: `INR ${monthlySip.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "वार्षिक वेतन वृद्धि दर (Basic)" : "Annual Basic Pay Increment", value: `${annualIncrement}%` },
+            { label: language === "hi" ? "वार्षिक महंगाई भत्ता वृद्धि (DA)" : "Annual DA Expansion Rate", value: `${daGrowth}%` },
+            { label: language === "hi" ? "वार्षिक एसआईपी वृद्धि (Step-up)" : "Annual SIP Step-up Rate", value: `${stepUpPercent}%` }
+          ]
+        },
+        {
+          title: language === "hi" ? "दीर्घकालिक संचय विवरण (20 वर्ष)" : "Long-Term Wealth Accumulation (20 Years)",
+          items: [
+            { label: language === "hi" ? "कुल एसआईपी संचित धन" : "Accumulated SIP Mutual Funds", value: `INR ${projectionData.finalSipBalance.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "कुल संचित एनपीएस राशि" : "Accumulated NPS Pension Corpus", value: `INR ${projectionData.finalNpsBalance.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "ग्रेच्युटी अनुमान (Gratuity)" : "Estimated State Gratuity Pay", value: `INR ${projectionData.estimatedGratuity.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "कुल संयुक्त संपत्ति (Corpus)" : "Combined Net Wealth Corpus", value: `INR ${projectionData.combinedCorpus.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: language === "hi" ? "मासिक सेवानिवृत्ति आय अनुमान" : "Monthly Retirement Income Projection",
+          items: [
+            { label: language === "hi" ? "एनपीएस संचित वार्षिकी पेंशन (40% वार्षिकी)" : "NPS Monthly Pension (from 40% Annuity)", value: `INR ${projectionData.monthlyNpsPension.toLocaleString("en-IN")}/mo` },
+            { label: language === "hi" ? "सुरक्षित निकासी दर (SWP) मासिक आय" : "Safe SWP Payout (from SIP + 60% NPS)", value: `INR ${projectionData.monthlySipSafeWithdrawal.toLocaleString("en-IN")}/mo` },
+            { label: language === "hi" ? "कुल अनुमानित मासिक सेवानिवृत्ति आय" : "Total Estimated Monthly Income", value: `INR ${projectionData.totalEstimatedMonthlyRetirementIncome.toLocaleString("en-IN")}/mo` }
+          ]
+        }
+      ],
+      notes: language === "hi" ? [
+        "वेतन वृद्धि की दर राज्य कर्मचारी नियमावली के 3% वार्षिक मानक बुनियादी ढांचे पर आधारित है।",
+        "एनपीएस का 40% अनिवार्य रूप से वार्षिकी में निवेश किया जाता है जो आजीवन मासिक पेंशन प्रदान करता है।",
+        "एसआईपी तथा 60% एनपीएस एकमुश्त राशि पर 5% सुरक्षित निकासी दर (SWP) लागू करके मासिक आय को अधिकतम किया गया है।"
+      ] : [
+        "Annual increments map to the 3% standard base salary hikes mandated for Bihar State Government employees.",
+        "NPS regulations enforce a minimum of 40% annuity conversion to generate monthly life-long pensions.",
+        "Safe SWP is computed at a highly conservative 5% annual payout on mutual funds and tax-free lumpsum NPS."
+      ]
+    });
+  };
+
   return (
     <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-slate-50 dark:bg-slate-950 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
       
@@ -136,13 +183,22 @@ export default function GovtEmployeeSipCalculator({ language = "en" }: GovtEmplo
             A state-of-the-art calculator tuned specifically for BPSC Teachers & state officers. Computes the combined effect of basic pay increments, DA hikes, step-up SIPs, and NPS balance.
           </p>
         </div>
-        <button
-          onClick={shareToWhatsApp}
-          className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 self-start sm:self-center shadow-md transition-all border-0"
-        >
-          <Share2 className="w-4 h-4" />
-          <span>{language === "hi" ? "सहेजें और साझा करें" : "Save & Share on WhatsApp"}</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
+          <button
+            onClick={downloadPDFReport}
+            className="bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"
+          >
+            <FileDown className="w-4 h-4" />
+            <span>{language === "hi" ? "पीडीएफ रिपोर्ट डाउनलोड" : "Download PDF Report"}</span>
+          </button>
+          <button
+            onClick={shareToWhatsApp}
+            className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"
+          >
+            <Share2 className="w-4 h-4" />
+            <span>{language === "hi" ? "सहेजें और साझा करें" : "Save & Share on WhatsApp"}</span>
+          </button>
+        </div>
       </div>
 
       {/* Inputs vs Outputs panels */}

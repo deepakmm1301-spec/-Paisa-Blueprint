@@ -11,9 +11,11 @@ import {
   TrendingUp, 
   Calendar,
   Layers,
-  ArrowRight
+  ArrowRight,
+  FileDown
 } from "lucide-react";
 import { getShareableLink } from "../types";
+import { generatePDFReport } from "../utils/pdfGenerator";
 
 interface NpsGovtCalculatorProps {
   language?: "en" | "hi";
@@ -204,6 +206,93 @@ Calculate your exact lifetime pension blueprint: ${currentUrl}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
+  const downloadPDFReport = () => {
+    if (activeTab === "bpsc") {
+      generatePDFReport({
+        title: language === "hi" ? "बीपीएससी शिक्षक एनपीएस और पेंशन रिपोर्ट" : "BPSC Teacher NPS & Pension Projection",
+        subtitle: language === "hi" ? "वेतन-आधारित स्वचालित योगदान और पेंशन योजना" : "Salary-linked pension projections and compound wealth evaluation",
+        language,
+        sections: [
+          {
+            title: language === "hi" ? "मासिक वेतन और एनपीएस इनपुट" : "Monthly Salary & NPS Inputs",
+            items: [
+              { label: language === "hi" ? "मूल वेतन + महंगाई भत्ता" : "Basic Pay + DA", value: `INR ${basicPayDa.toLocaleString("en-IN")}` },
+              { label: language === "hi" ? "कर्मचारी योगदान (10%)" : "Employee Contribution (10%)", value: `INR ${bpscCalculations.employeeShare.toLocaleString("en-IN")}` },
+              { label: language === "hi" ? "नियोक्ता (सरकार) योगदान (14%)" : "Govt (Employer) Share (14%)", value: `INR ${bpscCalculations.employerShare.toLocaleString("en-IN")}` },
+              { label: language === "hi" ? "कुल मासिक एनपीएस निवेश" : "Total Monthly NPS Invested", value: `INR ${bpscCalculations.monthlyContribution.toLocaleString("en-IN")}` },
+              { label: language === "hi" ? "निवेश की अवधि (वर्ष)" : "Tenure (Years)", value: `${yearsToRetire} Years` }
+            ]
+          },
+          {
+            title: language === "hi" ? "अनुमानित सेवानिवृत्ति धन" : "Expected Retirement Corpus",
+            items: [
+              { label: language === "hi" ? "कुल संचित सेवानिवृत्ति निधि" : "Total Accumulated Wealth", value: `INR ${bpscCalculations.totalAccumulatedCorpus.toLocaleString("en-IN")}` },
+              { label: language === "hi" ? "कुल निवेशित मूलधन" : "Total Invested Principal", value: `INR ${bpscCalculations.totalInvestedAmount.toLocaleString("en-IN")}` },
+              { label: language === "hi" ? "अर्जित अनुमानित ब्याज" : "Estimated Returns Earned", value: `INR ${(bpscCalculations.totalAccumulatedCorpus - bpscCalculations.totalInvestedAmount).toLocaleString("en-IN")}` }
+            ]
+          },
+          {
+            title: language === "hi" ? "वार्षिकी और एकमुश्त भुगतान" : "Annuity & Lump Sum Division",
+            items: [
+              { label: language === "hi" ? "एकमुश्त कर-मुक्त निकासी (60%)" : "Lump Sum Tax-Free Cash (60%)", value: `INR ${bpscCalculations.lumpsumWithdrawalCorpus.toLocaleString("en-IN")}` },
+              { label: language === "hi" ? "पेंशन के लिए पुनर्निवेश (40%)" : "Annuity Purchase Corpus (40%)", value: `INR ${bpscCalculations.annuityCorpus.toLocaleString("en-IN")}` },
+              { label: language === "hi" ? "अनुमानित वार्षिक ब्याज दर" : "Expected Annuity Yield", value: `${expectedAnnuityRate}%` },
+              { label: language === "hi" ? "अनुमानित मासिक पेंशन" : "Estimated Monthly Pension", value: `INR ${bpscCalculations.monthlyPensionAmount.toLocaleString("en-IN")}/mo` }
+            ]
+          }
+        ],
+        notes: language === "hi" ? [
+          "गणना नेशनल पेंशन सिस्टम (NPS) के सरकार द्वारा तय दिशानिर्देशों के अनुरूप है।",
+          "60% तक की एकमुश्त निकासी आयकर की धारा 10(12A) के तहत पूरी तरह कर-मुक्त है।"
+        ] : [
+          "Projections adhere strictly to National Pension System rules under Government Sector guidelines.",
+          "60% lump sum withdrawal is completely tax-free under current Section 10(12A) of the IT Act."
+        ]
+      });
+    } else {
+      generatePDFReport({
+        title: language === "hi" ? "एनपीएस पेंशन योजना रिपोर्ट" : "Custom National Pension System Report",
+        subtitle: language === "hi" ? "व्यक्तिगत सेवानिवृत्ति बचत और वित्तीय ब्लूप्रिंट" : "Personal retirement savings summary and dynamic step-up growth projection",
+        language,
+        sections: [
+          {
+            title: language === "hi" ? "व्यक्तिगत और निवेश इनपुट" : "Personal & Investment Inputs",
+            items: [
+              { label: language === "hi" ? "जन्म तिथि" : "Date of Birth", value: customDob },
+              { label: language === "hi" ? "वर्तमान आयु" : "Current Age", value: `${customCalculations.currentAge} Years` },
+              { label: language === "hi" ? "मासिक योगदान" : "Monthly Contribution", value: `INR ${customMonthlyContribution.toLocaleString("en-IN")}` },
+              { label: language === "hi" ? "वार्षिक योगदान वृद्धि" : "Annual Step-Up Increment", value: `${customContributionIncrease}%` },
+              { label: language === "hi" ? "सेवानिवृत्ति की आयु" : "Retirement Age Goal", value: `${customRetirementAge} Years` }
+            ]
+          },
+          {
+            title: language === "hi" ? "पेंशन संचय और संपत्ति" : "Pension Wealth Accumulation",
+            items: [
+              { label: language === "hi" ? "कुल संचित राशि" : "Total Accumulated Wealth", value: `INR ${customCalculations.totalAccumulatedCorpus.toLocaleString("en-IN")}` },
+              { label: language === "hi" ? "कुल निवेशित मूलधन" : "Total Invested Principal", value: `INR ${customCalculations.totalAmountInvested.toLocaleString("en-IN")}` },
+              { label: language === "hi" ? "अर्जित ब्याज लाभ" : "Estimated Returns Earned", value: `INR ${customCalculations.gainsEarned.toLocaleString("en-IN")}` }
+            ]
+          },
+          {
+            title: language === "hi" ? "पेंशन और एकमुश्त भुगतान" : "Annuity Purchases & Pension",
+            items: [
+              { label: language === "hi" ? "एकमुश्त निकासी राशि" : "Lump Sum Withdrawal", value: `INR ${customCalculations.lumpsumWithdrawalCorpus.toLocaleString("en-IN")}` },
+              { label: language === "hi" ? "वार्षिकी क्रय कोष" : "Annuity Purchased Corpus", value: `INR ${customCalculations.annuityCorpus.toLocaleString("en-IN")}` },
+              { label: language === "hi" ? "मासिक आजीवन पेंशन" : "Expected Monthly Pension", value: `INR ${customCalculations.monthlyPensionAmount.toLocaleString("en-IN")}/mo` }
+            ]
+          }
+        ],
+        notes: language === "hi" ? [
+          "वार्षिक रूप से योगदान में वृद्धि (Step-up) करने से दीर्घकालिक चक्रवर्ती ब्याज का लाभ मिलता है।",
+          "यह रिपोर्ट काल्पनिक अनुमानों पर आधारित है, वास्तविक परिणाम बाजार की चाल और रिटर्न पर निर्भर करते हैं।"
+        ] : [
+          "Annual step-up growth ensures compounding creates a significant wealth cushion for retirement.",
+          "Market linked rates are simulations. Actual returns are governed by PFRDA regulated fund managers."
+        ]
+      });
+    }
+  };
+
   return (
     <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-slate-50 dark:bg-slate-950 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
       
@@ -221,13 +310,22 @@ Calculate your exact lifetime pension blueprint: ${currentUrl}`;
             Evaluate your government pension accumulation and plan voluntary contributions under the National Pension System (NPS). Supports both auto-matching tax rules and dynamic compounding models.
           </p>
         </div>
-        <button
-          onClick={shareToWhatsApp}
-          className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 self-start sm:self-center shadow-md transition-all border-0 cursor-pointer"
-        >
-          <Share2 className="w-4 h-4" />
-          <span>{language === "hi" ? "व्हाट्सएप पर साझा करें" : "Share on WhatsApp"}</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
+          <button
+            onClick={downloadPDFReport}
+            className="bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"
+          >
+            <FileDown className="w-4 h-4" />
+            <span>{language === "hi" ? "पीडीएफ रिपोर्ट डाउनलोड" : "Download PDF Report"}</span>
+          </button>
+          <button
+            onClick={shareToWhatsApp}
+            className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"
+          >
+            <Share2 className="w-4 h-4" />
+            <span>{language === "hi" ? "व्हाट्सएप साझा" : "Share on WhatsApp"}</span>
+          </button>
+        </div>
       </div>
 
       {/* Segmented Tab Control */}

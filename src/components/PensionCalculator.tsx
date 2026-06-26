@@ -12,9 +12,11 @@ import {
   PieChart,
   Grid,
   Info,
-  Share2
+  Share2,
+  FileDown
 } from "lucide-react";
 import { getShareableLink } from "../types";
+import { generatePDFReport } from "../utils/pdfGenerator";
 
 export default function PensionCalculator() {
   // Subscriber Details
@@ -185,6 +187,55 @@ Map your exact NPS pension blueprint here: ${currentUrl}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
+  const downloadPDFReport = () => {
+    generatePDFReport({
+      title: "NPS Pension Planner Report",
+      subtitle: `National Pension System (NPS) projections for ${subscriberSector} Sector subscribers`,
+      sections: [
+        {
+          title: "Subscription & Profile Parameters",
+          items: [
+            { label: "Subscriber Sector", value: subscriberSector },
+            { label: "Date of Birth / Calculated Age", value: `${dob} / ${calculatedAge} Years` },
+            { label: "Scheme Selected", value: scheme },
+            { label: "Existing Pension Corpus", value: `INR ${existingCorpus.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: "Voluntary Contributions & Investment Model",
+          items: [
+            { label: "Initial Monthly Contribution", value: `INR ${monthlyContribution.toLocaleString("en-IN")}` },
+            { label: "Annual Step-up Increment", value: `${annualIncrease}%` },
+            { label: "Contribution Period (Years)", value: `${results.accumulationYears} Years (to Age ${contributionAge})` },
+            { label: "Expected Accumulation Growth Rate", value: `${expectedGrowthRate}%` }
+          ]
+        },
+        {
+          title: "Accumulated Retirement Pension Corpus",
+          items: [
+            { label: "Total Invested Principal", value: `INR ${results.totalContribution.toLocaleString("en-IN")}` },
+            { label: "Estimated Compound Interest Earned", value: `INR ${Math.max(0, results.totalAccumulatedCorpus - results.totalContribution).toLocaleString("en-IN")}` },
+            { label: "Total Accumulated Retirement Corpus", value: `INR ${results.totalAccumulatedCorpus.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: "Annuity and Monthly Pension Payout",
+          items: [
+            { label: "Lump Sum Tax-Free Withdrawal (60%)", value: `INR ${results.lumpSumWithdrawn.toLocaleString("en-IN")}` },
+            { label: "Annuity Reinvestment (40%)", value: `INR ${results.annuityCorpus.toLocaleString("en-IN")}` },
+            { label: "Expected Annuity Return Rate", value: `${expectedAnnuityRate}%` },
+            { label: "Estimated Monthly Lifetime Pension", value: `INR ${results.expectedMonthlyPension.toLocaleString("en-IN")}/mo` }
+          ]
+        }
+      ],
+      notes: [
+        "Estimates are simulated based on standard compounding and National Pension System Rules.",
+        "Under current guidelines, a minimum of 40% of the accumulated corpus must be reinvested into IRDAI regulated annuity schemes.",
+        "The remaining 60% is paid out as a lump-sum, which is fully exempt from income tax."
+      ]
+    });
+  };
+
   return (
     <div id="pension-calculator-section" className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start w-full">
       {/* Input controls form (8 cols) */}
@@ -196,13 +247,20 @@ Map your exact NPS pension blueprint here: ${currentUrl}`;
             </h3>
             <p className="text-xs text-slate-500 mt-1">Based on the National Pension System Trust guidelines</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 flex-wrap">
             <button 
               onClick={handleReset}
               className="inline-flex items-center gap-1 text-[11px] font-bold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/30 px-2.5 py-1.5 rounded-lg border border-purple-200/50 dark:border-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors cursor-pointer"
             >
               <Undo2 className="w-3.5 h-3.5" />
               Reset
+            </button>
+            <button
+              onClick={downloadPDFReport}
+              className="bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 text-white font-bold text-[11px] px-3 py-1.5 rounded-lg flex items-center justify-center gap-1.5 shadow-sm transition-all border-0 cursor-pointer"
+            >
+              <FileDown className="w-3.5 h-3.5" />
+              <span>Download PDF</span>
             </button>
             <button
               onClick={shareToWhatsApp}

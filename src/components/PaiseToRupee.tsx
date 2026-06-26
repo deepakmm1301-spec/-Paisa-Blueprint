@@ -19,8 +19,10 @@ import {
   ArrowRight,
   ShieldCheck,
   Check,
-  AlertTriangle
+  AlertTriangle,
+  FileDown
 } from "lucide-react";
+import { generatePDFReport } from "../utils/pdfGenerator";
 
 interface PaiseToRupeeProps {
   userGrossMonthly?: number;
@@ -437,6 +439,241 @@ export default function PaiseToRupee({ userGrossMonthly = 75000, language: propL
       enDesc: "Calculate your early retirement FIRE corpus based on inflation and savings rate"
     }
   ];
+
+  const downloadPDFReport = () => {
+    let title = "";
+    let subtitle = "";
+    let sections: any[] = [];
+    let notes: string[] = [];
+
+    if (activeQuestion === "returns") {
+      title = "Systematic Investment Plan (SIP) Projection Report";
+      subtitle = "Systematic long-term capital compounding and wealth estimation";
+      sections = [
+        {
+          title: "Investment Input Specifications",
+          items: [
+            { label: "Monthly Contribution (Starting)", value: `INR ${sip5kAmount.toLocaleString("en-IN")}/mo` },
+            { label: "Planning Period (Tenure)", value: `${sip5kYears} Years` },
+            { label: "Assumed Annual Return Rate (CAGR)", value: `${sip5kRate}%` },
+            { label: "Annual Step-Up Increment Rate", value: `${sip5kStepUp}%` }
+          ]
+        },
+        {
+          title: "Maturity & Growth Compilation",
+          items: [
+            { label: "Total Amount Invested Over Period", value: `INR ${sip5kComp.invested.toLocaleString("en-IN")}` },
+            { label: "Estimated Compound Growth Gains", value: `INR ${sip5kComp.gains.toLocaleString("en-IN")}` },
+            { label: "Estimated Future Maturity Value", value: `INR ${sip5kComp.maturity.toLocaleString("en-IN")}` },
+            { label: "Asset Growth Multiplier Index", value: `${sip5kComp.multiplier}x times investment` }
+          ]
+        }
+      ];
+      notes = [
+        "Returns on Mutual Fund equity SIPs are indicative of historic market performance averages and are subject to market volatility.",
+        "Step-Up SIP plans allow you to increase monthly allocations in sync with salary increments, compounding your wealth much faster.",
+        "LTCG (Long Term Capital Gains) taxes are applicable on mutual fund returns over 1.25 Lakhs per financial year."
+      ];
+    } else if (activeQuestion === "sip-vs-fd") {
+      title = "SIP Equity vs. Fixed Deposit (FD) Comparative Analysis";
+      subtitle = "Compounding growth comparison: Inflation-protected equity vs. guaranteed debt returns";
+      sections = [
+        {
+          title: "Investment Comparison Specs",
+          items: [
+            { label: "Monthly Allocation (Same for both)", value: `INR ${compareAmount.toLocaleString("en-IN")}/mo` },
+            { label: "Comparison Tenure Period", value: `${compareYears} Years` },
+            { label: "Assumed Equity SIP Growth Rate (CAGR)", value: `${compareSipRate}%` },
+            { label: "Standard Bank Fixed Deposit (FD) Rate", value: `${compareFdRate}%` }
+          ]
+        },
+        {
+          title: "Equity Mutual Fund Projections (SIP)",
+          items: [
+            { label: "Total Cumulative Investment", value: `INR ${sipVsFdComp.totalInvested.toLocaleString("en-IN")}` },
+            { label: "Estimated Mutual Fund Gains", value: `INR ${sipVsFdComp.sipGains.toLocaleString("en-IN")}` },
+            { label: "Expected SIP Maturity Amount", value: `INR ${sipVsFdComp.sipMaturity.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: "Guaranteed Bank Fixed Deposit (FD)",
+          items: [
+            { label: "Total Cumulative Investment", value: `INR ${sipVsFdComp.totalInvested.toLocaleString("en-IN")}` },
+            { label: "Guaranteed Interest Gains", value: `INR ${sipVsFdComp.fdGains.toLocaleString("en-IN")}` },
+            { label: "Expected FD Maturity Amount", value: `INR ${sipVsFdComp.fdMaturity.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: "Wealth Growth Summary",
+          items: [
+            { label: "Incremental Equity Premium (Wealth Gap)", value: `INR ${sipVsFdComp.wealthGap.toLocaleString("en-IN")}` }
+          ]
+        }
+      ];
+      notes = [
+        "Fixed Deposits yield guaranteed nominal returns but rarely outcompete long-term compounding inflation indices.",
+        "Equity mutual fund investments carry standard capital market risks but offer substantial inflation premiums over standard debt.",
+        "Taxation is different: FD interest is taxed at slab rates yearly, whereas equity mutual fund returns are taxed as capital gains upon redemption."
+      ];
+    } else if (activeQuestion === "crore-sip") {
+      title = "Milestone Goal Tracker: Target Corpus Roadmap";
+      subtitle = "Systematic roadmap to achieve your target milestone capital";
+      sections = [
+        {
+          title: "Milestone Target Scope",
+          items: [
+            { label: "Desired Target Goal Corpus Value", value: `INR ${targetCorpus.toLocaleString("en-IN")}` },
+            { label: "Desired Year Timeline", value: `${targetYears} Years` },
+            { label: "Assumed Investment Annual Growth (CAGR)", value: `${targetRate}%` },
+            { label: "Yearly Step-Up Rate Selected", value: `${targetStepUp}%` }
+          ]
+        },
+        {
+          title: "Required Monthly Allocation Strategies",
+          items: [
+            { label: "Fixed Monthly SIP (Zero Step-Up)", value: `INR ${sipFor1CrComp.sipNeededNormal.toLocaleString("en-IN")}/mo` },
+            { label: "Optimized Step-Up Monthly SIP (Starting Year 1)", value: `INR ${sipFor1CrComp.sipNeededWithStepUp.toLocaleString("en-IN")}/mo` }
+          ]
+        }
+      ];
+      notes = [
+        "An optimized step-up investment strategy lowers the required initial savings burden by matching your contribution increases with income growth.",
+        "Projections do not represent formal guarantees of yield, but highlight mathematical systematic compounding formulas."
+      ];
+    } else if (activeQuestion === "ppf-vs-nps") {
+      title = "PPF vs. NPS Comparative Retirement Diagnostics";
+      subtitle = "Public Provident Fund (Debt) vs. National Pension System (Mixed Asset Class)";
+      sections = [
+        {
+          title: "Retirement Contributions Specs",
+          items: [
+            { label: "Yearly Contribution Amount", value: `INR ${ppfNpsAmount.toLocaleString("en-IN")}/yr` },
+            { label: "Retirement Contribution Tenure", value: `${ppfNpsYears} Years` },
+            { label: "PPF Sovereign Fixed Rate", value: "7.1% (Tax Free)" },
+            { label: "Estimated NPS Average Annual Return", value: `${npsEquityReturn}%` }
+          ]
+        },
+        {
+          title: "Public Provident Fund (PPF) Growth",
+          items: [
+            { label: "Total Contributed PPF Capital", value: `INR ${ppfVsNpsComp.totalPaid.toLocaleString("en-IN")}` },
+            { label: "Guaranteed Tax-free Interest earned", value: `INR ${ppfVsNpsComp.ppfGains.toLocaleString("en-IN")}` },
+            { label: "Total PPF Maturity (Tax Free Lumpsum)", value: `INR ${ppfVsNpsComp.ppfMaturity.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: "National Pension System (NPS) Projections",
+          items: [
+            { label: "Total Contributed NPS Capital", value: `INR ${ppfVsNpsComp.totalPaid.toLocaleString("en-IN")}` },
+            { label: "Estimated Investment Interest Gains", value: `INR ${ppfVsNpsComp.npsGains.toLocaleString("en-IN")}` },
+            { label: "Estimated NPS Total Corpus at Retirement", value: `INR ${ppfVsNpsComp.npsMaturity.toLocaleString("en-IN")}` },
+            { label: "Max 60% Tax-Free Lumpsum Withdrawal", value: `INR ${ppfVsNpsComp.npsTaxFreeLumpsum.toLocaleString("en-IN")}` },
+            { label: "Mandatory 40% Annuity Investment Core", value: `INR ${ppfVsNpsComp.npsAnnuityRequired.toLocaleString("en-IN")}` },
+            { label: "Indicative Monthly Pension From Annuity", value: `INR ${Math.round(ppfVsNpsComp.estimatedYearlyAnnuityIncome / 12).toLocaleString("en-IN")}/mo` }
+          ]
+        }
+      ];
+      notes = [
+        "PPF enjoys fully exempt-exempt-exempt (EEE) sovereign status, but capped maximum investments of 1.5 Lakhs per financial year apply.",
+        "NPS offers additional tax deduction under Section 80CCD(1B) of up to 50,000 INR. 60% of retirement maturity corpus is tax-free while the remaining 40% must purchase standard pension annuity schemes.",
+        "NPS equity schemes generally yield higher inflation-adjusted returns than fixed-debt channels."
+      ];
+    } else if (activeQuestion === "tax-opt") {
+      title = "Income Tax Deductions Optimization Roadmap";
+      subtitle = "Optimized deductions allocation under Section 80C, 80D, and 80CCD";
+      sections = [
+        {
+          title: "Proposed Deductions Matrix",
+          items: [
+            { label: "Declared Section 80C - ELSS Mutual Funds", value: `INR ${elssAmt.toLocaleString("en-IN")}` },
+            { label: "Declared Section 80C - PPF Deposits", value: `INR ${ppfAmt.toLocaleString("en-IN")}` },
+            { label: "Declared Section 80C - NSC Certs/EPF/FDs", value: `INR ${nscAmt.toLocaleString("en-IN")}` },
+            { label: "Declared Section 80CCD - Extra NPS", value: `INR ${npsAmt.toLocaleString("en-IN")}` },
+            { label: "Declared Section 80D - Health Insurance Premiums", value: `INR ${healthAmt.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: "Deductions & Refunding Synthesis",
+          items: [
+            { label: "Total Deductions Claimed", value: `INR ${taxOptimizerComp.totalDeductions.toLocaleString("en-IN")}` },
+            { label: "Tax Bracket Rate Slab", value: `${taxSlab}%` },
+            { label: "Estimated Annual Income Tax Saved", value: `INR ${taxOptimizerComp.realTaxSaved.toLocaleString("en-IN")}` }
+          ]
+        }
+      ];
+      notes = [
+        "The Section 80C tax deduction limit is strictly capped at a maximum of 1,50,000 INR per financial year across all components.",
+        "Section 80CCD(1B) allows for an additional tax deduction of up to 50,000 INR strictly for NPS contributions.",
+        "Section 80D covers health insurance premiums for self, spouse, and dependents, with standard limits of 25,000 INR (increased to 50,000 INR for senior citizens)."
+      ];
+    } else if (activeQuestion === "budget") {
+      const needsDelta = budgetComp.idealNeeds - actualNeeds;
+      const wantsDelta = budgetComp.idealWants - actualWants;
+      const savingsDelta = actualSavings - budgetComp.idealSavings;
+
+      title = "50-30-20 Monthly Budget Allocation Audit";
+      subtitle = "Personal cash flow optimization matching standard household budgeting guidelines";
+      sections = [
+        {
+          title: "Monthly Cash Flow Matrix",
+          items: [
+            { label: "Gross Monthly Disposable Income", value: `INR ${budgetIncome.toLocaleString("en-IN")}` },
+            { label: "Spent on Essential Needs (Food/Rent/EMIs)", value: `INR ${actualNeeds.toLocaleString("en-IN")} (${budgetComp.needsPercent}%)` },
+            { label: "Spent on Lifestyle Wants (Vacations/Gadgets/Dining)", value: `INR ${actualWants.toLocaleString("en-IN")} (${budgetComp.wantsPercent}%)` },
+            { label: "Saved for Investments & Goals", value: `INR ${actualSavings.toLocaleString("en-IN")} (${budgetComp.savingsPercent}%)` }
+          ]
+        },
+        {
+          title: "Standard Budgeting Audit & Recommendations",
+          items: [
+            { label: "Essential Needs Balance Status", value: needsDelta >= 0 ? "Under limit (Prudent)" : "Needs tightening" },
+            { label: "Lifestyle Wants Balance Status", value: wantsDelta >= 0 ? "Under limit (Prudent)" : "Wants portion is elevated" },
+            { label: "Systematic Investments Balance Status", value: savingsDelta >= 0 ? "Great saving rate!" : "Investment portion should be scaled up" }
+          ]
+        }
+      ];
+      notes = [
+        "The standard 50-30-20 model suggests spending up to 50% on Essential Needs, up to 30% on discretionary Wants, and saving at least 20% for future goals.",
+        "Debt EMIs should ideally be counted as part of essential needs, though minimizing them frees up cash directly into systematic savings."
+      ];
+    } else if (activeQuestion === "fire-retire") {
+      title = "Early Retirement FIRE Feasibility Assessment";
+      subtitle = "Financial Independence, Retire Early (FIRE) target corpus analysis";
+      sections = [
+        {
+          title: "Demographics & Expenditure Inputs",
+          items: [
+            { label: "Current Age", value: `${currentAge} Years` },
+            { label: "Early Retirement Target Age", value: `${retireAge} Years` },
+            { label: "Current Monthly Living Costs", value: `INR ${monthlyExpense.toLocaleString("en-IN")}/mo` },
+            { label: "Assumed Compounding Inflation Rate", value: `${inflationRate}%` },
+            { label: "Assumed Pre-Retirement Return Rate", value: `${preRetireReturn}%` },
+            { label: "Assumed Conservative Post-Retirement Return", value: `${postRetireReturn}%` }
+          ]
+        },
+        {
+          title: "FIRE Target Outputs & Timeline",
+          items: [
+            { label: "Accumulation Years Remaining", value: `${fireComp.yearsToAccumulate} Years` },
+            { label: "Adjusted Future Monthly Cost (At retirement)", value: `INR ${fireComp.adjustedMonthlyExpense.toLocaleString("en-IN")}/mo` },
+            { label: "Required Total FIRE Corpus Fund", value: `INR ${fireComp.fireCorpusNeeded.toLocaleString("en-IN")}` },
+            { label: "Required Monthly SIP Starting Today", value: fireComp.requiredSipStarting > 0 ? `INR ${fireComp.requiredSipStarting.toLocaleString("en-IN")}/mo` : "Goal achieved! 🎉" }
+          ]
+        }
+      ];
+      notes = [
+        "Early retirement (FIRE) requires a substantial accumulation multiplier, typically 25x to 35x your future annual household costs.",
+        "Post-retirement investments should focus on high safety indices like hybrid funds and SWPs (Systematic Withdrawal Plans) to guarantee capital longevity."
+      ];
+    }
+
+    generatePDFReport({
+      title,
+      subtitle,
+      sections,
+      notes
+    });
+  };
 
   return (
     <div className="seohub-canvas bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 shadow-xl space-y-6 text-slate-800 dark:text-white overflow-hidden relative">
@@ -1584,17 +1821,26 @@ export default function PaiseToRupee({ userGrossMonthly = 75000, language: propL
                   : "Found this helpful? Share this calculation and guide with family & friends!"}
               </span>
             </div>
-            <a
-              href={`https://api.whatsapp.com/send?text=${shareText}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto bg-gradient-to-r from-[#25D366] to-[#128C7E] hover:from-[#20ba5a] hover:to-[#0e6f63] active:scale-95 text-white text-xs sm:text-sm font-black px-5 py-2.5 rounded-2xl shadow-md cursor-pointer transition-all flex items-center justify-center gap-2 hover:shadow-lg no-underline shrink-0"
-            >
-              <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.417 9.863-9.848.002-2.63-1.023-5.101-2.884-6.963C16.58 1.952 14.108.928 11.48.928c-5.44 0-9.866 4.416-9.87 9.848-.002 1.79.479 3.541 1.39 5.1l-.479 1.754 1.83-.48.116.069zM17.151 14.28c-.282-.142-1.67-.824-1.928-.918-.258-.095-.447-.142-.635.142-.188.283-.729.918-.893 1.107-.164.188-.328.213-.61.071-.282-.142-1.192-.44-2.271-1.402-.839-.75-1.407-1.675-1.571-1.958-.164-.283-.018-.435.123-.576.127-.127.282-.329.423-.495.141-.165.188-.283.282-.472.094-.188.047-.354-.024-.495-.07-.142-.635-1.529-.87-2.094-.229-.553-.46-.477-.635-.486-.164-.008-.353-.01-.541-.01s-.494.07-.753.354c-.259.283-.988.966-.988 2.358 0 1.392 1.012 2.735 1.153 2.924.141.189 1.992 3.041 4.825 4.258.674.29 1.201.463 1.61.593.677.215 1.293.185 1.78.113.543-.081 1.67-.682 1.905-1.34s.235-1.226.165-1.34c-.07-.114-.282-.208-.564-.35z"/>
-              </svg>
-              <span>{language === "hi" ? "व्हाट्सएप पर साझा करें" : "Share on WhatsApp"}</span>
-            </a>
+            <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full sm:w-auto">
+              <button
+                onClick={downloadPDFReport}
+                className="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 active:scale-95 text-white text-xs sm:text-sm font-black px-5 py-2.5 rounded-2xl shadow-md cursor-pointer transition-all flex items-center justify-center gap-2 hover:shadow-lg border-0 shrink-0"
+              >
+                <FileDown className="w-4 h-4" />
+                <span>{language === "hi" ? "पीडीएफ रिपोर्ट डाउनलोड करें" : "Download PDF Report"}</span>
+              </button>
+              <a
+                href={`https://api.whatsapp.com/send?text=${shareText}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto bg-gradient-to-r from-[#25D366] to-[#128C7E] hover:from-[#20ba5a] hover:to-[#0e6f63] active:scale-95 text-white text-xs sm:text-sm font-black px-5 py-2.5 rounded-2xl shadow-md cursor-pointer transition-all flex items-center justify-center gap-2 hover:shadow-lg no-underline shrink-0"
+              >
+                <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.417 9.863-9.848.002-2.63-1.023-5.101-2.884-6.963C16.58 1.952 14.108.928 11.48.928c-5.44 0-9.866 4.416-9.87 9.848-.002 1.79.479 3.541 1.39 5.1l-.479 1.754 1.83-.48.116.069zM17.151 14.28c-.282-.142-1.67-.824-1.928-.918-.258-.095-.447-.142-.635.142-.188.283-.729.918-.893 1.107-.164.188-.328.213-.61.071-.282-.142-1.192-.44-2.271-1.402-.839-.75-1.407-1.675-1.571-1.958-.164-.283-.018-.435.123-.576.127-.127.282-.329.423-.495.141-.165.188-.283.282-.472.094-.188.047-.354-.024-.495-.07-.142-.635-1.529-.87-2.094-.229-.553-.46-.477-.635-.486-.164-.008-.353-.01-.541-.01s-.494.07-.753.354c-.259.283-.988.966-.988 2.358 0 1.392 1.012 2.735 1.153 2.924.141.189 1.992 3.041 4.825 4.258.674.29 1.201.463 1.61.593.677.215 1.293.185 1.78.113.543-.081 1.67-.682 1.905-1.34s.235-1.226.165-1.34c-.07-.114-.282-.208-.564-.35z"/>
+                </svg>
+                <span>{language === "hi" ? "व्हाट्सएप पर साझा करें" : "Share on WhatsApp"}</span>
+              </a>
+            </div>
           </div>
 
         </div>

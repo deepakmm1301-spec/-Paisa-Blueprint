@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
-import { Sparkles, ArrowLeft, Info, HelpCircle, Share2, Calculator, CheckCircle, Percent, ShieldCheck } from "lucide-react";
+import { Sparkles, ArrowLeft, Info, HelpCircle, Share2, Calculator, CheckCircle, Percent, ShieldCheck, FileDown } from "lucide-react";
 import { getShareableLink } from "../types";
+import { generatePDFReport } from "../utils/pdfGenerator";
 
 interface BpscTeacherSalaryProps {
   language?: "en" | "hi";
@@ -78,6 +79,65 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
+  const downloadPDFReport = () => {
+    const translatedGrade = teacherGrade === "primary" ? "प्राथमिक (Primary 1-5)" 
+      : teacherGrade === "middle" ? "मध्य (Middle 6-8)" 
+      : teacherGrade === "secondary" ? "माध्यमिक (Secondary 9-10)" 
+      : "उच्च माध्यमिक (Higher Secondary 11-12)";
+
+    generatePDFReport({
+      title: language === "hi" ? "बीपीएससी शिक्षक वेतन रिपोर्ट 2026" : "BPSC Teacher Salary Report 2026",
+      subtitle: language === "hi" ? "बिहार सरकार के नियमों के तहत विस्तृत वित्तीय विवरण" : "Detailed salary calculation summary based on Bihar State Govt regulations",
+      language,
+      sections: [
+        {
+          title: language === "hi" ? "कर्मचारी और श्रेणी विवरण" : "Employee & Grade Parameters",
+          items: [
+            { label: language === "hi" ? "शिक्षक श्रेणी" : "Teacher Grade Level", value: translatedGrade },
+            { label: language === "hi" ? "मूल वेतन" : "Basic Pay", value: `INR ${calculations.basicPay.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "महंगाई भत्ता दर" : "Dearness Allowance Rate", value: `${daPercent}%` },
+            { label: language === "hi" ? "एचआरए दर" : "HRA Rate", value: `${hraPercent}%` }
+          ]
+        },
+        {
+          title: language === "hi" ? "मासिक भत्ते विवरण" : "Monthly Allowances Breakdown",
+          items: [
+            { label: language === "hi" ? "महंगाई भत्ता राशि" : "Dearness Allowance (DA)", value: `INR ${calculations.daAmount.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "गृह किराया भत्ता" : "House Rent Allowance (HRA)", value: `INR ${calculations.hraAmount.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "चिकित्सा भत्ता" : "Medical Allowance", value: `INR ${calculations.medicalAllowance.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "अन्य भत्ते (CTA/Other)" : "Other Allowances", value: `INR ${calculations.otherAllowances.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "सकल मासिक वेतन" : "Gross Monthly Salary", value: `INR ${calculations.grossSalary.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: language === "hi" ? "मासिक कटौतियाँ" : "Monthly Deductions Breakdown",
+          items: [
+            { label: language === "hi" ? "एनपीएस योगदान (कर्मचारी 10%)" : "NPS Employee Contribution (10%)", value: `INR ${calculations.npsDeduction.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "व्यावसायिक कर" : "Professional Tax", value: `INR ${calculations.stateTaxPro.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "समूह बीमा योजना (GIS)" : "Group Insurance (GIS)", value: `INR ${calculations.groupInsurance.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "कुल मासिक कटौती" : "Total Monthly Deductions", value: `INR ${calculations.totalDeductions.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: language === "hi" ? "अंतिम वेतन और सेवानिवृत्ति निधि" : "Final Net Pay & Pension Funds",
+          items: [
+            { label: language === "hi" ? "शुद्ध इन-हैंड वेतन" : "Net In-Hand Salary (Take-home)", value: `INR ${calculations.inHandSalary.toLocaleString("en-IN")}` },
+            { label: language === "hi" ? "सरकार का एनपीएस योगदान (14%)" : "Govt NPS Contribution (14%)", value: `INR ${calculations.govtNpsContribution.toLocaleString("en-IN")}` }
+          ]
+        }
+      ],
+      notes: language === "hi" ? [
+        "वेतन की गणना सातवें वेतन आयोग के नवीनतम नियमों के अनुसार की गई है।",
+        "सरकारी एनपीएस पेंशन योगदान (14%) सीधे आपके नेशनल पेंशन सिस्टम खाते में जमा किया जाता है, यह इन-हैंड वेतन में शामिल नहीं होता है।",
+        "यह रिपोर्ट केवल एक शैक्षणिक अनुमान है। आधिकारिक वेतन विसंगतियों के लिए डीडीओ (DDO) से संपर्क करें।"
+      ] : [
+        "Salary structure formulated strictly based on the 7th Central Pay Commission (CPC) recommendations for Bihar State Government Employees.",
+        "The 14% Government NPS contribution is directly credited to your PRAN account and does not affect the monthly cash-in-hand.",
+        "Calculations are mock projections based on standard DDO templates. Actual figures may vary depending on local rules."
+      ]
+    });
+  };
+
   return (
     <div className="w-full max-w-5xl mx-auto p-4 sm:p-6 bg-slate-50 dark:bg-slate-950 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
       {/* Title Header */}
@@ -94,13 +154,22 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
             Assess Bihar state government teacher basic pay, dearness allowance, HRA tiers, monthly NPS deductions, and Net Take-home salary.
           </p>
         </div>
-        <button
-          onClick={shareToWhatsApp}
-          className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 self-start sm:self-center shadow-md transition-all border-0"
-        >
-          <Share2 className="w-4 h-4" />
-          <span>{language === "hi" ? "व्हाट्सऐप पर साझा करें" : "Share on WhatsApp"}</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
+          <button
+            onClick={downloadPDFReport}
+            className="bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"
+          >
+            <FileDown className="w-4 h-4" />
+            <span>{language === "hi" ? "पीडीएफ रिपोर्ट डाउनलोड" : "Download PDF Report"}</span>
+          </button>
+          <button
+            onClick={shareToWhatsApp}
+            className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"
+          >
+            <Share2 className="w-4 h-4" />
+            <span>{language === "hi" ? "व्हाट्सऐप साझा" : "Share on WhatsApp"}</span>
+          </button>
+        </div>
       </div>
 
       {/* Main Grid View */}

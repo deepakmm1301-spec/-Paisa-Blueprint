@@ -12,9 +12,11 @@ import {
   Calendar, 
   Percent,
   TrendingDown,
-  Share2
+  Share2,
+  FileDown
 } from "lucide-react";
 import { getShareableLink } from "../types";
+import { generatePDFReport } from "../utils/pdfGenerator";
 
 export default function SIPCalculator() {
   const [monthlySip, setMonthlySip] = useState<number>(10000);
@@ -173,6 +175,48 @@ Calculate your compounding potential instantly: ${currentUrl}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
+  const downloadPDFReport = () => {
+    generatePDFReport({
+      title: "Systematic Investment Plan (SIP) Report",
+      subtitle: "Compounding simulation comparing standard and step-up monthly investments",
+      sections: [
+        {
+          title: "Investment Input Matrix",
+          items: [
+            { label: "Initial Monthly SIP Contribution", value: `INR ${monthlySip.toLocaleString("en-IN")}` },
+            { label: "Annual Step-up Increment Rate", value: `${annualStepUp}%` },
+            { label: "Expected Annual Returns (CAGR)", value: `${expectedReturn}%` },
+            { label: "Investment Duration (Years)", value: `${years} Years` },
+            { label: "Simulated Inflation Rate", value: `${inflationRate}%` }
+          ]
+        },
+        {
+          title: "Step-Up Compounding Projections (Recommended)",
+          items: [
+            { label: "Total Invested Principal", value: `INR ${investedAmount.toLocaleString("en-IN")}` },
+            { label: "Estimated Wealth Created (Gains)", value: `INR ${wealthCreated.toLocaleString("en-IN")}` },
+            { label: "Total Estimated Future Value", value: `INR ${futureValue.toLocaleString("en-IN")}` },
+            { label: "Inflation-Adjusted Future Value", value: `INR ${inflationAdjusted.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: "Traditional Flat SIP Projections (Comparative)",
+          items: [
+            { label: "Total Invested Principal (Flat)", value: `INR ${normalInvested.toLocaleString("en-IN")}` },
+            { label: "Total Estimated Future Value (Flat)", value: `INR ${normalFutureValue.toLocaleString("en-IN")}` },
+            { label: "Step-Up Bonus Gains (Outperformance)", value: `INR ${outperformanceGains.toLocaleString("en-IN")}` },
+            { label: "Wealth Multiplier Ratio", value: `${multiplierRatio}x Principal` }
+          ]
+        }
+      ],
+      notes: [
+        "A Step-Up SIP involves increasing your monthly contribution annually by a fixed percentage (e.g., 10%), helping you align investments with salary hikes.",
+        "Inflation-adjusted purchasing power decreases the future value of your money. Real yield is simulated at standard rates.",
+        "Projections do not account for capital gains taxes or exit loads; please review SEBI guidelines for mutual funds."
+      ]
+    });
+  };
+
   return (
     <div id="sip-calculator-module" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 md:p-8 shadow-xs">
       {/* Header Banner */}
@@ -186,13 +230,22 @@ Calculate your compounding potential instantly: ${currentUrl}`;
             Compare flat traditional SIPs with compounding Step-Up SIPs to trace pure capital gains over time.
           </p>
         </div>
-        <button
-          onClick={shareToWhatsApp}
-          className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 self-start sm:self-center shadow-md transition-all border-0 cursor-pointer"
-        >
-          <Share2 className="w-4 h-4" />
-          <span>Share on WhatsApp</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
+          <button
+            onClick={downloadPDFReport}
+            className="bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"
+          >
+            <FileDown className="w-4 h-4" />
+            <span>Download PDF Report</span>
+          </button>
+          <button
+            onClick={shareToWhatsApp}
+            className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"
+          >
+            <Share2 className="w-4 h-4" />
+            <span>Share on WhatsApp</span>
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

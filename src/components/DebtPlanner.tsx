@@ -15,9 +15,11 @@ import {
   Sparkles,
   RefreshCw,
   Gauge,
-  Share2
+  Share2,
+  FileDown
 } from "lucide-react";
 import { UserProfile, LoanDetails, getShareableLink } from "../types";
+import { generatePDFReport } from "../utils/pdfGenerator";
 
 interface DebtItem {
   id: string;
@@ -555,6 +557,54 @@ Design your custom debt-prepayment roadmap instantly: ${currentUrl}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
+  const downloadPDFReport = () => {
+    if (debts.length === 0) return;
+
+    const totalDebtAmount = debts.reduce((sum, d) => sum + d.balance, 0);
+
+    const activeDebtsList = debts.filter(d => d.active !== false).map((d) => ({
+      label: `${d.name} (${d.interestRate}% interest)`,
+      value: `Balance: INR ${d.balance.toLocaleString("en-IN")} | Min EMI: INR ${d.minimumMonthlyPayment.toLocaleString("en-IN")}`
+    }));
+
+    generatePDFReport({
+      title: "Debt Repayment & Freedom Plan",
+      subtitle: "Accelerated debt reduction roadmap & payoff comparison",
+      sections: [
+        {
+          title: "Current Debt Profile Matrix",
+          items: [
+            { label: "Total Active Debt Accounts", value: `${debts.filter(d => d.active !== false).length} Accounts` },
+            { label: "Total Outstanding Principal Owed", value: `INR ${totalDebtAmount.toLocaleString("en-IN")}` },
+            { label: "Total Minimum Monthly EMIs Due", value: `INR ${totalMinEmi.toLocaleString("en-IN")}` },
+            { label: "Gross Monthly Income Level", value: `INR ${monthlySalary.toLocaleString("en-IN")}` },
+            { label: "Current Debt-to-Income (DTI / FOIR) Ratio", value: `${foirRatio.toFixed(1)}% (${foirMeta.text})` }
+          ]
+        },
+        {
+          title: "Debt Breakdown",
+          items: activeDebtsList
+        },
+        {
+          title: "Prepayment Strategy Comparison",
+          items: [
+            { label: "Selected Acceleration Strategy", value: selectedStrategy === "avalanche" ? "Avalanche (High Interest rate first)" : "Snowball (Lowest Balance first)" },
+            { label: "Additional Monthly Prepayment Added", value: `INR ${extraMonthlyPayment.toLocaleString("en-IN")}` },
+            { label: "Rolling Paid-off EMIs (Rollover Effect)", value: snowballRolloverEnabled ? "Enabled (Recommended)" : "Disabled" },
+            { label: "Months Saved to Zero-Debt State", value: `${monthsSaved} Months` },
+            { label: "Estimated Compound Interest Saved", value: `INR ${interestSaved.toLocaleString("en-IN")}` },
+            { label: "Revised Timeframe to Debt-Free State", value: `${strategyMonths} Months` }
+          ]
+        }
+      ],
+      notes: [
+        "The Debt Avalanche strategy prioritizes high-interest-rate loans first, mathematically saving the maximum amount of compounding interest.",
+        "The Debt Snowball strategy prioritizes low-balance accounts first, giving quick psychological victories to build momentum.",
+        "Rolling over paid-off EMI amounts into active debt targets acts as an exponential catalyst to accelerate your timeline to debt freedom."
+      ]
+    });
+  };
+
   return (
     <div id="debt-repayment-planner-app" className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-xl overflow-hidden transition-all duration-300">
       
@@ -577,6 +627,14 @@ Design your custom debt-prepayment roadmap instantly: ${currentUrl}`;
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={downloadPDFReport}
+              disabled={debts.length === 0}
+              className="bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+            >
+              <FileDown className="w-4 h-4" />
+              <span>Download PDF</span>
+            </button>
             <button
               onClick={shareToWhatsApp}
               disabled={debts.length === 0}

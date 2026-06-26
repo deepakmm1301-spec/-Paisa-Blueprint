@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Sparkles, Calendar, Plus, Trash2, HelpCircle, GraduationCap, Home, Car, Heart, Palmtree, Compass, AlertCircle, Pencil, Check, X, Share2 } from "lucide-react";
+import { Sparkles, Calendar, Plus, Trash2, HelpCircle, GraduationCap, Home, Car, Heart, Palmtree, Compass, AlertCircle, Pencil, Check, X, Share2, FileDown } from "lucide-react";
 import { Goal, getShareableLink } from "../types";
+import { generatePDFReport } from "../utils/pdfGenerator";
 
 export default function GoalPlanner() {
   const [goals, setGoals] = useState<Goal[]>(() => {
@@ -167,6 +168,41 @@ export default function GoalPlanner() {
     }
   };
 
+  const downloadPDFReport = () => {
+    if (goals.length === 0) return;
+
+    const sections = goals.map((g, idx) => {
+      const inflatedTarget = Math.round(g.targetAmount * Math.pow(1 + g.inflationRate / 100, g.yearsLeft));
+      const rMonthly = (g.expectedReturn / 100) / 12;
+      const nMonths = g.yearsLeft * 12;
+      const compoundFactor = ((Math.pow(1 + rMonthly, nMonths) - 1) / rMonthly) * (1 + rMonthly);
+      const sipNeeded = Math.round(inflatedTarget / (compoundFactor || 1));
+
+      return {
+        title: `${idx + 1}. ${g.name} (${g.category.toUpperCase()})`,
+        items: [
+          { label: "Target Goal Amount (Today Value)", value: `INR ${g.targetAmount.toLocaleString("en-IN")}` },
+          { label: "Years Left to Achieve", value: `${g.yearsLeft} Years` },
+          { label: "Assumed Annual Inflation", value: `${g.inflationRate}%` },
+          { label: "Expected Investment Annual Return", value: `${g.expectedReturn}%` },
+          { label: "Inflation-Adjusted Future Goal Cost", value: `INR ${inflatedTarget.toLocaleString("en-IN")}` },
+          { label: "Required Monthly SIP Investment", value: `INR ${sipNeeded.toLocaleString("en-IN")}/mo` }
+        ]
+      };
+    });
+
+    generatePDFReport({
+      title: "Milestones and Financial Goals Report",
+      subtitle: "Inflation-protected goal planning and systematic investment roadmap",
+      sections,
+      notes: [
+        "Inflation acts as an erosion factor on currency values. Standard education and house purchase costs are estimated with a 6% compounding inflation index.",
+        "Systematic Investment Plan (SIP) returns are based on estimated historical compound growth metrics and are not guaranteed mutual fund yields.",
+        "Regular rebalancing is recommended as you draw closer to the milestone target date."
+      ]
+    });
+  };
+
   const shareToWhatsApp = () => {
     const currentUrl = getShareableLink("goal_planner", "/goals");
     if (goals.length === 0) return;
@@ -205,6 +241,13 @@ export default function GoalPlanner() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={downloadPDFReport}
+            disabled={goals.length === 0}
+            className="flex items-center gap-1.5 bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-xs transition-all border-0 cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+          >
+            <FileDown className="w-4 h-4" /> Download PDF Report
+          </button>
           <button
             onClick={shareToWhatsApp}
             disabled={goals.length === 0}

@@ -20,6 +20,7 @@ import NpsGovtCalculator from "./components/NpsGovtCalculator";
 import EightPayCommissionHub from "./components/EightPayCommissionHub";
 import AboutCard from "./components/AboutCard";
 import ContactCard from "./components/ContactCard";
+import StudentPdfToolkit from "./components/StudentPdfToolkit";
 // @ts-ignore
 import paisaLogo from "./assets/images/deep_paisa_logo_1780484307855.png";
 
@@ -125,7 +126,8 @@ type ActiveWidget =
   | "eight_pay_date"
   | "eight_pay_teachers"
   | "about"
-  | "contact";
+  | "contact"
+  | "student_pdf";
 
 export default function App() {
   const [showWelcomePopup, setShowWelcomePopup] = useState(true);
@@ -371,6 +373,7 @@ export default function App() {
       if (cleanPath === "/8th-pay-commission-for-teachers") return "eight_pay_teachers";
       if (cleanPath === "/about") return "about";
       if (cleanPath === "/contact") return "contact";
+      if (cleanPath === "/student-pdf-toolkit" || cleanPath === "/student-pdf") return "student_pdf";
       return "eight_pay_calc";
     };
 
@@ -394,13 +397,14 @@ export default function App() {
         if (queryWidget === "8th_pay_chart" || queryWidget === "8th-pay-chart" || queryWidget === "eight-pay-chart") queryWidget = "eight_pay_chart";
         if (queryWidget === "8th_pay_date" || queryWidget === "8th-pay-date" || queryWidget === "eight-pay-date") queryWidget = "eight_pay_date";
         if (queryWidget === "8th_pay_teachers" || queryWidget === "8th-pay-teachers" || queryWidget === "eight-pay-teachers") queryWidget = "eight_pay_teachers";
+        if (queryWidget === "student_pdf" || queryWidget === "student-pdf" || queryWidget === "pdf-toolkit") queryWidget = "student_pdf";
 
         const validWidgets = [
           "profiles", "salary", "pension", "health", "sip", "retirement",
           "goals", "tax", "networth", "cibil", "debt", "coach", "seohub", "learning",
           "eight_pay_calc", "eight_pay_fitment", "eight_pay_hike", "eight_pay_pension",
           "eight_pay_news", "eight_pay_fitment_info", "eight_pay_chart", "eight_pay_date", "eight_pay_teachers",
-          "about", "contact"
+          "about", "contact", "student_pdf"
         ];
         if (validWidgets.includes(queryWidget)) {
           return queryWidget as ActiveWidget;
@@ -450,6 +454,7 @@ export default function App() {
     if (widget === "eight_pay_teachers") return "/8th-pay-commission-for-teachers";
     if (widget === "about") return "/about.html";
     if (widget === "contact") return "/contact.html";
+    if (widget === "student_pdf") return "/student-pdf-toolkit";
     return "/";
   }, []);
 
@@ -488,6 +493,9 @@ export default function App() {
     } else if (activeWidget === "contact") {
       targetTitle = "Contact Us - Connect with Capital Advisors | Paisa Blueprint";
       targetDesc = "Get in touch with Paisa Blueprint advisers, share your calculations feedback, or report bug tickets instantly.";
+    } else if (activeWidget === "student_pdf") {
+      targetTitle = "Student PDF Toolkit | Paisa Blueprint";
+      targetDesc = "Use our powerful client-side toolkit including JPG to PDF, PDF Merge, Split, Compress, Handwriting Note compiler, Resume Builder, and Award Certificate Generator.";
     } else if (activeWidget === "eight_pay_calc") {
       targetTitle = "8th Pay Commission Salary Calculator 2026 | Paisa Blueprint";
     } else if (activeWidget === "eight_pay_fitment") {
@@ -1012,6 +1020,13 @@ export default function App() {
       color: "text-bhagwa-600 bg-bhagwa-50 border-bhagwa-100",
     },
     {
+      id: "student_pdf" as ActiveWidget,
+      label: language === "hi" ? "छात्र PDF टूलकिट" : "Student PDF Toolkit",
+      desc: language === "hi" ? "JPG से PDF, PDF मर्ज, स्प्लिट, कंप्रेस, हैंडराइटिंग और बायोडाटा मेकर" : "JPG to PDF, merge, split, compress, handwritten notes & resume builder",
+      icon: <BookOpen className="w-5 h-5 text-emerald-500 fill-emerald-500/20" />,
+      color: "text-emerald-600 bg-emerald-50 border-emerald-100",
+    },
+    {
       id: "about" as ActiveWidget,
       label: language === "hi" ? "हमारे बारे में" : "About Us",
       desc: language === "hi" ? "पैसा ब्लूप्रिंट का मिशन एवं विज़न" : "Our mission and team statement",
@@ -1227,6 +1242,47 @@ export default function App() {
       {/* Main Container Layout */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-28 lg:pb-8 flex-1 w-full flex flex-col gap-8">
 
+        {/* High-visibility alert banner for Student PDF Toolkit */}
+        <div className="relative overflow-hidden bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-purple-500/10 border-2 border-emerald-500/20 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-400/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-purple-400/10 rounded-full blur-xl pointer-events-none" />
+          
+          <div className="flex items-center gap-3.5 relative z-10">
+            <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/10">
+              <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+            </div>
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[9px] font-black uppercase bg-emerald-600 text-white px-2 py-0.5 rounded-full tracking-wider animate-pulse">
+                  NEW TOOLKIT
+                </span>
+                <span className="text-[9px] font-black uppercase bg-purple-650 text-white px-2 py-0.5 rounded-full tracking-wider">
+                  100% Free & Offline
+                </span>
+              </div>
+              <h4 className="text-sm font-black text-slate-800 dark:text-slate-100 mt-1">
+                {language === "hi" ? "छात्र PDF टूलकिट अब लाइव है!" : "Student PDF Toolkit is Now Live!"}
+              </h4>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                {language === "hi" ? "JPG को PDF बनाएं, PDF मर्ज/स्प्लिट/कंप्रेस करें, बायोडाटा बनाएं और हैंडराइटिंग नोट कम्पाइलर का उपयोग करें।" : "Convert JPG to PDF, Merge/Split/Compress PDF, build premium Resumes, and compile Handwritten Notes."}
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              setActiveWidget("student_pdf");
+              if (contentRef.current) {
+                contentRef.current.scrollIntoView({ behavior: "smooth" });
+              }
+            }}
+            className="w-full sm:w-auto px-5 py-2.5 bg-slate-900 hover:bg-slate-800 active:scale-[0.98] text-white text-xs font-bold rounded-xl transition-all cursor-pointer shadow-sm flex items-center justify-center gap-1.5 shrink-0 border border-slate-800 relative z-10"
+          >
+            <span>{language === "hi" ? "टूलकिट खोलें" : "Open PDF Toolkit"}</span>
+            <ChevronRight className="w-4 h-4 text-emerald-400" />
+          </button>
+        </div>
+
         {/* Dynamic Brand Tagline & Action Banner */}
         <div id="brand-tagline-hero" className="relative overflow-hidden bg-gradient-to-br from-violet-100 via-white to-emerald-100/85 dark:from-[#24173d] dark:via-slate-900 dark:to-[#052b1e] border-2 border-violet-200/70 dark:border-emerald-500/30 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 shadow-md dark:shadow-xl dark:shadow-violet-950/20 transition-all duration-300">
           {/* Decorative glows & patterns using light purple and light green */}
@@ -1435,6 +1491,10 @@ export default function App() {
 
                 {activeWidget === "contact" && (
                   <ContactCard />
+                )}
+
+                {activeWidget === "student_pdf" && (
+                  <StudentPdfToolkit />
                 )}
 
                 {(activeWidget === "eight_pay_calc" ||

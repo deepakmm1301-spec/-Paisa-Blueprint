@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { UserProfile, getShareableLink } from "../types";
-import { ShieldCheck, HeartPulse, Sparkles, TrendingUp, DollarSign, Wallet, Percent, Users, Landmark, AlertTriangle, Share2 } from "lucide-react";
+import { ShieldCheck, HeartPulse, Sparkles, TrendingUp, DollarSign, Wallet, Percent, Users, Landmark, AlertTriangle, Share2, FileDown } from "lucide-react";
+import { generatePDFReport } from "../utils/pdfGenerator";
 
 interface Props {
   profile: UserProfile;
@@ -196,6 +197,60 @@ Measure your instant financial health scorecard here: ${currentUrl}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
+  const downloadPDFReport = () => {
+    const scoreLabel = getScoreLabel(financialScore);
+    const recommendations = getRecommendations().map((r, i) => ({
+      label: `Recommendation ${i + 1}: ${r.title} [Urgency: ${r.urgency}]`,
+      value: r.desc
+    }));
+
+    generatePDFReport({
+      title: "Financial Health Scorecard & Assessment",
+      subtitle: `Comprehensive diagnostics and blueprint summary for ${profile.name || "Subscriber"}`,
+      sections: [
+        {
+          title: "Demographics & Earnings Profile",
+          items: [
+            { label: "Subscriber Name", value: profile.name || "N/A" },
+            { label: "Current Age", value: `${profile.age} Years` },
+            { label: "Location Classification", value: profile.city ? profile.city.toUpperCase() : "N/A" },
+            { label: "Gross Monthly Salary", value: `INR ${profile.salary.toLocaleString("en-IN")}/mo` },
+            { label: "Declared Monthly Living Expenses", value: `INR ${profile.monthlyExpenses.toLocaleString("en-IN")}/mo` }
+          ]
+        },
+        {
+          title: "Financial Security Health Indicators",
+          items: [
+            { label: "Overall Financial Health Score", value: `${financialScore}/100 (${scoreLabel})` },
+            { label: "Emergency Reserve Security Index", value: `${emergencyScore}/100` },
+            { label: "Risk Protection (Insurance) Score", value: `${insuranceScore}/100` },
+            { label: "Retirement Compounding Readiness Score", value: `${retirementScore}/100` },
+            { label: "Debt-to-Income / FOIR Score", value: `${debtScore}/100` },
+            { label: "Net Asset Wealth Accumulation Score", value: `${wealthScore}/100` }
+          ]
+        },
+        {
+          title: "Asset and Liability Statement",
+          items: [
+            { label: "Liquid Emergency Savings Balance", value: `INR ${profile.currentSavings.toLocaleString("en-IN")}` },
+            { label: "Total Asset Investments (Mutual Funds/Stocks/EPF/PPF/etc.)", value: `INR ${currentTotalInvestments.toLocaleString("en-IN")}` },
+            { label: "Total Outstanding Loan Liabilities", value: `INR ${totalLoans.toLocaleString("en-IN")}` },
+            { label: "Net Worth Calculation", value: `INR ${netWorth.toLocaleString("en-IN")}` }
+          ]
+        },
+        {
+          title: "Actionable Optimization Recommendations",
+          items: recommendations
+        }
+      ],
+      notes: [
+        "Calibrated based on industry-standard financial health parameters, including 6 months of emergency reserves and 10-15x term coverage multipliers.",
+        "Your financial health score is a projection. Periodic review and asset reallocation are advised to stay aligned with market factors.",
+        "Insurance targets are based on Indian private healthcare escalation and average life expectancy indexes."
+      ]
+    });
+  };
+
   return (
     <div id="financial-health-check" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-6 md:p-8 shadow-xs">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-100 dark:border-slate-800 pb-5 mb-6 gap-4">
@@ -207,6 +262,12 @@ Measure your instant financial health scorecard here: ${currentUrl}`;
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={downloadPDFReport}
+            className="flex items-center gap-1.5 bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-xs transition-all border-0 cursor-pointer"
+          >
+            <FileDown className="w-4 h-4" /> Download PDF Report
+          </button>
           <button
             onClick={shareToWhatsApp}
             className="flex items-center gap-1.5 bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-xs transition-all border-0 cursor-pointer"
