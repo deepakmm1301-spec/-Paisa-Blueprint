@@ -957,6 +957,13 @@ export default function App() {
       color: "text-violet-650 bg-violet-50 border-violet-100",
     },
     {
+      id: "student_pdf" as ActiveWidget,
+      label: language === "hi" ? "छात्र PDF टूलकिट" : "Student PDF Toolkit",
+      desc: language === "hi" ? "JPG से PDF, PDF मर्ज, स्प्लिट, कंप्रेस, हैंडराइटिंग और बायोडाटा मेकर" : "JPG to PDF, merge, split, compress, handwritten notes & resume builder",
+      icon: <BookOpen className="w-5 h-5 text-emerald-500 fill-emerald-500/20" />,
+      color: "text-emerald-600 bg-emerald-50 border-emerald-100",
+    },
+    {
       id: "govt_sip" as ActiveWidget,
       label: language === "hi" ? "BPSC शिक्षक SIP" : "BPSC Teacher SIP",
       desc: language === "hi" ? "वेतन वृद्धि + SIP का चक्रवृद्धि प्रभाव" : "Salary increment + compounding planner",
@@ -1018,13 +1025,6 @@ export default function App() {
       desc: language === "hi" ? "वित्तीय प्रश्नों के तुरंत जवाब" : "Real-time chat & feedback",
       icon: <Bot className="w-5 h-5" />,
       color: "text-bhagwa-600 bg-bhagwa-50 border-bhagwa-100",
-    },
-    {
-      id: "student_pdf" as ActiveWidget,
-      label: language === "hi" ? "छात्र PDF टूलकिट" : "Student PDF Toolkit",
-      desc: language === "hi" ? "JPG से PDF, PDF मर्ज, स्प्लिट, कंप्रेस, हैंडराइटिंग और बायोडाटा मेकर" : "JPG to PDF, merge, split, compress, handwritten notes & resume builder",
-      icon: <BookOpen className="w-5 h-5 text-emerald-500 fill-emerald-500/20" />,
-      color: "text-emerald-600 bg-emerald-50 border-emerald-100",
     },
     {
       id: "about" as ActiveWidget,

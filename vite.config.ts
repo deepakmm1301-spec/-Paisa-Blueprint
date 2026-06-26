@@ -48,6 +48,8 @@ export default defineConfig(() => {
           eight_pay_chart: path.resolve(__dirname, '8th-pay-commission-salary-chart/index.html'),
           eight_pay_date: path.resolve(__dirname, '8th-pay-commission-date/index.html'),
           eight_pay_teachers: path.resolve(__dirname, '8th-pay-commission-for-teachers/index.html'),
+          student_pdf_toolkit: path.resolve(__dirname, 'student-pdf-toolkit/index.html'),
+          student_pdf: path.resolve(__dirname, 'student-pdf/index.html'),
         },
       },
     },
