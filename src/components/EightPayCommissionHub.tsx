@@ -15,8 +15,10 @@ import {
   ArrowLeftRight,
   TrendingDown,
   HelpCircle,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Share2
 } from "lucide-react";
+import { getShareableLink } from "../types";
 
 interface EightPayCommissionHubProps {
   activeSubPage: string;
@@ -232,6 +234,14 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
   const inHandOld = grossOld - npsOld;
   const inHandNew = grossNew - npsNew;
 
+  const shareToWhatsApp = () => {
+    const currentUrl = getShareableLink("eight_pay_calc", "/8th-pay-commission-calculator");
+    const text = language === "hi"
+      ? `📊 *8वां वेतन आयोग (8th Pay Commission) सैलरी कैलकुलेटर*\n\nवर्तमान मूल वेतन: ₹${basicPay.toLocaleString("en-IN")}\nअनुमानित फिटमेंट फैक्टर: ${fitmentFactor}x\n*अनुमानित संशोधित 8वां मूल वेतन: ₹${calculatedRevisedBasic.toLocaleString("en-IN")}*\nअनुमानित संशोधित सकल मासिक वेतन (Gross): ₹${Math.round(grossNew).toLocaleString("en-IN")}/माह (+₹${Math.round(grossNew - grossOld).toLocaleString("en-IN")} यानी +${((grossNew - grossOld) / grossOld * 100).toFixed(1)}% की वृद्धि)\nअनुमानित इन-हैंड वेतन (Net In-Hand): ₹${Math.round(inHandNew).toLocaleString("en-IN")}/माह\n\nअपने 8वें वेतन आयोग के वेतन, कुल बढ़ोतरी और पेंशन की तुरंत गणना करें: ${currentUrl}`
+      : `📊 *8th Pay Commission Salary Calculator 2026*\n\nCurrent Basic Pay: ₹${basicPay.toLocaleString("en-IN")}\nAssumed Fitment Factor: ${fitmentFactor}x\n*Estimated Revised 8th CPC Basic Pay: ₹${calculatedRevisedBasic.toLocaleString("en-IN")}*\nEstimated Revised Gross Salary: ₹${Math.round(grossNew).toLocaleString("en-IN")}/month (+₹${Math.round(grossNew - grossOld).toLocaleString("en-IN")} | +${((grossNew - grossOld) / grossOld * 100).toFixed(1)}% hike)\nEstimated Net In-Hand Salary: ₹${Math.round(inHandNew).toLocaleString("en-IN")}/month\n\nCalculate your 8th Pay basic, gross, hike & pension instantly here: ${currentUrl}`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
   return (
     <div className="bg-slate-50 dark:bg-slate-900 min-h-screen">
       {/* 8th Pay Banner Hub Header */}
@@ -315,7 +325,32 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
 
         {/* VIEW 1: Basic 8th Pay Salary Calculator */}
         {activeSubPage === "calculator" && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="space-y-6">
+            {/* Header with WhatsApp Share button */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
+              <div>
+                <h2 className="text-lg sm:text-xl font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
+                  <Coins className="w-5 h-5 text-violet-600" />
+                  {language === "hi" ? "8वां वेतन आयोग वेतन कैलकुलेटर" : "8th Pay Commission Salary Calculator"}
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 font-medium">
+                  {language === "hi"
+                    ? "नए मूल वेतन, महंगाई भत्ता (DA), मकान किराया भत्ता (HRA) और शुद्ध सकल वेतन वृद्धि की गणना करें।"
+                    : "Simulate revised basic pay, revised DA, revised HRA, and final gross salary increase."}
+                </p>
+              </div>
+              <div className="self-start sm:self-center shrink-0">
+                <button
+                  onClick={shareToWhatsApp}
+                  className="bg-[#25D366] hover:bg-[#20ba5a] active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"
+                >
+                  <Share2 className="w-4 h-4 text-white" />
+                  <span>{language === "hi" ? "व्हाट्सऐप साझा" : "Share on WhatsApp"}</span>
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Calculation controller */}
             <div className="lg:col-span-5 bg-white dark:bg-slate-850 border border-slate-200/80 dark:border-slate-800/80 rounded-3xl p-6 shadow-sm">
               <div className="flex items-center gap-2 mb-4">
@@ -608,7 +643,8 @@ export default function EightPayCommissionHub({ activeSubPage, onNavigate, langu
               </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
 
         {/* VIEW 2: 8th Pay Commission Fitment Factor Calculator */}
         {activeSubPage === "fitment" && (

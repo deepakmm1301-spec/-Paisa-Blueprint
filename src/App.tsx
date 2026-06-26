@@ -1243,7 +1243,7 @@ export default function App() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-28 lg:pb-8 flex-1 w-full flex flex-col gap-8">
 
         {/* High-visibility alert banner for Student PDF Toolkit */}
-        <div className="relative overflow-hidden bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-purple-500/10 border-2 border-emerald-500/20 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+        <div className="hidden sm:flex relative overflow-hidden bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-purple-500/10 border-2 border-emerald-500/20 rounded-2xl p-4 sm:p-5 flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
           <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-400/10 rounded-full blur-2xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-purple-400/10 rounded-full blur-xl pointer-events-none" />
           
