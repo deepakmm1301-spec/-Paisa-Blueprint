@@ -1,6 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { jsPDF } from "jspdf";
 import { PDFDocument, PDFRawStream, PDFDict, PDFName, PDFArray } from "pdf-lib";
+import { Document, Page, pdfjs } from "react-pdf";
+
+// Load pdf.js worker from unpkg CDN for client-side execution inside the sandbox previewer
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version || "4.4.0"}/build/pdf.worker.min.mjs`;
+
 import { 
   FileText, 
   FileDown, 
@@ -33,6 +38,14 @@ type ActiveTool = "jpg_to_pdf" | "merge" | "split" | "compress" | "handwriting" 
 
 export default function StudentPdfToolkit() {
   const [activeTool, setActiveTool] = useState<ActiveTool>("jpg_to_pdf");
+
+  // ==========================================
+  // PDF Preview State
+  // ==========================================
+  const [previewPdf, setPreviewPdf] = useState<{ url: string; blob: Blob; filename: string } | null>(null);
+  const [numPages, setNumPages] = useState<number | null>(null);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [zoom, setZoom] = useState(1.0);
 
   // ==========================================
   // JPG to PDF State
@@ -128,7 +141,15 @@ export default function StudentPdfToolkit() {
       }
     });
 
-    doc.save(`student_jpgs_to_pdf_${Date.now()}.pdf`);
+    const filename = `student_jpgs_to_pdf_${Date.now()}.pdf`;
+    const pdfBlob = doc.output("blob");
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+    setPreviewPdf({
+      url: pdfUrl,
+      blob: pdfBlob,
+      filename
+    });
+    setPageNumber(1);
   };
 
   // ==========================================
@@ -182,12 +203,12 @@ export default function StudentPdfToolkit() {
       const mergedPdfBytes = await mergedPdf.save();
       const blob = new Blob([mergedPdfBytes], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `merged_student_toolkit_${Date.now()}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      setPreviewPdf({
+        url,
+        blob,
+        filename: `merged_student_toolkit_${Date.now()}.pdf`
+      });
+      setPageNumber(1);
       
       setMergeSuccess(true);
       setTimeout(() => setMergeSuccess(false), 4000);
@@ -293,12 +314,12 @@ export default function StudentPdfToolkit() {
       const splitPdfBytes = await outputPdf.save();
       const blob = new Blob([splitPdfBytes], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `split_${selectedPages.length}_pages_${Date.now()}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      setPreviewPdf({
+        url,
+        blob,
+        filename: `split_${selectedPages.length}_pages_${Date.now()}.pdf`
+      });
+      setPageNumber(1);
     } catch (err) {
       console.error("Error splitting PDF:", err);
       alert("Failed to split PDF. Check if PDF permissions are locked.");
@@ -526,14 +547,14 @@ export default function StudentPdfToolkit() {
 
         const blob = new Blob([compressedBytes], { type: "application/pdf" });
         const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
         const baseName = compressFile.name.endsWith(".pdf") ? compressFile.name.slice(0, -4) : compressFile.name;
-        link.download = `optimized_${targetKb}kb_${baseName}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        const filename = `optimized_${targetKb}kb_${baseName}.pdf`;
+        setPreviewPdf({
+          url,
+          blob,
+          filename
+        });
+        setPageNumber(1);
         setCompressedSuccess(true);
       } 
       else {
@@ -712,7 +733,16 @@ export default function StudentPdfToolkit() {
     const a4Height = 841.89;
 
     doc.addImage(imgData, "JPEG", 0, 0, a4Width, a4Height);
-    doc.save(`handwritten_assignment_${Date.now()}.pdf`);
+    
+    const filename = `handwritten_assignment_${Date.now()}.pdf`;
+    const pdfBlob = doc.output("blob");
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+    setPreviewPdf({
+      url: pdfUrl,
+      blob: pdfBlob,
+      filename
+    });
+    setPageNumber(1);
   };
 
   // ==========================================
@@ -855,7 +885,15 @@ export default function StudentPdfToolkit() {
     doc.setFillColor(themeColor[0], themeColor[1], themeColor[2]);
     doc.rect(0, pH - 10, pW, 10, "F");
 
-    doc.save(`${resumeData.name.replace(/\s+/g, "_").toLowerCase()}_resume.pdf`);
+    const filename = `${resumeData.name.replace(/\s+/g, "_").toLowerCase()}_resume.pdf`;
+    const pdfBlob = doc.output("blob");
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+    setPreviewPdf({
+      url: pdfUrl,
+      blob: pdfBlob,
+      filename
+    });
+    setPageNumber(1);
   };
 
   // ==========================================
@@ -988,7 +1026,158 @@ export default function StudentPdfToolkit() {
     doc.setTextColor(255, 255, 255);
     doc.text("EXCELLENCE", stampX, stampY + 3, { align: "center" });
 
-    doc.save(`academic_certificate_${certData.recipient.replace(/\s+/g, "_").toLowerCase()}.pdf`);
+    const filename = `academic_certificate_${certData.recipient.replace(/\s+/g, "_").toLowerCase()}.pdf`;
+    const pdfBlob = doc.output("blob");
+    const pdfUrl = URL.createObjectURL(pdfBlob);
+    setPreviewPdf({
+      url: pdfUrl,
+      blob: pdfBlob,
+      filename
+    });
+    setPageNumber(1);
+  };
+
+  const handleDownloadPreview = () => {
+    if (!previewPdf) return;
+    const link = document.createElement("a");
+    link.href = previewPdf.url;
+    link.download = previewPdf.filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const PDFPreviewPane = () => {
+    if (!previewPdf) return null;
+
+    const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
+      setNumPages(numPages);
+      setPageNumber(1);
+    };
+
+    return (
+      <div id="pdf-toolkit-previewer" className="mt-8 border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/40 rounded-3xl p-4 sm:p-6 space-y-4 print:hidden">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-b border-slate-250/30 dark:border-slate-800 pb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl">
+              <Eye className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                <span>Interactive PDF Live Preview</span>
+                <span className="bg-emerald-100 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-400 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                  Ready
+                </span>
+              </h4>
+              <p className="text-[10px] text-slate-500 font-mono mt-0.5 truncate max-w-xs sm:max-w-md">
+                {previewPdf.filename}
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleDownloadPreview}
+              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 transition-all shadow-xs cursor-pointer border-0"
+            >
+              <FileDown className="w-3.5 h-3.5" />
+              <span>Download PDF</span>
+            </button>
+            <button
+              onClick={() => setPreviewPdf(null)}
+              className="px-3 py-2 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/50 rounded-xl transition-all cursor-pointer border-0 text-xs font-bold font-sans"
+              title="Close Preview"
+            >
+              <span>Dismiss</span>
+            </button>
+          </div>
+        </div>
+
+        {/* react-pdf Document render zone */}
+        <div className="flex flex-col items-center justify-center p-4 bg-slate-100/60 dark:bg-slate-950/60 rounded-2xl border border-slate-200/50 dark:border-slate-800 relative min-h-[300px] overflow-auto">
+          <Document
+            file={previewPdf.url}
+            onLoadSuccess={onDocumentLoadSuccess}
+            loading={
+              <div className="flex flex-col items-center justify-center gap-2.5 py-12">
+                <RefreshCw className="w-8 h-8 text-emerald-600 animate-spin" />
+                <span className="text-xs font-bold text-slate-500">Loading document pages...</span>
+              </div>
+            }
+            error={
+              <div className="text-center py-12 space-y-2 text-red-500">
+                <AlertCircle className="w-8 h-8 mx-auto" />
+                <p className="text-xs font-bold">Failed to render PDF page preview.</p>
+                <p className="text-[10px] text-slate-400">Please try re-generating or check the file.</p>
+              </div>
+            }
+          >
+            <Page
+              pageNumber={pageNumber}
+              scale={zoom}
+              renderTextLayer={false}
+              renderAnnotationLayer={false}
+              className="shadow-xl rounded-xl border border-slate-200/60 dark:border-slate-800/80 bg-white max-w-full overflow-hidden transition-all duration-200"
+            />
+          </Document>
+        </div>
+
+        {/* Toolbar Controls */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+          {/* Zoom Controls */}
+          <div className="flex items-center gap-2 bg-white dark:bg-slate-950 px-3 py-1.5 rounded-xl border border-slate-100 dark:border-slate-850">
+            <button
+              onClick={() => setZoom(z => Math.max(0.5, z - 0.1))}
+              disabled={zoom <= 0.5}
+              className="p-1 text-slate-500 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all disabled:opacity-30 cursor-pointer border-0 font-bold px-1.5"
+              title="Zoom Out"
+            >
+              -
+            </button>
+            <span className="text-[10px] font-bold font-mono text-slate-600 dark:text-slate-300 min-w-[50px] text-center">
+              {Math.round(zoom * 100)}%
+            </span>
+            <button
+              onClick={() => setZoom(z => Math.min(2.0, z + 0.1))}
+              disabled={zoom >= 2.0}
+              className="p-1 text-slate-500 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-all disabled:opacity-30 cursor-pointer border-0 font-bold px-1.5"
+              title="Zoom In"
+            >
+              +
+            </button>
+          </div>
+
+          {/* Pagination Controls */}
+          {numPages && numPages > 1 && (
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setPageNumber(p => Math.max(1, p - 1))}
+                disabled={pageNumber <= 1}
+                className="px-3 py-1.5 bg-white dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-850 border border-slate-250 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl transition-all disabled:opacity-35 disabled:pointer-events-none cursor-pointer"
+              >
+                Previous
+              </button>
+              <span className="text-xs font-bold text-slate-600 dark:text-slate-350">
+                Page <span className="text-slate-900 dark:text-white font-extrabold">{pageNumber}</span> of <span className="font-extrabold">{numPages}</span>
+              </span>
+              <button
+                onClick={() => setPageNumber(p => Math.min(numPages, p + 1))}
+                disabled={pageNumber >= numPages}
+                className="px-3 py-1.5 bg-white dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-850 border border-slate-250 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl transition-all disabled:opacity-35 disabled:pointer-events-none cursor-pointer"
+              >
+                Next
+              </button>
+            </div>
+          )}
+          
+          {(!numPages || numPages === 1) && (
+            <span className="text-xs text-slate-450 dark:text-slate-500 italic">
+              Single Page Document
+            </span>
+          )}
+        </div>
+      </div>
+    );
   };
 
 
@@ -1218,8 +1407,8 @@ export default function StudentPdfToolkit() {
                     onClick={handleGenerateJpgToPdf}
                     className="w-full mt-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all border-0 cursor-pointer shadow-xs"
                   >
-                    <FileDown className="w-4 h-4" />
-                    <span>Compile & Download PDF ({jpgFiles.length} Pages)</span>
+                    <Eye className="w-4 h-4" />
+                    <span>Compile & Preview PDF ({jpgFiles.length} Pages)</span>
                   </button>
                 </div>
               )}
@@ -1340,8 +1529,8 @@ export default function StudentPdfToolkit() {
                       </>
                     ) : (
                       <>
-                        <Merge className="w-4 h-4" />
-                        <span>Merge & Export Combined PDF</span>
+                        <Eye className="w-4 h-4" />
+                        <span>Merge & Preview Combined PDF</span>
                       </>
                     )}
                   </button>
@@ -1480,8 +1669,8 @@ export default function StudentPdfToolkit() {
                       </>
                     ) : (
                       <>
-                        <Scissors className="w-4 h-4" />
-                        <span>Extract & Export selected pages ({selectedPages.length})</span>
+                        <Eye className="w-4 h-4" />
+                        <span>Extract & Preview selected pages ({selectedPages.length})</span>
                       </>
                     )}
                   </button>
@@ -1674,7 +1863,8 @@ export default function StudentPdfToolkit() {
                         </>
                       ) : (
                         <>
-                          <span>Reduce Size</span>
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>Reduce Size & Preview</span>
                         </>
                       )}
                     </button>
@@ -1801,8 +1991,8 @@ export default function StudentPdfToolkit() {
                     onClick={handleDownloadHandwrittenPdf}
                     className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all border-0 cursor-pointer shadow-xs"
                   >
-                    <FileDown className="w-4 h-4" />
-                    <span>Download Handwritten Note PDF</span>
+                    <Eye className="w-4 h-4" />
+                    <span>Generate & Preview Handwritten PDF</span>
                   </button>
                 </div>
 
@@ -1981,8 +2171,8 @@ export default function StudentPdfToolkit() {
                   onClick={handleDownloadResumePdf}
                   className="w-full bg-teal-600 hover:bg-teal-500 text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all border-0 cursor-pointer shadow-xs"
                 >
-                  <FileDown className="w-4 h-4" />
-                  <span>Download Resume PDF ({resumeTheme.replace("_", " ")})</span>
+                  <Eye className="w-4 h-4" />
+                  <span>Generate & Preview Resume PDF ({resumeTheme.replace("_", " ")})</span>
                 </button>
               </div>
             </div>
@@ -2128,8 +2318,8 @@ export default function StudentPdfToolkit() {
                   onClick={handleDownloadCertificatePdf}
                   className="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all border-0 cursor-pointer shadow-xs"
                 >
-                  <FileDown className="w-4 h-4" />
-                  <span>Download Certificate PDF ({certTheme.replace("_", " ")})</span>
+                  <Eye className="w-4 h-4" />
+                  <span>Generate & Preview Certificate PDF ({certTheme.replace("_", " ")})</span>
                 </button>
               </div>
             </div>
@@ -2137,6 +2327,8 @@ export default function StudentPdfToolkit() {
 
         </div>
       </div>
+
+      <PDFPreviewPane />
 
       {/* General Student Instructions Cabinet */}
       <div className="mt-8 bg-slate-50 dark:bg-slate-950/25 border border-slate-100 dark:border-slate-800/80 p-5 rounded-2xl flex items-start gap-3.5">
