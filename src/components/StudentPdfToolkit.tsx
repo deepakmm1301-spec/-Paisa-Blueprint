@@ -3,8 +3,42 @@ import { jsPDF } from "jspdf";
 import { PDFDocument, PDFRawStream, PDFDict, PDFName, PDFArray } from "pdf-lib";
 import { Document, Page, pdfjs } from "react-pdf";
 
-// Load pdf.js worker from unpkg CDN for client-side execution inside the sandbox previewer
-pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version || "4.4.0"}/build/pdf.worker.min.mjs`;
+// Load pdf.js worker using standard URL-based worker import in Vite with same-origin Blob fallback
+const localWorkerUrl = new URL(
+  "pdfjs-dist/build/pdf.worker.min.mjs",
+  import.meta.url
+).toString();
+
+pdfjs.GlobalWorkerOptions.workerSrc = localWorkerUrl;
+
+// For sandboxed iframe compatibility, try fetching the worker from a CDN and loading it via Blob URL
+// This bypasses strict cross-origin worker restrictions in sandboxed environments.
+const initPdfWorker = async () => {
+  const version = pdfjs.version || "5.4.296";
+  const urls = [
+    `https://unpkg.com/pdfjs-dist@${version}/build/pdf.worker.min.mjs`,
+    `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${version}/pdf.worker.min.mjs`
+  ];
+
+  for (const url of urls) {
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        pdfjs.GlobalWorkerOptions.workerSrc = blobUrl;
+        console.log("Successfully loaded pdf.js worker from CDN blob:", url);
+        return;
+      }
+    } catch (e) {
+      console.warn(`Failed to fetch pdf.js worker from ${url}:`, e);
+    }
+  }
+};
+
+initPdfWorker().catch(err => {
+  console.error("Failed to initialize remote pdf.js worker, keeping local URL:", err);
+});
 
 import { 
   FileText, 
