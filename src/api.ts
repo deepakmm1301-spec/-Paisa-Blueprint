@@ -37,5 +37,11 @@ export async function paisaFetch(endpoint: string, options: RequestInit = {}): P
     headers,
   };
   
-  return fetch(url, mergedOptions);
+  try {
+    const response = await fetch(url, mergedOptions);
+    return response;
+  } catch (error) {
+    console.error(`paisaFetch failed for URL [${url}] with error:`, error);
+    throw error;
+  }
 }
