@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Receipt, Landmark, ShieldCheck, Scale, Award, HelpCircle, FileText, Sparkles, Share2, FileDown } from "lucide-react";
+import { Receipt, Landmark, ShieldCheck, Scale, Award, HelpCircle, FileText, Sparkles, Share2, FileDown, Bookmark } from "lucide-react";
 import { UserProfile, getShareableLink } from "../types";
 import { generatePDFReport } from "../utils/pdfGenerator";
+import { paisaFetch } from "../api";
 
 interface Props {
   profile?: UserProfile;
@@ -14,6 +15,30 @@ export default function TaxPlanner({ profile }: Props) {
   const [section80D, setSection80D] = useState<number>(25000); // Health insurance, max 25k or 50k
   const [hraExempt, setHraExempt] = useState<number>(40000); // standard HRA claims
   const [homeloanInterest, setHomeloanInterest] = useState<number>(0); // Section 24b max 2L
+
+  // Save / Load states
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">("idle");
+
+  // Load calculation listener
+  useEffect(() => {
+    const handleLoad = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail && (customEvent.detail.type.startsWith("tax"))) {
+        const data = customEvent.detail.data;
+        if (data) {
+          if (data.annualGross) setAnnualGross(data.annualGross);
+          if (data.section80C !== undefined) setSection80C(data.section80C);
+          if (data.section80Nps !== undefined) setSection80Nps(data.section80Nps);
+          if (data.section80D !== undefined) setSection80D(data.section80D);
+          if (data.hraExempt !== undefined) setHraExempt(data.hraExempt);
+          if (data.homeloanInterest !== undefined) setHomeloanInterest(data.homeloanInterest);
+        }
+      }
+    };
+    window.addEventListener("paisa-load-calculation", handleLoad);
+    return () => window.removeEventListener("paisa-load-calculation", handleLoad);
+  }, []);
 
   useEffect(() => {
     if (profile) {
@@ -127,6 +152,51 @@ export default function TaxPlanner({ profile }: Props) {
   const standardTaxSavings = Math.abs(totalTaxOld - totalTaxNew);
   const betterRegime = totalTaxOld < totalTaxNew ? "Old Regime" : "New Regime";
 
+  // Save calculation handler
+  const saveToLocker = async () => {
+    setIsSaving(true);
+    setSaveStatus("idle");
+    try {
+      const res = await paisaFetch("/api/locker/save", {
+        method: "POST",
+        body: JSON.stringify({
+          title: `Tax Plan (Gross: ₹${annualGross.toLocaleString()} - Optimal: ${betterRegime})`,
+          type: "tax",
+          data: {
+            annualGross,
+            section80C,
+            section80Nps,
+            section80D,
+            hraExempt,
+            homeloanInterest,
+            totalTaxOld,
+            totalTaxNew,
+            standardTaxSavings,
+            betterRegime
+          }
+        })
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        setSaveStatus("success");
+        window.dispatchEvent(new Event("paisa-locker-saved"));
+        setTimeout(() => setSaveStatus("idle"), 3000);
+      } else {
+        setSaveStatus("error");
+        setTimeout(() => setSaveStatus("idle"), 3000);
+        alert(data?.message || "Failed to save calculation. Please make sure you are logged in.");
+      }
+    } catch (err) {
+      setSaveStatus("error");
+      setTimeout(() => setSaveStatus("idle"), 3000);
+      alert("Please log in to save this plan to your financial locker.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const downloadPDFReport = () => {
     generatePDFReport({
       title: "Income Tax Optimization Report",
@@ -202,6 +272,14 @@ Optimize your salary and deductions instantly: ${currentUrl}`;
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
+          <button
+            onClick={saveToLocker}
+            disabled={isSaving}
+            className={`bg-purple-600 hover:bg-purple-700 active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer ${isSaving ? "opacity-75 cursor-not-allowed" : ""}`}
+          >
+            <Bookmark className="w-4 h-4 text-white" />
+            <span>{isSaving ? "Saving..." : saveStatus === "success" ? "Saved! ✓" : "Save to Vault"}</span>
+          </button>
           <button
             onClick={downloadPDFReport}
             className="bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"

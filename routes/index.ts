@@ -3,6 +3,7 @@ import { authController } from "../controllers/authController";
 import { chatController } from "../controllers/chatController";
 import { insightController } from "../controllers/insightController";
 import { visitorController } from "../controllers/visitorController";
+import { financialLockerController } from "../controllers/financialLockerController";
 import { apiLimiter, heavyLimiter } from "../middleware/rateLimiter";
 import { isAuthenticated, isAdmin, isPremium } from "../middleware/auth";
 
@@ -49,5 +50,15 @@ router.get("/chat/status", chatController.getStatus);
 
 // Market Insights endpoint
 router.get("/market-insights", insightController.getMarketInsights);
+
+// Financial Locker Endpoints (Protected)
+router.get("/locker", isAuthenticated as any, financialLockerController.getLocker as any);
+router.get("/locker/recent", isAuthenticated as any, financialLockerController.getRecent as any);
+router.post("/locker/save", isAuthenticated as any, financialLockerController.saveItem as any);
+router.put("/locker/update/:id", isAuthenticated as any, financialLockerController.updateItem as any);
+router.delete("/locker/delete/:id", isAuthenticated as any, financialLockerController.deleteItem as any);
+router.post("/locker/favourite/:id", isAuthenticated as any, financialLockerController.toggleFavourite as any);
+router.get("/locker/favourites", isAuthenticated as any, financialLockerController.getFavourites as any);
+router.get("/locker/search", isAuthenticated as any, financialLockerController.searchItems as any);
 
 export default router;

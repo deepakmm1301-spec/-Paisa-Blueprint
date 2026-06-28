@@ -12,10 +12,12 @@ import {
   Calendar,
   Layers,
   ArrowRight,
-  FileDown
+  FileDown,
+  Bookmark
 } from "lucide-react";
 import { getShareableLink } from "../types";
 import { generatePDFReport } from "../utils/pdfGenerator";
+import { paisaFetch } from "../api";
 
 interface NpsGovtCalculatorProps {
   language?: "en" | "hi";
@@ -26,6 +28,10 @@ export default function NpsGovtCalculator({ language: propLanguage }: NpsGovtCal
   const [language, setLanguage] = useState<"en" | "hi">(() => {
     return propLanguage || (localStorage.getItem("paisa_lang_selection") as "en" | "hi") || "hi";
   });
+
+  // Save / Load states
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">("idle");
 
   // Synchronize internal language with prop updates
   useEffect(() => {
@@ -53,6 +59,110 @@ export default function NpsGovtCalculator({ language: propLanguage }: NpsGovtCal
   const [customExpectedReturn, setCustomExpectedReturn] = useState<number | "">(10);
   const [customAnnuityPurchasePercent, setCustomAnnuityPurchasePercent] = useState<number>(40);
   const [customExpectedAnnuityRate, setCustomExpectedAnnuityRate] = useState<number>(6.75);
+
+  // Load calculation listener
+  useEffect(() => {
+    const handleLoad = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail && (customEvent.detail.type === "nps" || customEvent.detail.type === "nps_govt")) {
+        const data = customEvent.detail.data;
+        if (data) {
+          if (data.activeTab) setActiveTab(data.activeTab);
+          
+          // TAB A: BPSC
+          if (data.basicPayDa) setBasicPayDa(data.basicPayDa);
+          if (data.employeeRate !== undefined) setEmployeeRate(data.employeeRate);
+          if (data.employerRate !== undefined) setEmployerRate(data.employerRate);
+          if (data.yearsToRetire !== undefined) setYearsToRetire(data.yearsToRetire);
+          if (data.expectedReturn !== undefined) setExpectedReturn(data.expectedReturn);
+          if (data.annuityPurchasePercent !== undefined) setAnnuityPurchasePercent(data.annuityPurchasePercent);
+          if (data.expectedAnnuityRate !== undefined) setExpectedAnnuityRate(data.expectedAnnuityRate);
+
+          // TAB B: Custom
+          if (data.customDob) setCustomDob(data.customDob);
+          if (data.customExistingCorpus !== undefined) setCustomExistingCorpus(data.customExistingCorpus);
+          if (data.customMonthlyContribution !== undefined) setCustomMonthlyContribution(data.customMonthlyContribution);
+          if (data.customRetirementAge !== undefined) setCustomRetirementAge(data.customRetirementAge);
+          if (data.customDeferAge !== undefined) setCustomDeferAge(data.customDeferAge);
+          if (data.customContributionIncrease !== undefined) setCustomContributionIncrease(data.customContributionIncrease);
+          if (data.customExpectedReturn !== undefined) setCustomExpectedReturn(data.customExpectedReturn);
+          if (data.customAnnuityPurchasePercent !== undefined) setCustomAnnuityPurchasePercent(data.customAnnuityPurchasePercent);
+          if (data.customExpectedAnnuityRate !== undefined) setCustomExpectedAnnuityRate(data.customExpectedAnnuityRate);
+        }
+      }
+    };
+    window.addEventListener("paisa-load-calculation", handleLoad);
+    return () => window.removeEventListener("paisa-load-calculation", handleLoad);
+  }, []);
+
+  // Save calculation handler
+  const saveToLocker = async () => {
+    setIsSaving(true);
+    setSaveStatus("idle");
+    
+    const activeData = activeTab === "bpsc" ? {
+      activeTab: "bpsc",
+      basicPayDa,
+      employeeRate,
+      employerRate,
+      yearsToRetire,
+      expectedReturn,
+      annuityPurchasePercent,
+      expectedAnnuityRate,
+      monthlyContribution: bpscCalculations.monthlyContribution,
+      totalCorpus: bpscCalculations.totalAccumulatedCorpus,
+      lumpSum: bpscCalculations.lumpsumWithdrawalCorpus,
+      annuityCorpus: bpscCalculations.annuityCorpus,
+      monthlyPension: bpscCalculations.monthlyPensionAmount
+    } : {
+      activeTab: "custom",
+      customDob,
+      customExistingCorpus,
+      customMonthlyContribution,
+      customRetirementAge,
+      customDeferAge,
+      customContributionIncrease,
+      customExpectedReturn,
+      customAnnuityPurchasePercent,
+      customExpectedAnnuityRate,
+      monthlyContribution: customMonthlyContribution,
+      totalCorpus: customCalculations.totalAccumulatedCorpus,
+      lumpSum: customCalculations.lumpsumWithdrawalCorpus,
+      annuityCorpus: customCalculations.annuityCorpus,
+      monthlyPension: customCalculations.monthlyPensionAmount
+    };
+
+    try {
+      const res = await paisaFetch("/api/locker/save", {
+        method: "POST",
+        body: JSON.stringify({
+          title: activeTab === "bpsc" 
+            ? `NPS BPSC Teacher Plan (Basic+DA: ₹${basicPayDa.toLocaleString()})`
+            : `NPS Govt Pension Plan (₹${customMonthlyContribution.toLocaleString()}/mo)`,
+          type: "nps",
+          data: activeData
+        })
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        setSaveStatus("success");
+        window.dispatchEvent(new Event("paisa-locker-saved"));
+        setTimeout(() => setSaveStatus("idle"), 3000);
+      } else {
+        setSaveStatus("error");
+        setTimeout(() => setSaveStatus("idle"), 3000);
+        alert(data?.message || "Failed to save calculation. Please make sure you are logged in.");
+      }
+    } catch (err) {
+      setSaveStatus("error");
+      setTimeout(() => setSaveStatus("idle"), 3000);
+      alert("Please log in to save this plan to your financial locker.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   // Date of Birth -> Age Helper
   const calculateAge = (dobString: string): number => {
@@ -311,6 +421,14 @@ Calculate your exact lifetime pension blueprint: ${currentUrl}`;
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
+          <button
+            onClick={saveToLocker}
+            disabled={isSaving}
+            className={`bg-purple-600 hover:bg-purple-700 active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer ${isSaving ? "opacity-75 cursor-not-allowed" : ""}`}
+          >
+            <Bookmark className="w-4 h-4 text-white" />
+            <span>{isSaving ? "Saving..." : saveStatus === "success" ? (language === "hi" ? "सुरक्षित किया गया! ✓" : "Saved! ✓") : (language === "hi" ? "तिजोरी में सहेजें" : "Save to Vault")}</span>
+          </button>
           <button
             onClick={downloadPDFReport}
             className="bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Sparkles, Calendar, Plus, Trash2, HelpCircle, GraduationCap, Home, Car, Heart, Palmtree, Compass, AlertCircle, Pencil, Check, X, Share2, FileDown } from "lucide-react";
+import { Sparkles, Calendar, Plus, Trash2, HelpCircle, GraduationCap, Home, Car, Heart, Palmtree, Compass, AlertCircle, Pencil, Check, X, Share2, FileDown, Bookmark } from "lucide-react";
 import { Goal, getShareableLink } from "../types";
 import { generatePDFReport } from "../utils/pdfGenerator";
+import { paisaFetch } from "../api";
 
 export default function GoalPlanner() {
   const [goals, setGoals] = useState<Goal[]>(() => {
@@ -57,6 +58,71 @@ export default function GoalPlanner() {
   useEffect(() => {
     localStorage.setItem("paisa_goal_planner_list", JSON.stringify(goals));
   }, [goals]);
+
+  // Save / Load states
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">("idle");
+
+  // Load calculation listener
+  useEffect(() => {
+    const handleLoad = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail && (customEvent.detail.type === "goal" || customEvent.detail.type === "financialGoals")) {
+        const data = customEvent.detail.data;
+        if (data && data.goals) {
+          setGoals(data.goals);
+        } else if (data && data.id) {
+          // If they selected a single saved goal, add or update it in the list!
+          setGoals((prev) => {
+            const exists = prev.some((g) => g.id === data.id);
+            if (exists) {
+              return prev.map((g) => g.id === data.id ? data : g);
+            } else {
+              return [...prev, data];
+            }
+          });
+        }
+      }
+    };
+    window.addEventListener("paisa-load-calculation", handleLoad);
+    return () => window.removeEventListener("paisa-load-calculation", handleLoad);
+  }, []);
+
+  // Save calculation handler
+  const saveToLocker = async () => {
+    setIsSaving(true);
+    setSaveStatus("idle");
+    try {
+      const res = await paisaFetch("/api/locker/save", {
+        method: "POST",
+        body: JSON.stringify({
+          title: `Goal Targets Checklist (${goals.length} active targets)`,
+          type: "goal",
+          data: {
+            goals
+          }
+        })
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        setSaveStatus("success");
+        window.dispatchEvent(new Event("paisa-locker-saved"));
+        setTimeout(() => setSaveStatus("idle"), 3000);
+      } else {
+        setSaveStatus("error");
+        setTimeout(() => setSaveStatus("idle"), 3000);
+        alert(data?.message || "Failed to save goals. Please make sure you are logged in.");
+      }
+    } catch (err) {
+      setSaveStatus("error");
+      setTimeout(() => setSaveStatus("idle"), 3000);
+      alert("Please log in to save this plan to your financial locker.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   // Form states for creating custom goal
   const [showAddForm, setShowAddForm] = useState(false);
@@ -241,6 +307,14 @@ export default function GoalPlanner() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={saveToLocker}
+            disabled={isSaving}
+            className={`flex items-center gap-1.5 bg-purple-600 hover:bg-purple-700 active:scale-95 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-xs transition-all border-0 cursor-pointer ${isSaving ? "opacity-75 cursor-not-allowed" : ""}`}
+          >
+            <Bookmark className="w-4 h-4 text-white" />
+            <span>{isSaving ? "Saving..." : saveStatus === "success" ? "Saved!" : "Save Goals to Vault"}</span>
+          </button>
           <button
             onClick={downloadPDFReport}
             disabled={goals.length === 0}

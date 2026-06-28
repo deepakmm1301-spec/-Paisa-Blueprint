@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   TrendingUp, 
   Award, 
@@ -13,10 +13,12 @@ import {
   Percent,
   TrendingDown,
   Share2,
-  FileDown
+  FileDown,
+  Bookmark
 } from "lucide-react";
 import { getShareableLink } from "../types";
 import { generatePDFReport } from "../utils/pdfGenerator";
+import { paisaFetch } from "../api";
 
 export default function SIPCalculator() {
   const [monthlySip, setMonthlySip] = useState<number>(10000);
@@ -24,6 +26,73 @@ export default function SIPCalculator() {
   const [expectedReturn, setExpectedReturn] = useState<number>(12); // Standard equity mutual fund returns
   const [years, setYears] = useState<number | "">(15);
   const [inflationRate, setInflationRate] = useState<number>(6); // 6% average Indian inflation
+  
+  // Save / Load states
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">("idle");
+
+  // Load calculation listener
+  useEffect(() => {
+    const handleLoad = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail && (customEvent.detail.type.startsWith("sip"))) {
+        const data = customEvent.detail.data;
+        if (data) {
+          if (data.monthlySip) setMonthlySip(data.monthlySip);
+          if (data.annualStepUp !== undefined) setAnnualStepUp(data.annualStepUp);
+          if (data.expectedReturn !== undefined) setExpectedReturn(data.expectedReturn);
+          if (data.years !== undefined) setYears(data.years);
+          if (data.inflationRate !== undefined) setInflationRate(data.inflationRate);
+        }
+      }
+    };
+    window.addEventListener("paisa-load-calculation", handleLoad);
+    return () => window.removeEventListener("paisa-load-calculation", handleLoad);
+  }, []);
+
+  // Save calculation handler
+  const saveToLocker = async () => {
+    setIsSaving(true);
+    setSaveStatus("idle");
+    try {
+      const res = await paisaFetch("/api/locker/save", {
+        method: "POST",
+        body: JSON.stringify({
+          title: `SIP Investment Plan (₹${monthlySip.toLocaleString()}/mo @ ${expectedReturn}%)`,
+          type: "sip",
+          data: {
+            monthlySip,
+            annualStepUp,
+            expectedReturn,
+            years,
+            inflationRate,
+            investedAmount,
+            futureValue,
+            wealthCreated,
+            inflationAdjusted
+          }
+        })
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        setSaveStatus("success");
+        window.dispatchEvent(new Event("paisa-locker-saved"));
+        setTimeout(() => setSaveStatus("idle"), 3000);
+      } else {
+        setSaveStatus("error");
+        setTimeout(() => setSaveStatus("idle"), 3000);
+        alert(data?.message || "Failed to save calculation. Please make sure you are logged in.");
+      }
+    } catch (err) {
+      setSaveStatus("error");
+      setTimeout(() => setSaveStatus("idle"), 3000);
+      alert("Please log in to save this plan to your financial locker.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
   
   // Dashboard tab states
   const [visualizationTab, setVisualizationTab] = useState<"growth" | "breakdown">("growth");
@@ -231,6 +300,14 @@ Calculate your compounding potential instantly: ${currentUrl}`;
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
+          <button
+            onClick={saveToLocker}
+            disabled={isSaving}
+            className={`bg-purple-600 hover:bg-purple-700 active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer ${isSaving ? "opacity-75 cursor-not-allowed" : ""}`}
+          >
+            <Bookmark className="w-4 h-4 text-white" />
+            <span>{isSaving ? "Saving..." : saveStatus === "success" ? "Saved!" : "Save to Vault"}</span>
+          </button>
           <button
             onClick={downloadPDFReport}
             className="bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"

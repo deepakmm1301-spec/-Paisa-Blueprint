@@ -13,10 +13,12 @@ import {
   Grid,
   Info,
   Share2,
-  FileDown
+  FileDown,
+  Bookmark
 } from "lucide-react";
 import { getShareableLink } from "../types";
 import { generatePDFReport } from "../utils/pdfGenerator";
+import { paisaFetch } from "../api";
 
 export default function PensionCalculator() {
   // Subscriber Details
@@ -55,6 +57,111 @@ export default function PensionCalculator() {
     expectedMonthlyPension: 0,
     growthRateUsed: 10
   });
+
+  // Save / Load states
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">("idle");
+
+  // Load calculation listener
+  useEffect(() => {
+    const handleLoad = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail && (customEvent.detail.type.startsWith("pension"))) {
+        const data = customEvent.detail.data;
+        if (data) {
+          if (data.subscriberSector) setSubscriberSector(data.subscriberSector);
+          if (data.scheme) setScheme(data.scheme);
+          if (data.dob) setDob(data.dob);
+          if (data.existingCorpus) {
+            setExistingCorpus(data.existingCorpus);
+            setExistingCorpusStr(String(data.existingCorpus));
+          }
+          if (data.monthlyContribution) {
+            setMonthlyContribution(data.monthlyContribution);
+            setMonthlyContributionStr(String(data.monthlyContribution));
+          }
+          if (data.contributionAge) {
+            setContributionAge(data.contributionAge);
+            setContributionAgeStr(String(data.contributionAge));
+          }
+          if (data.withdrawalAge) {
+            setWithdrawalAge(data.withdrawalAge);
+            setWithdrawalAgeStr(String(data.withdrawalAge));
+          }
+          if (data.annualIncrease) {
+            setAnnualIncrease(data.annualIncrease);
+            setAnnualIncreaseStr(String(data.annualIncrease));
+          }
+          if (data.annuityRatio) {
+            setAnnuityRatio(data.annuityRatio);
+            setAnnuityRatioStr(String(data.annuityRatio));
+          }
+          if (data.expectedAnnuityRate) {
+            setExpectedAnnuityRate(data.expectedAnnuityRate);
+            setExpectedAnnuityRateStr(String(data.expectedAnnuityRate));
+          }
+          if (data.expectedGrowthRate) {
+            setExpectedGrowthRate(data.expectedGrowthRate);
+            setExpectedGrowthRateStr(String(data.expectedGrowthRate));
+          }
+        }
+      }
+    };
+    window.addEventListener("paisa-load-calculation", handleLoad);
+    return () => window.removeEventListener("paisa-load-calculation", handleLoad);
+  }, []);
+
+  // Save calculation handler
+  const saveToLocker = async () => {
+    setIsSaving(true);
+    setSaveStatus("idle");
+    try {
+      const res = await paisaFetch("/api/locker/save", {
+        method: "POST",
+        body: JSON.stringify({
+          title: `NPS Pension Plan (${subscriberSector} Sector - ₹${monthlyContribution.toLocaleString()}/mo)`,
+          type: "pension",
+          data: {
+            subscriberSector,
+            scheme,
+            dob,
+            existingCorpus,
+            monthlyContribution,
+            contributionAge,
+            withdrawalAge,
+            annualIncrease,
+            annuityRatio,
+            expectedAnnuityRate,
+            expectedGrowthRate,
+            totalContribution: results.totalContribution,
+            totalCorpus: results.totalAccumulatedCorpus,
+            lumpSumWithdrawn: results.lumpSumWithdrawn,
+            annuityCorpus: results.annuityCorpus,
+            monthlyPension: results.expectedMonthlyPension,
+            gratuity: 0 // backward-compatible
+          }
+        })
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        setSaveStatus("success");
+        window.dispatchEvent(new Event("paisa-locker-saved"));
+        setTimeout(() => setSaveStatus("idle"), 3000);
+      } else {
+        setSaveStatus("error");
+        setTimeout(() => setSaveStatus("idle"), 3000);
+        alert(data?.message || "Failed to save calculation. Please make sure you are logged in.");
+      }
+    } catch (err) {
+      setSaveStatus("error");
+      setTimeout(() => setSaveStatus("idle"), 3000);
+      alert("Please log in to save this plan to your financial locker.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   // Calculate age based on Date of Birth
   useEffect(() => {
@@ -254,6 +361,14 @@ Map your exact NPS pension blueprint here: ${currentUrl}`;
             >
               <Undo2 className="w-3.5 h-3.5" />
               Reset
+            </button>
+            <button
+              onClick={saveToLocker}
+              disabled={isSaving}
+              className={`bg-purple-600 hover:bg-purple-700 disabled:opacity-75 text-white font-bold text-[11px] px-3 py-1.5 rounded-lg flex items-center justify-center gap-1.5 shadow-sm transition-all border-0 cursor-pointer ${isSaving ? "opacity-75 cursor-not-allowed" : ""}`}
+            >
+              <Bookmark className="w-3.5 h-3.5 text-white" />
+              <span>{isSaving ? "Saving..." : saveStatus === "success" ? "Saved!" : "Save to Vault"}</span>
             </button>
             <button
               onClick={downloadPDFReport}

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { UserProfile, getShareableLink } from "../types";
-import { Landmark, Calculator, Receipt, Shield, Award, HelpCircle, AlertCircle, Share2, FileDown } from "lucide-react";
+import { Landmark, Calculator, Receipt, Shield, Award, HelpCircle, AlertCircle, Share2, FileDown, Bookmark } from "lucide-react";
 import { generatePDFReport } from "../utils/pdfGenerator";
+import { paisaFetch } from "../api";
 
 interface Props {
   profile: UserProfile;
@@ -21,6 +22,84 @@ export default function SalaryPlanner({ profile }: Props) {
   const [daHikeRate, setDaHikeRate] = useState<number>(3); // DA Hike % e.g. 3% or 4%
   const [monthsEncash, setMonthsEncash] = useState<number>(10); // Standard leave encashment months (max 10 months / 300 days)
   const [yearsWorked, setYearsWorked] = useState<number>(20); // Gratuity calculation years
+
+  // Save to Locker states
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">("idle");
+
+  // Load calculation listener
+  useEffect(() => {
+    const handleLoad = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail && (customEvent.detail.type.startsWith("salary"))) {
+        const data = customEvent.detail.data;
+        if (data) {
+          if (data.category) setCategory(data.category);
+          if (data.basicPay) setBasicPay(data.basicPay);
+          if (data.daRate) setDaRate(data.daRate);
+          if (data.hraRate) setHraRate(data.hraRate);
+          if (data.otherAllowances) setOtherAllowances(data.otherAllowances);
+          if (data.daHikeRate !== undefined) setDaHikeRate(data.daHikeRate);
+          if (data.monthsEncash !== undefined) setMonthsEncash(data.monthsEncash);
+          if (data.yearsWorked !== undefined) setYearsWorked(data.yearsWorked);
+        }
+      }
+    };
+    window.addEventListener("paisa-load-calculation", handleLoad);
+    return () => window.removeEventListener("paisa-load-calculation", handleLoad);
+  }, []);
+
+  // Save calculation handler
+  const saveToLocker = async () => {
+    setIsSaving(true);
+    setSaveStatus("idle");
+    try {
+      const res = await paisaFetch("/api/locker/save", {
+        method: "POST",
+        body: JSON.stringify({
+          title: `Salary Projection - ${category.replace("_", " ").toUpperCase()} (Basic: ₹${basicPay.toLocaleString()})`,
+          type: "salary",
+          data: {
+            category,
+            basicPay,
+            daRate,
+            daAmount,
+            hraRate,
+            hraAmount,
+            otherAllowances,
+            grossSalary,
+            npsEmployeeDeduction,
+            pfDeduction,
+            professionalTax,
+            netSalary: inHandSalary,
+            daHikeRate,
+            estimatedGratuity,
+            estimatedLeaveEncashment,
+            monthsEncash,
+            yearsWorked
+          }
+        })
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        setSaveStatus("success");
+        window.dispatchEvent(new Event("paisa-locker-saved"));
+        setTimeout(() => setSaveStatus("idle"), 3000);
+      } else {
+        setSaveStatus("error");
+        setTimeout(() => setSaveStatus("idle"), 3000);
+        alert(data?.message || "Failed to save calculation. Please make sure you are logged in.");
+      }
+    } catch (err) {
+      setSaveStatus("error");
+      setTimeout(() => setSaveStatus("idle"), 3000);
+      alert("Please log in to save this plan to your financial locker.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   // Pre-fill fields based on categorization
   useEffect(() => {
@@ -190,6 +269,14 @@ Check your exact salary breakdown: ${currentUrl}`;
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
+          <button
+            onClick={saveToLocker}
+            disabled={isSaving}
+            className={`bg-purple-600 hover:bg-purple-700 active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer ${isSaving ? "opacity-75 cursor-not-allowed" : ""}`}
+          >
+            <Bookmark className="w-4 h-4 text-white" />
+            <span>{isSaving ? "Saving..." : saveStatus === "success" ? "Saved! ✓" : "Save to Vault"}</span>
+          </button>
           <button
             onClick={downloadPDFReport}
             className="bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"
