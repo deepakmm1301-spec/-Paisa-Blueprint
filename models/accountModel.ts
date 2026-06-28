@@ -149,9 +149,9 @@ export function loadAccounts(): void {
           acc.refreshTokens = [];
           dirty = true;
         }
-        if (acc.passwordHash === "paisa") {
-          // If in plain-text, secure it immediately
-          acc.passwordHash = "$2a$10$9fJ6LzZfH5N7P93Y12W1XODvQ1sT2U6iXfSg3v4fV7O/Yn.2E6SXe";
+        if (acc.passwordHash && !acc.passwordHash.startsWith("$2a$") && !acc.passwordHash.startsWith("$2b$") && !acc.passwordHash.startsWith("$2y$")) {
+          // If in plain-text, secure it immediately using bcrypt
+          acc.passwordHash = bcrypt.hashSync(acc.passwordHash, 10);
           dirty = true;
         }
         if (dirty) updated = true;
@@ -206,12 +206,21 @@ export const accountModel = {
     saveAccounts();
   },
 
-  updateAccount: (updatedAccount: ServerUserAccount): boolean => {
+  updateAccount: (updatedAccount: Partial<ServerUserAccount> & { id: string }): boolean => {
     const idx = accountsMemory.findIndex(acc => acc.id === updatedAccount.id);
     if (idx === -1) return false;
     
+    // Filter out undefined properties to prevent replacing existing fields with undefined
+    const cleanUpdate: any = {};
+    for (const [key, val] of Object.entries(updatedAccount)) {
+      if (val !== undefined) {
+        cleanUpdate[key] = val;
+      }
+    }
+
     accountsMemory[idx] = {
-      ...updatedAccount,
+      ...accountsMemory[idx],
+      ...cleanUpdate,
       updatedAt: new Date().toISOString()
     };
     saveAccounts();
