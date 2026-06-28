@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
+import { API_BASE } from "../api";
 import { Lock, Mail, Phone, Eye, EyeOff, ShieldCheck, ArrowRight, User, UserPlus, CheckCircle } from "lucide-react";
 
 interface SignupPageProps {
@@ -96,7 +97,7 @@ export default function SignupPage({ onSuccess, onNavigate, language, defaultPro
 
     setIsLoading(true);
     try {
-      const res = await fetch("/api/auth/register", {
+      const res = await fetch(`${API_BASE}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

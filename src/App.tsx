@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { UserProfile, LoanDetails, InvestmentDetails, getShareableLink } from "./types";
+import { API_BASE } from "./api";
 import FinancialHealthCheck from "./components/FinancialHealthCheck";
 import SalaryPlanner from "./components/SalaryPlanner";
 import SIPCalculator from "./components/SIPCalculator";
@@ -232,7 +233,7 @@ export default function App() {
   useEffect(() => {
     const checkUserSession = async () => {
       try {
-        const res = await fetch("/api/auth/me");
+        const res = await fetch(`${API_BASE}/api/auth/me`);
         if (res.ok) {
           const data = await res.json();
           if (data && data.user) {
@@ -249,7 +250,7 @@ export default function App() {
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/auth/logout", { method: "POST" });
+      await fetch(`${API_BASE}/api/auth/logout`, { method: "POST" });
     } catch (e) {
       console.error("Server logout request failed", e);
     }
@@ -813,7 +814,7 @@ export default function App() {
   useEffect(() => {
     if (sessionUser && sessionUser.email) {
       setIsLoadingProfiles(true);
-      fetch(`/api/auth/get-profiles?email=${encodeURIComponent(sessionUser.email)}`)
+      fetch(`${API_BASE}/api/auth/get-profiles?email=${encodeURIComponent(sessionUser.email)}`)
         .then(res => {
           if (res.ok) return res.json();
           throw new Error("Response status indicates error");
@@ -886,7 +887,7 @@ export default function App() {
       }
 
       // Synchronize with Central Server Database dynamically on modification
-      fetch("/api/auth/update-profiles", {
+      fetch(`${API_BASE}/api/auth/update-profiles`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

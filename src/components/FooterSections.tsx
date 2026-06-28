@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../api";
 import { 
   X, 
   Info, 
@@ -26,7 +27,7 @@ export function FooterSections({ language = "en" }: { language?: "en" | "hi" } =
 
   useEffect(() => {
     // Record page view on load
-    fetch("/api/visitors/hit", { method: "POST" })
+    fetch(`${API_BASE}/api/visitors/hit`, { method: "POST" })
       .then((res) => res.json())
       .then((data) => {
         if (typeof data.count === "number") {
@@ -35,7 +36,7 @@ export function FooterSections({ language = "en" }: { language?: "en" | "hi" } =
       })
       .catch((err) => {
         console.error("Failed to post visitor hit, fetching count via GET fallback...", err);
-        fetch("/api/visitors")
+        fetch(`${API_BASE}/api/visitors`)
           .then((res) => res.json())
           .then((data) => {
             if (typeof data.count === "number") {

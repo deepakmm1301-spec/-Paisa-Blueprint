@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
+import { API_BASE } from "../api";
 import { Lock, Mail, Phone, Eye, EyeOff, ShieldCheck, ArrowRight, Sparkles, LogIn } from "lucide-react";
 
 interface LoginPageProps {
@@ -51,7 +52,7 @@ export default function LoginPage({ onSuccess, onNavigate, language }: LoginPage
 
     setIsLoading(true);
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch(`${API_BASE}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

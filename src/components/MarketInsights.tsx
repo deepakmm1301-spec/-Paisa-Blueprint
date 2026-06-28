@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { API_BASE } from "../api";
 import { Newspaper, RefreshCw, AlertCircle, ArrowRight, Sparkles, Send, MapPin, Landmark, Award, Copy, Check } from "lucide-react";
 
 interface InsightItem {
@@ -114,7 +115,7 @@ export default function MarketInsights({ language }: MarketInsightsProps) {
     setLoading(true);
     setErrorMsg(null);
     try {
-      const response = await fetch(`/api/market-insights?lang=${language}`);
+      const response = await fetch(`${API_BASE}/api/market-insights?lang=${language}`);
       if (!response.ok) {
         throw new Error("Failed to load real-time market insights.");
       }

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { UserProfile, ChatMessage } from "../types";
+import { API_BASE } from "../api";
 import { Sparkles, Send, Bot, User, Trash2, HelpCircle, Loader2, AlertCircle, Key, Eye, EyeOff, Save } from "lucide-react";
 
 interface Props {
@@ -39,7 +40,7 @@ Here are some helpful presets you can ask me, or type your own question below:`,
   }, [messages]);
 
   useEffect(() => {
-    fetch("/api/chat/status")
+    fetch(`${API_BASE}/api/chat/status`)
       .then((res) => res.json())
       .then((data) => {
         if (typeof data.hasApiKey === "boolean") {
@@ -70,7 +71,7 @@ Here are some helpful presets you can ask me, or type your own question below:`,
     setLoading(true);
 
     try {
-      const response = await fetch("/api/chat", {
+      const response = await fetch(`${API_BASE}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

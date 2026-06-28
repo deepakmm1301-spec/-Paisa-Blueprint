@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
+import { API_BASE } from "../api";
 import { Lock, Mail, ChevronLeft, ShieldCheck, MailWarning, Sparkles } from "lucide-react";
 
 interface ForgotPasswordPageProps {
@@ -27,7 +28,7 @@ export default function ForgotPasswordPage({ onNavigate, language }: ForgotPassw
 
     setIsLoading(true);
     try {
-      const res = await fetch("/api/auth/forgot-password", {
+      const res = await fetch(`${API_BASE}/api/auth/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim() })

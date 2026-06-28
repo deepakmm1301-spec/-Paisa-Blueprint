@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Lock, Mail, User, ShieldCheck, Sparkles, LogIn, UserPlus, ArrowRight, Eye, EyeOff, ChevronLeft, Phone } from "lucide-react";
+import { API_BASE } from "../api";
 // @ts-ignore
 import paisaLogo from "../assets/images/deep_paisa_logo_1780484307855.png";
 
@@ -90,7 +91,7 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
 
     setIsLoading(true);
     try {
-      const res = await fetch("/api/auth/register", {
+      const res = await fetch(`${API_BASE}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -158,7 +159,7 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
 
     setIsLoading(true);
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch(`${API_BASE}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: valueStr, password })
