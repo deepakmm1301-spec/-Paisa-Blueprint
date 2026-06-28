@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { API_BASE } from "../api";
+import { paisaFetch } from "../api";
 import { Lock, Mail, Phone, Eye, EyeOff, ShieldCheck, ArrowRight, User, UserPlus, CheckCircle } from "lucide-react";
 
 interface SignupPageProps {
@@ -97,7 +97,7 @@ export default function SignupPage({ onSuccess, onNavigate, language, defaultPro
 
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/auth/register`, {
+      const res = await paisaFetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -112,6 +112,11 @@ export default function SignupPage({ onSuccess, onNavigate, language, defaultPro
 
       if (!res.ok) {
         throw new Error(data.message || (language === "hi" ? "पंजीकरण विफल।" : "Registration failed."));
+      }
+
+      // Store acquired accessToken in localStorage
+      if (data.accessToken) {
+        localStorage.setItem("paisa_access_token", data.accessToken);
       }
 
       setSuccess(language === "hi" ? "सफलतापूर्वक पंजीकृत! ऑटो-लॉगिन शुरू..." : "Locker file registered and seeded successfully! Logging in...");

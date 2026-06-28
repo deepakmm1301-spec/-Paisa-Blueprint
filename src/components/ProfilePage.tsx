@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { User, Phone, MapPin, Briefcase, IndianRupee, Bell, ShieldCheck, Mail, Globe, Save } from "lucide-react";
-import { API_BASE } from "../api";
+import { paisaFetch } from "../api";
 
 interface ProfilePageProps {
   user: any;
@@ -33,7 +33,7 @@ export default function ProfilePage({ user, onUpdateUser, language }: ProfilePag
     setIsLoading(true);
 
     try {
-      const res = await fetch(`${API_BASE}/api/auth/profile`, {
+      const res = await paisaFetch("/api/auth/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

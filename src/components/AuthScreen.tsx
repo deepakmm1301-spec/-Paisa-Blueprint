@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Lock, Mail, User, ShieldCheck, Sparkles, LogIn, UserPlus, ArrowRight, Eye, EyeOff, ChevronLeft, Phone } from "lucide-react";
-import { API_BASE } from "../api";
+import { paisaFetch } from "../api";
 // @ts-ignore
 import paisaLogo from "../assets/images/deep_paisa_logo_1780484307855.png";
 
@@ -91,7 +91,7 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
 
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/auth/register`, {
+      const res = await paisaFetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -105,6 +105,11 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.error || "Registry error setting up files.");
+      }
+
+      // Store acquired accessToken in localStorage
+      if (data.accessToken) {
+        localStorage.setItem("paisa_access_token", data.accessToken);
       }
 
       setSuccessMsg("Locker file registered and seeded successfully! Logging in...");
@@ -159,7 +164,7 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
 
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/auth/login`, {
+      const res = await paisaFetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: valueStr, password })
@@ -167,6 +172,11 @@ export default function AuthScreen({ onLoginSuccess, defaultProfile }: AuthScree
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.error || (authMethod === "phone" ? "Locker matched incorrectly or does not exist." : "Password matched incorrectly or locker does not exist."));
+      }
+
+      // Store acquired accessToken in localStorage
+      if (data.accessToken) {
+        localStorage.setItem("paisa_access_token", data.accessToken);
       }
 
       setSuccessMsg("Locker file authenticated! Launching financial engine...");

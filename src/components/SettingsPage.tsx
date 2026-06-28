@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Lock, ShieldCheck, KeyRound, AlertTriangle } from "lucide-react";
-import { API_BASE } from "../api";
+import { paisaFetch } from "../api";
 
 interface SettingsPageProps {
   language: "en" | "hi";
@@ -37,7 +37,7 @@ export default function SettingsPage({ language }: SettingsPageProps) {
 
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/auth/change-password`, {
+       const res = await paisaFetch("/api/auth/change-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ oldPassword, newPassword })

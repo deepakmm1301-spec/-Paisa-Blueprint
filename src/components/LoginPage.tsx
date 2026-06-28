@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
-import { API_BASE } from "../api";
+import { paisaFetch } from "../api";
 import { Lock, Mail, Phone, Eye, EyeOff, ShieldCheck, ArrowRight, Sparkles, LogIn } from "lucide-react";
 
 interface LoginPageProps {
@@ -52,7 +52,7 @@ export default function LoginPage({ onSuccess, onNavigate, language }: LoginPage
 
     setIsLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/auth/login`, {
+      const res = await paisaFetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -65,6 +65,32 @@ export default function LoginPage({ onSuccess, onNavigate, language }: LoginPage
 
       if (!res.ok) {
         throw new Error(data.message || (language === "hi" ? "लॉगिन असफल। विवरण जांचें।" : "Locker matched incorrectly or does not exist."));
+      }
+
+      // Store acquired accessToken in localStorage
+      if (data.accessToken) {
+        localStorage.setItem("paisa_access_token", data.accessToken);
+      }
+
+      // Format response user payload to ensure user field matches App.tsx expectations
+      if (!data.user && data.email) {
+        data.user = {
+          id: data.id,
+          email: data.email,
+          name: data.name,
+          fullName: data.fullName,
+          phone: data.phone,
+          emailVerified: data.emailVerified,
+          role: data.role,
+          subscription: data.subscription,
+          profilesList: data.profilesList,
+          activeProfileId: data.activeProfileId,
+          notificationPreferences: data.notificationPreferences,
+          country: data.country,
+          state: data.state,
+          occupation: data.occupation,
+          salary: data.salary
+        };
       }
 
       setSuccess(language === "hi" ? "लॉकर प्रमाणित! वित्तीय इंजन लॉन्च किया जा रहा है..." : "Locker file authenticated! Launching financial engine...");

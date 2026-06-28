@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Laptop, Clock, ShieldAlert, Trash2, Calendar, Lock } from "lucide-react";
-import { API_BASE } from "../api";
+import { paisaFetch } from "../api";
 
 interface SessionsPageProps {
   user: any;
@@ -36,7 +36,7 @@ export default function SessionsPage({ user, onLogout, language }: SessionsPageP
 
     setIsDeleting(true);
     try {
-      const res = await fetch(`${API_BASE}/api/auth/delete-account`, {
+      const res = await paisaFetch("/api/auth/delete-account", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: deletePassword })
