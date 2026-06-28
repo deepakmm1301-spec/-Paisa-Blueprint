@@ -36,9 +36,12 @@ router.put("/auth/profile", isAuthenticated as any, authController.updateProfile
 router.delete("/auth/profile", isAuthenticated as any, authController.deleteAccount as any);
 
 // Legacy Authentication/Portfolio Profiles endpoints for backward-compatibility
+router.get("/auth/get-profile", authController.getProfiles);
 router.get("/auth/get-profiles", authController.getProfiles);
+router.post("/auth/update-profile", authController.updateProfiles);
 router.post("/auth/update-profiles", authController.updateProfiles);
 router.post("/auth/update-account-name", authController.updateAccountName);
+router.delete("/auth/delete-account", isAuthenticated as any, authController.deleteAccount as any);
 
 // AI Advisor chat endpoints (Heavy rate limiter applied to safeguard Gemini usage)
 router.post("/chat", heavyLimiter, chatController.chat);

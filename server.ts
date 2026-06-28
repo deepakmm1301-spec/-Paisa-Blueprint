@@ -37,6 +37,14 @@ app.use(sanitizeRequestMiddleware);
 // 6. Mount decoupled and structured API routes
 app.use("/api", apiRouter);
 
+// Fallback JSON error handler for unmatched /api/* routes to prevent returning HTML index
+app.all("/api/*", (req, res) => {
+  res.status(404).json({
+    error: "Not Found",
+    message: `API endpoint ${req.method} ${req.originalUrl} does not exist.`
+  });
+});
+
 // 7. Initialize assets pipelines & serve index files
 async function startServer() {
   if (env.NODE_ENV !== "production") {
