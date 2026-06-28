@@ -678,6 +678,21 @@ export const authController = {
         user.activeProfileId = activeProfileId;
       }
 
+      // Sync updated salary and name back to the active profile in profilesList
+      if (user.profilesList && Array.isArray(user.profilesList)) {
+        const activeId = user.activeProfileId || "profile-main";
+        user.profilesList = user.profilesList.map(p => {
+          if (p.id === activeId) {
+            return {
+              ...p,
+              name: user.fullName || p.name,
+              salary: typeof user.salary === "number" ? user.salary : p.salary
+            };
+          }
+          return p;
+        });
+      }
+
       user.updatedAt = new Date().toISOString();
       accountModel.updateAccount(user);
 

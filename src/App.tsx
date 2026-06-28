@@ -1694,6 +1694,23 @@ export default function App() {
                     onUpdateUser={(updatedUser) => {
                       setSessionUser(updatedUser);
                       localStorage.setItem("paisa_active_session", JSON.stringify(updatedUser));
+                      
+                      // Sync updated salary and name back to the active profile in profiles list
+                      if (updatedUser) {
+                        setProfiles(prevProfiles => {
+                          const activeId = updatedUser.activeProfileId || activeProfileId || "profile-main";
+                          return prevProfiles.map(p => {
+                            if (p.id === activeId) {
+                              return {
+                                ...p,
+                                name: updatedUser.fullName || updatedUser.name || p.name,
+                                salary: typeof updatedUser.salary === "number" ? updatedUser.salary : p.salary
+                              };
+                            }
+                            return p;
+                          });
+                        });
+                      }
                     }}
                     language={language}
                   />

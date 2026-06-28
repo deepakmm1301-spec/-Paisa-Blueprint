@@ -291,7 +291,7 @@ export default function ProfilePage({ user, onUpdateUser, language }: ProfilePag
         <button
           type="submit"
           disabled={isLoading}
-          className={`w-full bg-purple-650 hover:bg-purple-700 text-white font-black py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.99] cursor-pointer shadow-sm ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
+          className={`w-full bg-purple-600 hover:bg-purple-700 text-white font-black py-3 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-all active:scale-[0.99] cursor-pointer shadow-sm ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
         >
           {isLoading ? (
             <span className="flex items-center gap-2">
