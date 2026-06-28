@@ -21,6 +21,13 @@ import EightPayCommissionHub from "./components/EightPayCommissionHub";
 import AboutCard from "./components/AboutCard";
 import ContactCard from "./components/ContactCard";
 import StudentPdfToolkit from "./components/StudentPdfToolkit";
+import LoginPage from "./components/LoginPage";
+import SignupPage from "./components/SignupPage";
+import ForgotPasswordPage from "./components/ForgotPasswordPage";
+import ResetPasswordPage from "./components/ResetPasswordPage";
+import ProfilePage from "./components/ProfilePage";
+import SettingsPage from "./components/SettingsPage";
+import SessionsPage from "./components/SessionsPage";
 // @ts-ignore
 import paisaLogo from "./assets/images/deep_paisa_logo_1780484307855.png";
 
@@ -60,7 +67,11 @@ import {
   Share2,
   TrendingDown,
   IndianRupee,
-  HelpCircle
+  HelpCircle,
+  LogIn,
+  LogOut,
+  UserPlus,
+  Clock
 } from "lucide-react";
 
 // Default profile setup
@@ -127,7 +138,14 @@ type ActiveWidget =
   | "eight_pay_teachers"
   | "about"
   | "contact"
-  | "student_pdf";
+  | "student_pdf"
+  | "login"
+  | "signup"
+  | "forgot_password"
+  | "reset_password"
+  | "profile"
+  | "settings"
+  | "sessions";
 
 export default function App() {
   const [showWelcomePopup, setShowWelcomePopup] = useState(true);
@@ -197,7 +215,7 @@ export default function App() {
   const [isLoadingProfiles, setIsLoadingProfiles] = useState(false);
 
   // Session authentication state (Auto-bypassed/Preloaded)
-  const [sessionUser, setSessionUser] = useState<{ name: string; email: string }>(() => {
+  const [sessionUser, setSessionUser] = useState<any>(() => {
     const saved = localStorage.getItem("paisa_active_session");
     if (saved) {
       try {
@@ -207,8 +225,38 @@ export default function App() {
         console.error("Failed to parse active session", err);
       }
     }
-    return { name: "Anchal Priya", email: "paisa.mm1301@gmail.com" };
+    return { name: "Anchal Priya", email: "paisa.mm1301@gmail.com", profilePhoto: "🧑‍💼" };
   });
+
+  // Fetch active server session on mount to authenticate if HttpOnly cookie is valid
+  useEffect(() => {
+    const checkUserSession = async () => {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.user) {
+            setSessionUser(data.user);
+            localStorage.setItem("paisa_active_session", JSON.stringify(data.user));
+          }
+        }
+      } catch (err) {
+        console.warn("Server session validation error:", err);
+      }
+    };
+    checkUserSession();
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (e) {
+      console.error("Server logout request failed", e);
+    }
+    setSessionUser({ name: "Anchal Priya", email: "paisa.mm1301@gmail.com", profilePhoto: "🧑‍💼" });
+    localStorage.removeItem("paisa_active_session");
+    setActiveWidget("eight_pay_calc");
+  };
 
   const isDarkMode = false;
 
@@ -1231,6 +1279,113 @@ export default function App() {
               <span>Share on WhatsApp</span>
             </button>
 
+            {/* User Session Locker Dropdown */}
+            <div className="relative shrink-0">
+              <button
+                onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 active:scale-[0.98] text-white font-extrabold rounded-full text-xs flex items-center gap-2 transition-all cursor-pointer border-0 shadow-3xs"
+                title="Manage private ledger locker session"
+              >
+                <span className="text-sm">{sessionUser?.profilePhoto || "🧑‍💼"}</span>
+                <span className="max-w-[100px] truncate">{sessionUser?.fullName || sessionUser?.name || "Guest Lock"}</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isProfileDropdownOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              <AnimatePresence>
+                {isProfileDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    className="absolute right-0 mt-2 w-56 bg-white border border-slate-100 rounded-2xl shadow-xl py-2 z-50 overflow-hidden"
+                  >
+                    <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/50">
+                      <span className="text-[9px] text-slate-450 font-black uppercase tracking-wider block">
+                        {sessionUser?.email === "paisa.mm1301@gmail.com" ? "Offline Mode" : "Secure Session Locker"}
+                      </span>
+                      <span className="text-xs font-bold text-slate-800 block truncate mt-0.5">
+                        {sessionUser?.fullName || sessionUser?.name}
+                      </span>
+                      <span className="text-[10px] text-slate-500 block truncate font-medium">
+                        {sessionUser?.email}
+                      </span>
+                    </div>
+
+                    <div className="p-1.5 space-y-0.5">
+                      {sessionUser?.email === "paisa.mm1301@gmail.com" ? (
+                        <>
+                          <button
+                            onClick={() => {
+                              setActiveWidget("login");
+                              setIsProfileDropdownOpen(false);
+                            }}
+                            className="w-full text-left px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-all flex items-center gap-2 cursor-pointer border-0"
+                          >
+                            <LogIn className="w-4 h-4 text-purple-600" />
+                            <span>{language === "hi" ? "लॉकर अनलॉक करें" : "Unlock Locker"}</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setActiveWidget("signup");
+                              setIsProfileDropdownOpen(false);
+                            }}
+                            className="w-full text-left px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-all flex items-center gap-2 cursor-pointer border-0"
+                          >
+                            <UserPlus className="w-4 h-4 text-emerald-500" />
+                            <span>{language === "hi" ? "नया खाता बनाएं" : "Create Locker"}</span>
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => {
+                              setActiveWidget("profile");
+                              setIsProfileDropdownOpen(false);
+                            }}
+                            className="w-full text-left px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-all flex items-center gap-2 cursor-pointer border-0"
+                          >
+                            <User className="w-4 h-4 text-purple-600" />
+                            <span>{language === "hi" ? "मेरी प्रोफ़ाइल" : "My Profile"}</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setActiveWidget("settings");
+                              setIsProfileDropdownOpen(false);
+                            }}
+                            className="w-full text-left px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-all flex items-center gap-2 cursor-pointer border-0"
+                          >
+                            <Sliders className="w-4 h-4 text-emerald-500" />
+                            <span>{language === "hi" ? "सुरक्षा पिन बदलें" : "Security Passcode"}</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setActiveWidget("sessions");
+                              setIsProfileDropdownOpen(false);
+                            }}
+                            className="w-full text-left px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-all flex items-center gap-2 cursor-pointer border-0"
+                          >
+                            <Clock className="w-4 h-4 text-sky-500" />
+                            <span>{language === "hi" ? "सक्रिय सत्र" : "Active Sessions"}</span>
+                          </button>
+                          <hr className="border-slate-100 my-1" />
+                          <button
+                            onClick={() => {
+                              handleLogout();
+                              setIsProfileDropdownOpen(false);
+                            }}
+                            className="w-full text-left px-3 py-2 text-xs font-black text-red-600 hover:bg-red-50 rounded-xl transition-all flex items-center gap-2 cursor-pointer border-0"
+                          >
+                            <LogOut className="w-4 h-4 text-red-500" />
+                            <span>{language === "hi" ? "लॉग आउट" : "Lock Locker"}</span>
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
 
 
           </div>
@@ -1495,6 +1650,73 @@ export default function App() {
 
                 {activeWidget === "student_pdf" && (
                   <StudentPdfToolkit />
+                )}
+
+                {activeWidget === "login" && (
+                  <LoginPage 
+                    onSuccess={(data) => {
+                      setSessionUser(data.user);
+                      localStorage.setItem("paisa_active_session", JSON.stringify(data.user));
+                      setActiveWidget("profile");
+                    }} 
+                    onNavigate={(w) => setActiveWidget(w as ActiveWidget)}
+                    language={language}
+                  />
+                )}
+
+                {activeWidget === "signup" && (
+                  <SignupPage 
+                    onSuccess={(data) => {
+                      setSessionUser(data.user);
+                      localStorage.setItem("paisa_active_session", JSON.stringify(data.user));
+                      setActiveWidget("profile");
+                    }} 
+                    onNavigate={(w) => setActiveWidget(w as ActiveWidget)}
+                    language={language}
+                    defaultProfile={profile}
+                  />
+                )}
+
+                {activeWidget === "forgot_password" && (
+                  <ForgotPasswordPage 
+                    onNavigate={(w) => setActiveWidget(w as ActiveWidget)}
+                    language={language}
+                  />
+                )}
+
+                {activeWidget === "reset_password" && (
+                  <ResetPasswordPage 
+                    onNavigate={(w) => setActiveWidget(w as ActiveWidget)}
+                    language={language}
+                    tokenFromQuery={new URLSearchParams(window.location.search).get("token") || undefined}
+                  />
+                )}
+
+                {activeWidget === "profile" && (
+                  <ProfilePage 
+                    user={sessionUser}
+                    onUpdateUser={(updatedUser) => {
+                      setSessionUser(updatedUser);
+                      localStorage.setItem("paisa_active_session", JSON.stringify(updatedUser));
+                    }}
+                    language={language}
+                  />
+                )}
+
+                {activeWidget === "settings" && (
+                  <SettingsPage 
+                    language={language}
+                  />
+                )}
+
+                {activeWidget === "sessions" && (
+                  <SessionsPage 
+                    user={sessionUser}
+                    onLogout={() => {
+                      handleLogout();
+                    }}
+                    language={language}
+                  />
                 )}
 
                 {(activeWidget === "eight_pay_calc" ||
