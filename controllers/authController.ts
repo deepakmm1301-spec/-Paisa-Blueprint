@@ -155,6 +155,7 @@ export const authController = {
 
       // Save to ledger database
       accountModel.createAccount(newAccount);
+      logger.info(`[AUDIT] After registration, stored passwordHash prefix for ${newAccount.email}: ${newAccount.passwordHash ? newAccount.passwordHash.substring(0, 15) : "undefined"}`);
 
       // Send Verification emails in background asynchronously to prevent registration lag
       if (normalizedEmail) {
@@ -236,7 +237,9 @@ export const authController = {
       }
 
       // Check password matching using bcrypt
+      logger.info(`[AUDIT] Before login compare for ${user.email}, stored passwordHash prefix: ${user.passwordHash ? user.passwordHash.substring(0, 15) : "undefined"}`);
       const isMatch = await comparePassword(password, user.passwordHash);
+      logger.info(`[AUDIT] Login compare result for ${user.email}: ${isMatch}`);
       if (!isMatch) {
         logger.warn(`Failed login attempt for user: ${user.email} (incorrect password).`);
         res.status(401).json({
@@ -330,8 +333,10 @@ export const authController = {
           acc => acc.refreshTokens && acc.refreshTokens.includes(refreshToken)
         );
         if (user) {
+          logger.info(`[AUDIT] Before logout update for ${user.email}, stored passwordHash prefix: ${user.passwordHash ? user.passwordHash.substring(0, 15) : "undefined"}`);
           user.refreshTokens = user.refreshTokens?.filter(t => t !== refreshToken) || [];
           accountModel.updateAccount(user);
+          logger.info(`[AUDIT] After logout update for ${user.email}, stored passwordHash prefix: ${user.passwordHash ? user.passwordHash.substring(0, 15) : "undefined"}`);
         }
       }
 
@@ -773,7 +778,7 @@ export const authController = {
         });
       } else {
         // Create simple account on the fly as fallback
-        logger.info(`Legacy fallback ledger created for: ${email}`);
+        logger.info(`[AUDIT] getProfiles did not find match for ${email}, executing legacy fallback creation with paisa hash!`);
         const tempId = "user-" + Math.random().toString(36).substring(2, 11);
         const newAccount: ServerUserAccount = {
           id: tempId,
@@ -842,6 +847,7 @@ export const authController = {
       if (success) {
         res.json({ success: true, message: "Profiles synchronized successfully." });
       } else {
+        logger.info(`[AUDIT] updateProfiles did not find match for ${email}, executing legacy fallback creation with paisa hash!`);
         const tempId = "user-" + Math.random().toString(36).substring(2, 11);
         const newAccount: ServerUserAccount = {
           id: tempId,

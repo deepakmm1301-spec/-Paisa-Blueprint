@@ -210,6 +210,8 @@ export const accountModel = {
     const idx = accountsMemory.findIndex(acc => acc.id === updatedAccount.id);
     if (idx === -1) return false;
     
+    const oldHash = accountsMemory[idx].passwordHash;
+
     // Filter out undefined properties to prevent replacing existing fields with undefined
     const cleanUpdate: any = {};
     for (const [key, val] of Object.entries(updatedAccount)) {
@@ -223,6 +225,14 @@ export const accountModel = {
       ...cleanUpdate,
       updatedAt: new Date().toISOString()
     };
+    
+    const newHash = accountsMemory[idx].passwordHash;
+    if (oldHash !== newHash) {
+      logger.info(`[AUDIT] updateAccount CHANGED passwordHash for user ${accountsMemory[idx].email || accountsMemory[idx].id}! Old prefix: ${oldHash ? oldHash.substring(0, 15) : "undefined"}, New prefix: ${newHash ? newHash.substring(0, 15) : "undefined"}`);
+    } else {
+      logger.info(`[AUDIT] updateAccount did NOT change passwordHash for user ${accountsMemory[idx].email || accountsMemory[idx].id}. Current prefix: ${oldHash ? oldHash.substring(0, 15) : "undefined"}`);
+    }
+
     saveAccounts();
     return true;
   },
