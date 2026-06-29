@@ -15,6 +15,9 @@ export default defineConfig(() => {
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
+          dashboard: path.resolve(__dirname, 'dashboard/index.html'),
+          profiles: path.resolve(__dirname, 'profiles/index.html'),
+          personal_finance_dashboard: path.resolve(__dirname, 'personal-finance-dashboard/index.html'),
           sip_calculator: path.resolve(__dirname, 'sip-calculator.html'),
           nps_calculator: path.resolve(__dirname, 'nps-calculator.html'),
           pension_calculator: path.resolve(__dirname, 'pension-calculator.html'),
