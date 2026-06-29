@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import fs from "fs";
 import cookieParser from "cookie-parser";
 import { createServer as createViteServer } from "vite";
 import { env, validateEnv } from "./config/env";
@@ -54,6 +55,23 @@ async function startServer() {
       appType: "spa",
     });
     app.use(vite.middlewares);
+
+    // Serve index.html for all non-API paths in development
+    app.get("*", async (req, res, next) => {
+      // Check if it's an API route or has an extension (so it's a file request)
+      if (req.path.startsWith("/api") || req.path.includes(".")) {
+        return next();
+      }
+      try {
+        const indexHtml = path.join(process.cwd(), "index.html");
+        let html = fs.readFileSync(indexHtml, "utf-8");
+        html = await vite.transformIndexHtml(req.originalUrl, html);
+        res.status(200).set({ "Content-Type": "text/html" }).end(html);
+      } catch (err) {
+        next(err);
+      }
+    });
+
     logger.info("Joined Vite dev asset pipeline and middlewares successfully.");
   } else {
     // Production Mode: Serve static build output cleanly
