@@ -1,4 +1,6 @@
-export const API_BASE = "";
+export const API_BASE = (typeof window !== "undefined" && (window.location.hostname.includes("localhost") || window.location.hostname.includes("127.0.0.1") || window.location.hostname.includes("run.app")))
+  ? "" 
+  : "https://paisa-blueprint-production.up.railway.app";
 
 /**
  * Returns the authorization headers including Bearer token if it exists in localStorage.

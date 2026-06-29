@@ -986,16 +986,16 @@ export default function PersonalFinanceDashboard({ user, profile, language, onNa
 
                 <div className="grid grid-cols-2 gap-4">
                   {[
-                    { label: language === "hi" ? "म्यूचुअल फंड / शेयर" : "SIP & Mutual Funds", val: profile.investments?.mutualFunds + profile.investments?.stocks, color: "bg-purple-500" },
-                    { label: language === "hi" ? "पेंशन व सेवानिवृत्ति" : "NPS & Pension PPF", val: profile.investments?.nps + profile.investments?.ppf + profile.investments?.epf, color: "bg-emerald-500" },
-                    { label: language === "hi" ? "लिक्विड फंड (बचत)" : "Liquid emergency reserve", val: emergencyFund, color: "bg-sky-500" },
-                    { label: language === "hi" ? "स्वर्ण / रियल एस्टेट" : "Gold asset indexing", val: profile.investments?.gold, color: "bg-amber-400" }
+                    { label: language === "hi" ? "म्यूचुअल फंड / शेयर" : "SIP & Mutual Funds", val: (profile.investments?.mutualFunds || 0) + (profile.investments?.stocks || 0), color: "bg-purple-500" },
+                    { label: language === "hi" ? "पेंशन व सेवानिवृत्ति" : "NPS & Pension PPF", val: (profile.investments?.nps || 0) + (profile.investments?.ppf || 0) + (profile.investments?.epf || 0), color: "bg-emerald-500" },
+                    { label: language === "hi" ? "लिक्विड फंड (बचत)" : "Liquid emergency reserve", val: emergencyFund || 0, color: "bg-sky-500" },
+                    { label: language === "hi" ? "स्वर्ण / रियल एस्टेट" : "Gold asset indexing", val: profile.investments?.gold || 0, color: "bg-amber-400" }
                   ].map((item, idx) => (
                     <div key={idx} className="flex items-center gap-2">
                       <div className={`w-3 h-3 rounded-full ${item.color}`} />
                       <div>
                         <span className="text-[10px] text-slate-500 block leading-none font-bold">{item.label}</span>
-                        <span className="text-xs font-extrabold text-slate-900 font-mono">₹{item.val.toLocaleString()}</span>
+                        <span className="text-xs font-extrabold text-slate-900 font-mono">₹{Math.round(item.val || 0).toLocaleString()}</span>
                       </div>
                     </div>
                   ))}
@@ -1052,7 +1052,7 @@ export default function PersonalFinanceDashboard({ user, profile, language, onNa
                 </span>
                 <div className="h-36 flex items-end justify-around px-8">
                   {[
-                    { label: "80C Limits", limit: 150000, utilized: Math.min(150000, profile.investments?.mutualFunds * 0.5 + profile.investments?.ppf), color: "bg-red-400" },
+                    { label: "80C Limits", limit: 150000, utilized: Math.min(150000, (profile.investments?.mutualFunds || 0) * 0.5 + (profile.investments?.ppf || 0)), color: "bg-red-400" },
                     { label: "80CCD(1B) NPS", limit: 50000, utilized: monthlyNPSValue * 12, color: "bg-orange-500" },
                     { label: "80D Health", limit: 25000, utilized: Math.min(25000, profile.healthInsuranceCover ? 15000 : 0), color: "bg-emerald-400" }
                   ].map((item, idx) => {
