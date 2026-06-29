@@ -290,7 +290,9 @@ export default function PersonalFinanceDashboard({ user, profile, language, onNa
   const handleLoadItem = (item: SavedItem) => {
     let targetWidget = "";
     const type = item.type.toLowerCase();
-    if (type === "salary" || type === "salarycalculations" || type === "salary_calculations") targetWidget = "salary";
+    if (type === "salary" || type === "salarycalculations" || type === "salary_calculations") {
+      targetWidget = item.data?.teacherGrade ? "bpsc_salary" : "salary";
+    }
     else if (type === "pension" || type === "pensioncalculations" || type === "pension_calculations") targetWidget = "pension";
     else if (type === "sip" || type === "sipplans" || type === "sip_plans") targetWidget = "sip";
     else if (type === "nps" || type === "npsplans" || type === "nps_plans") targetWidget = "nps_govt";

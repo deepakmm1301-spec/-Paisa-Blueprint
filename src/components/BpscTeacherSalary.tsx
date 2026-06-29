@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from "react";
-import { Sparkles, ArrowLeft, Info, HelpCircle, Share2, Calculator, CheckCircle, Percent, ShieldCheck, FileDown } from "lucide-react";
+import React, { useState, useMemo, useEffect } from "react";
+import { Sparkles, ArrowLeft, Info, HelpCircle, Share2, Calculator, CheckCircle, Percent, ShieldCheck, FileDown, Bookmark } from "lucide-react";
 import { getShareableLink } from "../types";
 import { generatePDFReport } from "../utils/pdfGenerator";
+import { paisaFetch } from "../api";
 
 interface BpscTeacherSalaryProps {
   language?: "en" | "hi";
@@ -15,6 +16,30 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
   const [medicalAllowance, setMedicalAllowance] = useState<number | "">(1000); // Fixed Rs 1000 for Bihar Gov
   const [otherAllowances, setOtherAllowances] = useState<number | "">(2000); // CTA or specific school allowance
   const [gpfNpsPercent, setGpfNpsPercent] = useState<number | "">(10); // Standard employee contribution is 10% for NPS
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">("idle");
+
+  // Load saved calculation state if event received
+  useEffect(() => {
+    const handleLoad = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail && customEvent.detail.type === "salary") {
+        const data = customEvent.detail.data;
+        if (data && data.teacherGrade) {
+          if (data.teacherGrade) setTeacherGrade(data.teacherGrade);
+          if (data.customBasicPay !== undefined) setCustomBasicPay(data.customBasicPay);
+          if (data.daPercent !== undefined) setDaPercent(data.daPercent);
+          if (data.hraPercent !== undefined) setHraPercent(data.hraPercent);
+          if (data.medicalAllowance !== undefined) setMedicalAllowance(data.medicalAllowance);
+          if (data.otherAllowances !== undefined) setOtherAllowances(data.otherAllowances);
+          if (data.gpfNpsPercent !== undefined) setGpfNpsPercent(data.gpfNpsPercent);
+        }
+      }
+    };
+    window.addEventListener("paisa-load-calculation", handleLoad);
+    return () => window.removeEventListener("paisa-load-calculation", handleLoad);
+  }, []);
 
   // Bihar BPSC Teacher Pay Commission Matrix Core Constants
   // Basic Pay for grades as of Bihar BPSC TRE 2026/Recent Rules
@@ -59,9 +84,63 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
       groupInsurance,
       totalDeductions,
       inHandSalary,
-      govtNpsContribution
+      govtNpsContribution,
+      medicalAllowance: activeMedicalAllowance,
+      otherAllowances: activeOtherAllowances
     };
   }, [basicPay, daPercent, hraPercent, medicalAllowance, otherAllowances, gpfNpsPercent]);
+
+  // Save calculation handler
+  const saveToLocker = async () => {
+    setIsSaving(true);
+    setSaveStatus("idle");
+    try {
+      const translatedGrade = teacherGrade === "primary" ? (language === "hi" ? "प्राथमिक (Primary 1-5)" : "Primary (1-5)")
+        : teacherGrade === "middle" ? (language === "hi" ? "मध्य (Middle 6-8)" : "Middle (6-8)")
+        : teacherGrade === "secondary" ? (language === "hi" ? "माध्यमिक (Secondary 9-10)" : "Secondary (9-10)")
+        : (language === "hi" ? "उच्च माध्यमिक (Higher Secondary 11-12)" : "Higher Secondary (11-12)");
+
+      const res = await paisaFetch("/api/locker/save", {
+        method: "POST",
+        body: JSON.stringify({
+          title: language === "hi" 
+            ? `बीपीएससी शिक्षक वेतन - ${translatedGrade} (मूल: ₹${basicPay.toLocaleString()})`
+            : `BPSC Teacher Salary - ${translatedGrade} (Basic: ₹${basicPay.toLocaleString()})`,
+          type: "salary",
+          data: {
+            teacherGrade,
+            customBasicPay,
+            daPercent,
+            hraPercent,
+            medicalAllowance,
+            otherAllowances,
+            gpfNpsPercent,
+            netSalary: calculations.inHandSalary,
+            grossSalary: calculations.grossSalary
+          }
+        })
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok) {
+        setSaveStatus("success");
+        window.dispatchEvent(new Event("paisa-locker-saved"));
+        setTimeout(() => setSaveStatus("idle"), 3000);
+      } else {
+        setSaveStatus("error");
+        setTimeout(() => setSaveStatus("idle"), 3000);
+        alert(data?.message || (language === "hi" ? "गणना सहेजने में विफल। कृपया सुनिश्चित करें कि आप लॉग इन हैं।" : "Failed to save calculation. Please make sure you are logged in."));
+      }
+    } catch (error) {
+      console.error(error);
+      setSaveStatus("error");
+      setTimeout(() => setSaveStatus("idle"), 3000);
+      alert(language === "hi" ? "सहेजते समय एक अप्रत्याशित त्रुटि हुई।" : "An unexpected error occurred while saving.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   // Handle Share to WhatsApp
   const shareToWhatsApp = () => {
@@ -155,6 +234,14 @@ export default function BpscTeacherSalary({ language = "en" }: BpscTeacherSalary
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 self-start sm:self-center">
+          <button
+            onClick={saveToLocker}
+            disabled={isSaving}
+            className={`bg-purple-600 hover:bg-purple-700 active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer ${isSaving ? "opacity-75 cursor-not-allowed" : ""}`}
+          >
+            <Bookmark className="w-4 h-4 text-white" />
+            <span>{isSaving ? (language === "hi" ? "सहेजा जा रहा है..." : "Saving...") : saveStatus === "success" ? (language === "hi" ? "सहेजा गया! ✓" : "Saved! ✓") : (language === "hi" ? "तिजोरी में सहेजें" : "Save to Vault")}</span>
+          </button>
           <button
             onClick={downloadPDFReport}
             className="bg-slate-900 dark:bg-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95 text-white font-bold text-xs px-4 py-2.5 rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all border-0 cursor-pointer"
