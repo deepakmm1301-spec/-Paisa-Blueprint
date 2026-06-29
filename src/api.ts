@@ -1,4 +1,4 @@
-export const API_BASE = "https://paisa-blueprint-production.up.railway.app";
+export const API_BASE = "";
 
 /**
  * Returns the authorization headers including Bearer token if it exists in localStorage.

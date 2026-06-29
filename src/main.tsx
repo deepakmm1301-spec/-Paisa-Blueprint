@@ -15,16 +15,23 @@ if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
       });
   });
 } else if ('serviceWorker' in navigator) {
-  // In development, also register so it works locally/in dev preview if desired
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then((registration) => {
-        console.log('[PWA] Service Worker registered in Dev:', registration.scope);
-      })
-      .catch((error) => {
-        console.warn('[PWA] Service Worker registration skipped or failed in Dev:', error);
+  // In development, unregister any existing service workers to prevent caching and blank pages
+  navigator.serviceWorker.getRegistrations().then((registrations) => {
+    for (const registration of registrations) {
+      registration.unregister().then(() => {
+        console.log('[PWA] Unregistered active service worker in Dev mode to prevent caching issues');
       });
+    }
   });
+  if ('caches' in window) {
+    caches.keys().then((keys) => {
+      keys.forEach((key) => {
+        caches.delete(key).then(() => {
+          console.log('[PWA] Cleared cache in Dev mode:', key);
+        });
+      });
+    });
+  }
 }
 
 createRoot(document.getElementById('root')!).render(
