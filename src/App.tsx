@@ -29,6 +29,7 @@ import ResetPasswordPage from "./components/ResetPasswordPage";
 import ProfilePage from "./components/ProfilePage";
 import SettingsPage from "./components/SettingsPage";
 import SessionsPage from "./components/SessionsPage";
+import PersonalFinanceDashboard from "./components/PersonalFinanceDashboard";
 // @ts-ignore
 import paisaLogo from "./assets/images/deep_paisa_logo_1780484307855.png";
 
@@ -110,6 +111,7 @@ const defaultProfile: UserProfile = {
 };
 
 type ActiveWidget = 
+  | "dashboard"
   | "profiles"
   | "health" 
   | "salary" 
@@ -395,6 +397,7 @@ export default function App() {
         .replace(/\/index$/, "")
         .replace(/\.html$/, "")
         .toLowerCase();
+      if (cleanPath === "/dashboard" || cleanPath === "/personal-finance-dashboard") return "dashboard";
       if (cleanPath === "/bpsc-teacher-salary-calculator" || cleanPath === "/bihar-teacher-salary-calculator") return "bpsc_salary";
       if (cleanPath === "/bihar-da-calculator" || cleanPath === "/da-calculator") return "bihar_da";
       if (cleanPath === "/government-employee-sip-calculator") return "govt_sip";
@@ -424,6 +427,18 @@ export default function App() {
       if (cleanPath === "/about") return "about";
       if (cleanPath === "/contact") return "contact";
       if (cleanPath === "/student-pdf-toolkit" || cleanPath === "/student-pdf") return "student_pdf";
+      
+      if (cleanPath === "") {
+        const saved = localStorage.getItem("paisa_active_session");
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            if (parsed && parsed.email && parsed.email !== "paisa.mm1301@gmail.com") {
+              return "dashboard";
+            }
+          } catch (e) {}
+        }
+      }
       return "eight_pay_calc";
     };
 
@@ -450,7 +465,7 @@ export default function App() {
         if (queryWidget === "student_pdf" || queryWidget === "student-pdf" || queryWidget === "pdf-toolkit") queryWidget = "student_pdf";
 
         const validWidgets = [
-          "profiles", "salary", "pension", "health", "sip", "retirement",
+          "dashboard", "profiles", "salary", "pension", "health", "sip", "retirement",
           "goals", "tax", "networth", "cibil", "debt", "coach", "seohub", "learning",
           "eight_pay_calc", "eight_pay_fitment", "eight_pay_hike", "eight_pay_pension",
           "eight_pay_news", "eight_pay_fitment_info", "eight_pay_chart", "eight_pay_date", "eight_pay_teachers",
@@ -475,6 +490,7 @@ export default function App() {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
   const getPathFromWidget = useCallback((widget: ActiveWidget): string => {
+    if (widget === "dashboard") return "/dashboard";
     if (widget === "eight_pay_calc") return "/";
     if (widget === "profiles") return "/profiles";
     if (widget === "bpsc_salary") return "/bpsc-teacher-salary-calculator";
@@ -516,7 +532,10 @@ export default function App() {
     let targetDesc = "Visit India's Own Salaried Personal Calculator Suite with advanced compounding projection models.";
     let targetPath = getPathFromWidget(activeWidget);
 
-    if (activeWidget === "bpsc_salary") {
+    if (activeWidget === "dashboard") {
+      targetTitle = language === "hi" ? "व्यक्तिगत डैशबोर्ड | पैसा ब्लूप्रिंट" : "Personal Finance Dashboard | Paisa Blueprint";
+      targetDesc = language === "hi" ? "आपकी तिजोरी की सहेजी गई गणनाओं, कर विश्लेषण और समग्र वित्तीय लक्ष्यों की वास्तविक समय प्रगति रिपोर्ट।" : "Consolidated executive tracker with automated financial health check, savings snapshot, and interactive AI coach.";
+    } else if (activeWidget === "bpsc_salary") {
       targetTitle = "BPSC Teacher Salary Calculator 2026 | Paisa Blueprint";
       targetDesc = "Calculate Bihar BPSC Teacher salary scale, allowances, base HRA, and final hand-home salary scales after the latest revisions.";
     } else if (activeWidget === "bihar_da") {
@@ -941,7 +960,11 @@ export default function App() {
 
     setProfiles(profilesList);
     setActiveProfileId(activeId);
-    setActiveWidget("eight_pay_calc");
+    if (user.email !== "paisa.mm1301@gmail.com") {
+      setActiveWidget("dashboard");
+    } else {
+      setActiveWidget("eight_pay_calc");
+    }
   };
 
   const handleResetData = () => {
@@ -984,113 +1007,130 @@ export default function App() {
     }
   };
 
-  const menuItems = [
-    {
-      id: "eight_pay_calc" as ActiveWidget,
-      label: language === "hi" ? "8वां वेतन आयोग हब" : "8th Pay Commission Hub",
-      desc: language === "hi" ? "वेतन वृद्धि, फिटमेंट फैक्टर और 8वें वेतन आकलन 2026" : "Calculators & guides structure of 8th CPC",
-      icon: <Sparkles className="w-5 h-5 text-amber-500 fill-amber-500/20" />,
-      color: "text-purple-600 bg-purple-50 border-purple-100",
-    },
-    {
-      id: "bpsc_salary" as ActiveWidget,
-      label: language === "hi" ? "BPSC शिक्षक वेतन" : "BPSC Teacher Salary",
-      desc: language === "hi" ? "बिहार शिक्षक भर्ती वेतन आकलन 2026" : "Bihar BPSC teacher scales",
-      icon: <Award className="w-5 h-5" />,
-      color: "text-teal-650 bg-teal-50 border-teal-100",
-    },
-    {
-      id: "nps_govt" as ActiveWidget,
-      label: language === "hi" ? "BPSC शिक्षक NPS और पेंशन" : "BPSC Teacher NPS & Pension",
-      desc: language === "hi" ? "नियमित शिक्षक पेंशन एवं राष्ट्रीय पेंशन प्रणाली लेखाचित्र" : "National pension scheme & teacher retirement pension ledger",
-      icon: <Landmark className="w-5 h-5" />,
-      color: "text-violet-650 bg-violet-50 border-violet-100",
-    },
-    {
-      id: "student_pdf" as ActiveWidget,
-      label: language === "hi" ? "छात्र PDF टूलकिट" : "Student PDF Toolkit",
-      desc: language === "hi" ? "JPG से PDF, PDF मर्ज, स्प्लिट, कंप्रेस, हैंडराइटिंग और बायोडाटा मेकर" : "JPG to PDF, merge, split, compress, handwritten notes & resume builder",
-      icon: <BookOpen className="w-5 h-5 text-emerald-500 fill-emerald-500/20" />,
-      color: "text-emerald-600 bg-emerald-50 border-emerald-100",
-    },
-    {
-      id: "govt_sip" as ActiveWidget,
-      label: language === "hi" ? "BPSC शिक्षक SIP" : "BPSC Teacher SIP",
-      desc: language === "hi" ? "वेतन वृद्धि + SIP का चक्रवृद्धि प्रभाव" : "Salary increment + compounding planner",
-      icon: <TrendingUp className="w-5 h-5" />,
-      color: "text-indigo-650 bg-indigo-50 border-indigo-110",
-    },
-    {
-      id: "bihar_da" as ActiveWidget,
-      label: language === "hi" ? "BPSC शिक्षक DA कैलकुलेटर" : "BPSC Teacher DA Calculator",
-      desc: language === "hi" ? "राज्य कर्मियों का महंगाई भत्ता गणना 2026" : "Bihar state employee dearness allowance",
-      icon: <Percent className="w-5 h-5" />,
-      color: "text-emerald-600 bg-emerald-50 border-emerald-100",
-    },
-    {
-      id: "salary" as ActiveWidget,
-      label: language === "hi" ? "वेतन कैलकुलेटर" : "Salary Calculator",
-      desc: language === "hi" ? "महंगाई भत्ता (DA) व वेतनमान सटीक अनुमान" : "DA, HRA & scale estimator",
-      icon: <Landmark className="w-5 h-5" />,
-      color: "text-sky-600 bg-sky-50 border-sky-100",
-    },
-    {
-      id: "pension" as ActiveWidget,
-      label: language === "hi" ? "पेंशन कैलकुलेटर" : "Pension Calculator",
-      desc: language === "hi" ? "NPS और पेंशन योजना अनुमान" : "NPS and pension projection",
-      icon: <Coins className="w-5 h-5 font-bold" />,
-      color: "text-purple-600 bg-purple-50 border-purple-100",
-    },
-    {
-      id: "sip" as ActiveWidget,
-      label: language === "hi" ? "एसआईपी योजनाकार" : "Plan SIP",
-      desc: language === "hi" ? "चक्रवृद्धि के साथ धन वृद्धि" : "Compounding wealth growth",
-      icon: <TrendingUp className="w-5 h-5" />,
-      color: "text-emerald-600 bg-emerald-50 border-emerald-100",
-    },
-    {
-      id: "learning" as ActiveWidget,
-      label: language === "hi" ? "पैसे से पैसा बनाना सीखो" : "Paise to Rupee Wisdom",
-      desc: language === "hi" ? "₹5,050 SIP, तुलनात्मक FD, ₹1 करोड़ रोडमैप, बजट और FIRE नियम" : "₹5k SIP, FD v/s SIP battles, ₹1Cr targets, 50-30-20 rule, retirement calculations",
-      icon: <Sparkles className="w-5 h-5" />,
-      color: "text-emerald-655 bg-emerald-50 border-emerald-100",
-    },
-    {
-      id: "retirement" as ActiveWidget,
-      label: language === "hi" ? "रिटायरमेंट रोडमैप" : "Retirement Roadmap",
-      desc: language === "hi" ? "महंगाई दर और दीर्घायु वित्तीय कवर" : "Inflation vs longevity cover",
-      icon: <Compass className="w-5 h-5" />,
-      color: "text-violet-650 bg-violet-50 border-violet-100",
-    },
-    {
-      id: "seohub" as ActiveWidget,
-      label: language === "hi" ? "संसाधन व गाइड कैबिनेट" : "Cabinets & Resources",
-      desc: language === "hi" ? "10+ कैलकुलेटर, शब्दावली और वित्तीय गाइड" : "10+ Calculators, Glossary & Guides",
-      icon: <BookOpen className="w-5 h-5" />,
-      color: "text-purple-655 bg-purple-50 border-purple-110",
-    },
-    {
-      id: "coach" as ActiveWidget,
-      label: language === "hi" ? "पैसा एआई कोच" : "Paisa AI Coach",
-      desc: language === "hi" ? "वित्तीय प्रश्नों के तुरंत जवाब" : "Real-time chat & feedback",
-      icon: <Bot className="w-5 h-5" />,
-      color: "text-bhagwa-600 bg-bhagwa-50 border-bhagwa-100",
-    },
-    {
-      id: "about" as ActiveWidget,
-      label: language === "hi" ? "हमारे बारे में" : "About Us",
-      desc: language === "hi" ? "पैसा ब्लूप्रिंट का मिशन एवं विज़न" : "Our mission and team statement",
-      icon: <Award className="w-5 h-5" />,
-      color: "text-indigo-600 bg-indigo-50 border-indigo-100",
-    },
-    {
-      id: "contact" as ActiveWidget,
-      label: language === "hi" ? "संपर्क करें" : "Contact Us",
-      desc: language === "hi" ? "सलाहकार टीम और सहायता केंद्र" : "Connect with our support team",
-      icon: <HelpCircle className="w-5 h-5 text-orange-500 fill-orange-500/10" />,
-      color: "text-orange-650 bg-orange-50 border-orange-100",
-    },
-  ];
+  const menuItems = useMemo(() => {
+    const baseItems = [
+      {
+        id: "eight_pay_calc" as ActiveWidget,
+        label: language === "hi" ? "8वां वेतन आयोग हब" : "8th Pay Commission Hub",
+        desc: language === "hi" ? "वेतन वृद्धि, फिटमेंट फैक्टर और 8वें वेतन आकलन 2026" : "Calculators & guides structure of 8th CPC",
+        icon: <Sparkles className="w-5 h-5 text-amber-500 fill-amber-500/20" />,
+        color: "text-purple-600 bg-purple-50 border-purple-100",
+      },
+      {
+        id: "bpsc_salary" as ActiveWidget,
+        label: language === "hi" ? "BPSC शिक्षक वेतन" : "BPSC Teacher Salary",
+        desc: language === "hi" ? "बिहार शिक्षक भर्ती वेतन आकलन 2026" : "Bihar BPSC teacher scales",
+        icon: <Award className="w-5 h-5" />,
+        color: "text-teal-655 bg-teal-50 border-teal-100",
+      },
+      {
+        id: "nps_govt" as ActiveWidget,
+        label: language === "hi" ? "BPSC शिक्षक NPS और पेंशन" : "BPSC Teacher NPS & Pension",
+        desc: language === "hi" ? "नियमित शिक्षक पेंशन एवं राष्ट्रीय पेंशन प्रणाली लेखाचित्र" : "National pension scheme & teacher retirement pension ledger",
+        icon: <Landmark className="w-5 h-5" />,
+        color: "text-violet-650 bg-violet-50 border-violet-100",
+      },
+      {
+        id: "student_pdf" as ActiveWidget,
+        label: language === "hi" ? "छात्र PDF टूलकिट" : "Student PDF Toolkit",
+        desc: language === "hi" ? "JPG से PDF, PDF मर्ज, स्प्लिट, कंप्रेस, हैंडराइटिंग और बायोडाटा मेकर" : "JPG to PDF, merge, split, compress, handwritten notes & resume builder",
+        icon: <BookOpen className="w-5 h-5 text-emerald-500 fill-emerald-500/20" />,
+        color: "text-emerald-600 bg-emerald-50 border-emerald-100",
+      },
+      {
+        id: "govt_sip" as ActiveWidget,
+        label: language === "hi" ? "BPSC शिक्षक SIP" : "BPSC Teacher SIP",
+        desc: language === "hi" ? "वेतन वृद्धि + SIP का चक्रवृद्धि प्रभाव" : "Salary increment + compounding planner",
+        icon: <TrendingUp className="w-5 h-5" />,
+        color: "text-indigo-650 bg-indigo-50 border-indigo-110",
+      },
+      {
+        id: "bihar_da" as ActiveWidget,
+        label: language === "hi" ? "BPSC शिक्षक DA कैलकुलेटर" : "BPSC Teacher DA Calculator",
+        desc: language === "hi" ? "राज्य कर्मियों का महंगाई भत्ता गणना 2026" : "Bihar state employee dearness allowance",
+        icon: <Percent className="w-5 h-5" />,
+        color: "text-emerald-600 bg-emerald-50 border-emerald-100",
+      },
+      {
+        id: "salary" as ActiveWidget,
+        label: language === "hi" ? "वेतन कैलकुलेटर" : "Salary Calculator",
+        desc: language === "hi" ? "महंगाई भत्ता (DA) व वेतनमान सटीक अनुमान" : "DA, HRA & scale estimator",
+        icon: <Landmark className="w-5 h-5" />,
+        color: "text-sky-600 bg-sky-50 border-sky-100",
+      },
+      {
+        id: "pension" as ActiveWidget,
+        label: language === "hi" ? "पेंशन कैलकुलेटर" : "Pension Calculator",
+        desc: language === "hi" ? "NPS और पेंशन योजना अनुमान" : "NPS and pension projection",
+        icon: <Coins className="w-5 h-5 font-bold" />,
+        color: "text-purple-600 bg-purple-50 border-purple-100",
+      },
+      {
+        id: "sip" as ActiveWidget,
+        label: language === "hi" ? "एसआईपी योजनाकार" : "Plan SIP",
+        desc: language === "hi" ? "चक्रवृद्धि के साथ धन वृद्धि" : "Compounding wealth growth",
+        icon: <TrendingUp className="w-5 h-5" />,
+        color: "text-emerald-600 bg-emerald-50 border-emerald-100",
+      },
+      {
+        id: "learning" as ActiveWidget,
+        label: language === "hi" ? "पैसे से पैसा बनाना सीखो" : "Paise to Rupee Wisdom",
+        desc: language === "hi" ? "₹5,050 SIP, तुलनात्मक FD, ₹1 करोड़ रोडमैप, बजट और FIRE नियम" : "₹5k SIP, FD v/s SIP battles, ₹1Cr targets, 50-30-20 rule, retirement calculations",
+        icon: <Sparkles className="w-5 h-5" />,
+        color: "text-emerald-655 bg-emerald-50 border-emerald-100",
+      },
+      {
+        id: "retirement" as ActiveWidget,
+        label: language === "hi" ? "रिटायरमेंट रोडमैप" : "Retirement Roadmap",
+        desc: language === "hi" ? "महंगाई दर और दीर्घायु वित्तीय कवर" : "Inflation vs longevity cover",
+        icon: <Compass className="w-5 h-5" />,
+        color: "text-violet-650 bg-violet-50 border-violet-100",
+      },
+      {
+        id: "seohub" as ActiveWidget,
+        label: language === "hi" ? "संसाधन व गाइड कैबिनेट" : "Cabinets & Resources",
+        desc: language === "hi" ? "10+ कैलकुलेटर, शब्दावली और वित्तीय गाइड" : "10+ Calculators, Glossary & Guides",
+        icon: <BookOpen className="w-5 h-5" />,
+        color: "text-purple-655 bg-purple-50 border-purple-110",
+      },
+      {
+        id: "coach" as ActiveWidget,
+        label: language === "hi" ? "पैसा एआई कोच" : "Paisa AI Coach",
+        desc: language === "hi" ? "वित्तीय प्रश्नों के तुरंत जवाब" : "Real-time chat & feedback",
+        icon: <Bot className="w-5 h-5" />,
+        color: "text-bhagwa-600 bg-bhagwa-50 border-bhagwa-100",
+      },
+      {
+        id: "about" as ActiveWidget,
+        label: language === "hi" ? "हमारे बारे में" : "About Us",
+        desc: language === "hi" ? "पैसा ब्लूप्रिंट का मिशन एवं विज़न" : "Our mission and team statement",
+        icon: <Award className="w-5 h-5" />,
+        color: "text-indigo-600 bg-indigo-50 border-indigo-100",
+      },
+      {
+        id: "contact" as ActiveWidget,
+        label: language === "hi" ? "संपर्क करें" : "Contact Us",
+        desc: language === "hi" ? "सलाहकार टीम और सहायता केंद्र" : "Connect with our support team",
+        icon: <HelpCircle className="w-5 h-5 text-orange-500 fill-orange-500/10" />,
+        color: "text-orange-650 bg-orange-50 border-orange-100",
+      },
+    ];
+
+    if (sessionUser && sessionUser.email && sessionUser.email !== "paisa.mm1301@gmail.com") {
+      return [
+        {
+          id: "dashboard" as ActiveWidget,
+          label: language === "hi" ? "व्यक्तिगत डैशबोर्ड" : "Personal Finance Dashboard",
+          desc: language === "hi" ? "आपकी तिजोरी की सहेजी गई गणनाओं और लक्ष्यों की वित्तीय प्रगति" : "Your dynamic financial locker progress and scorecard",
+          icon: <LayoutGrid className="w-5 h-5 text-bhagwa-600 fill-bhagwa-600/20" />,
+          color: "text-bhagwa-700 bg-bhagwa-50 border-bhagwa-100",
+        },
+        ...baseItems
+      ];
+    }
+
+    return baseItems;
+  }, [language, sessionUser?.email]);
 
   const isDefaultUser = sessionUser?.email === "paisa.mm1301@gmail.com";
 
@@ -1588,6 +1628,20 @@ export default function App() {
                 transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                 className="w-full"
               >
+                {activeWidget === "dashboard" && (
+                  <PersonalFinanceDashboard 
+                    user={sessionUser}
+                    profile={profile}
+                    language={language}
+                    onNavigateToWidget={(w) => {
+                      setActiveWidget(w as ActiveWidget);
+                      if (contentRef.current) {
+                        contentRef.current.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }}
+                  />
+                )}
+
                 {activeWidget === "salary" && (
                   <SalaryPlanner profile={profile} />
                 )}
